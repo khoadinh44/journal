@@ -1,4 +1,4 @@
-def denoise(f, num, plot_all=False, get_result=False):
+def denoise(f, num, plot_all=False, get_result=False, thres=None):
   t = np.linspace(0, 1, num=num).astype(np.float32)
   f = Normal_0_X097_DE_time.reshape(num, )
 
@@ -9,7 +9,7 @@ def denoise(f, num, plot_all=False, get_result=False):
   freq = np.arange(num)
 
   ## Use the PSD to filter out noise
-  indices = PSD > 50       # Find all freqs with large power
+  indices = PSD > thres       # Find all freqs with large power
   PSDclean = PSD * indices  # Zero out all others
   fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
   ffilt = np.fft.ifft(fhat) # Inverse FFT for filtered time signal
