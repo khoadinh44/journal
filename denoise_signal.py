@@ -1,3 +1,4 @@
+# Denoise signal with Fourier
 def denoise(f, num, plot_all=False, get_result=False, thres=None):
   t = np.linspace(0, 1, num=num).astype(np.float32)
   f = Normal_0_X097_DE_time.reshape(num, )
