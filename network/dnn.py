@@ -6,7 +6,7 @@ After 200 epochs merge_network() was more overstanding than network(),
 with reach up more than 93% validation accuracy while the accuracy of network() was just ~40%.
 
 network+None | merge_network+None | merge_network+Fourie 
-40%           93%                   99%
+40%           93%                   ~99% (After 10 epochs)
 '''
 
 def network():
