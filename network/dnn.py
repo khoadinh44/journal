@@ -2,7 +2,11 @@ import keras
 import tensorflow as tf
 
 '''
-After 1000 epochs merge_network() was more overstanding than network(), with reach up more than 95% validation accuracy while the accuracy of network() was just ~40% 
+After 200 epochs merge_network() was more overstanding than network(), 
+with reach up more than 93% validation accuracy while the accuracy of network() was just ~40%.
+
+network+None | merge_network+None | merge_network+Fourie 
+40%           93%                   99%
 '''
 
 def network():
