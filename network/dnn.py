@@ -1,6 +1,10 @@
 import keras
 import tensorflow as tf
 
+'''
+After 200 epochs merge_network() was more overstanding than network(), with reach up more than 93% accuracy while accuracy of network() was just ~40% 
+'''
+
 def network():
   # Build neural network
   input_ = keras.layers.Input(shape=[1246, ])
