@@ -1,7 +1,11 @@
 # Denoise signal with Fourier
-def denoise(f, num, plot_all=False, get_result=False, thres=None):
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
   t = np.linspace(0, 1, num=num).astype(np.float32)
-  f = Normal_0_X097_DE_time.reshape(num, )
+  f = f.reshape(num, )
 
   ## Compute the Fast Fourier Transform (FFT)
   fhat = np.fft.fft(f, num)                     # Compute the FFT
@@ -15,13 +19,14 @@ def denoise(f, num, plot_all=False, get_result=False, thres=None):
   fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
   ffilt = np.fft.ifft(fhat) # Inverse FFT for filtered time signal
 
-  if plot_all == False:
-    plt.plot(PSD)
-    plt.title('Noise')
-    plt.show()
-    plt.savefig('plot_noise.png')
-  else:
-    ## Plots
+  if get_PSD:
+    return PSD.real 
+    # plt.plot(PSD.real)
+    # plt.title('Noise')
+    # plt.show()
+    # plt.rcParams["figure.figsize"] = (20,3)
+    # plt.savefig('plot_noise.png')
+  if plot_all:
     fig,axs = plt.subplots(3,1)
 
     plt.sca(axs[0])
@@ -41,6 +46,7 @@ def denoise(f, num, plot_all=False, get_result=False, thres=None):
     plt.legend()
 
     plt.show()
+    plt.rcParams["figure.figsize"] = (20,3)
     plt.savefig('plot_all.png')
   
   if get_result:
