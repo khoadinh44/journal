@@ -70,3 +70,10 @@ OR007_12_0_X122RPM      = OR007_12_0['X161RPM']
 OR007_12_0_group = np.concatenate((OR007_12_0_X122_DE_time.reshape(1, num), OR007_12_0_X122_FE_time.reshape(1, num)), axis=0)
 OR007_12_0_name  = [[0, 0, 0, 0, 0, 1]]*n
 OR007_12_0_reshape = OR007_12_0_group.reshape(n, int(num/n)*2)
+
+DE_time = np.concatenate((Normal_0_X097_DE_time.reshape(n, int(num/n)), B007_0_X122_DE_time.reshape(n, int(num/n)), IR007_0_X122_DE_time.reshape(n, int(num/n)), OR007_3_0_X122_DE_time.reshape(n, int(num/n)), OR007_6_0_X122_DE_time.reshape(n, int(num/n)), OR007_12_0_X122_DE_time.reshape(n, int(num/n))))
+FE_time = np.concatenate((Normal_0_X097_FE_time.reshape(n, int(num/n)), B007_0_X122_FE_time.reshape(n, int(num/n)), IR007_0_X122_FE_time.reshape(n, int(num/n)), OR007_3_0_X122_FE_time.reshape(n, int(num/n)), OR007_6_0_X122_FE_time.reshape(n, int(num/n)), OR007_12_0_X122_FE_time.reshape(n, int(num/n))))
+
+merge_data = np.concatenate((DE_time, FE_time), axis=1)
+label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
+# print(merge_data[:, :623].shape)
