@@ -2,21 +2,14 @@ import tensorflow as tf
 import numpy as np
 from network.dnn import network, merge_network
 from sklearn.model_selection import train_test_split
-from load_data import Normal_0_reshape,\
-                      B007_0_reshape,\
-                      IR007_0_reshape,\
-                      OR007_3_0_reshape,\
-                      OR007_6_0_reshape,\
-                      OR007_12_0_reshape,\
-                      merge_data, label
+from load_data import merge_data, label
 
-# data = np.concatenate((Normal_0_reshape, B007_0_reshape, IR007_0_reshape, OR007_3_0_reshape, OR007_6_0_reshape, OR007_12_0_reshape))
+# active GPU
+# tf.debugging.set_log_device_placement(True)
 
 X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.1, random_state=42, shuffle=True)
 X_train_A, X_train_B = X_train[:, :623], X_train[:, 623:]
 X_test_A, X_test_B = X_test[:, :623], X_test[:, 623:]
-# active GPU
-# tf.debugging.set_log_device_placement(True)
 
 # Load model------------------------------------------------------------------------------------
 def train(data=None, labels=None,\
