@@ -2,17 +2,17 @@ import tensorflow as tf
 import numpy as np
 from network.dnn import network, merge_network
 from sklearn.model_selection import train_test_split
-from load_data import merge_data_1, label, use_network, use_Wavelet, use_Fourier
+from load_data import merge_data_2, label, use_network, use_Wavelet, use_Fourier
 
 # active GPU
 # tf.debugging.set_log_device_placement(True) .reshape(X_train.shape[0], 300)
 
-X_train, X_test, y_train, y_test = train_test_split(merge_data_1, label, test_size=0.1, random_state=42, shuffle=True)
-X_train_A, X_train_B             = X_train[:, :50, :], X_train[:, 50:, :]
-X_test_A, X_test_B               = X_test[:, :50, :],  X_test[:, 50:, :]
+X_train, X_test, y_train, y_test = train_test_split(merge_data_2, label, test_size=0.1, random_state=42, shuffle=True)
+X_train_A, X_train_B             = X_train[:, :100, :], X_train[:, 100:, :]
+X_test_A, X_test_B               = X_test[:, :100, :],  X_test[:, 100:, :]
 
-X_train_A, X_train_B             = X_train_A.reshape(3364, 150), X_train_B.reshape(3364, 150)   
-X_test_A, X_test_B               = X_test_A.reshape(374, 150),  X_test_B.reshape(374, 150)
+X_train_A, X_train_B             = X_train_A.reshape(int(X_train_A.shape[0]), 300), X_train_B.reshape(int(X_train_B.shape[0]), 300)   
+X_test_A, X_test_B               = X_test_A.reshape(int(X_test_A.shape[0]), 300),  X_test_B.reshape(int(X_test_B.shape[0]), 300)
 
 # Load model------------------------------------------------------------------------------------
 def train(data=None, labels=None,\
