@@ -1,6 +1,8 @@
 # Denoise signal with Fourier
 import numpy as np
 import matplotlib.pyplot as plt
+import pywt
+from matplotlib.image import imread
 
 
 def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
@@ -51,3 +53,35 @@ def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
   
   if get_result:
     return ffilt.real
+
+def SVD_denoise(Xnoisy):
+    sigma = 1
+    U, S, VT = np.linalg.svd(Xnoisy, full_matrices=0)
+    N = Xnoisy.shape[1]
+    cutoff = (4/np.sqrt(3)) * np.sqrt(N) * sigma # Hard threshold
+    r = np.max(np.where(S > cutoff)) # Keep modes w/ sig > cutoff 
+
+    Xclean = U[:,:(r+1)] @ np.diag(S[:(r+1)]) @ VT[:(r+1),:]
+    return Xclean
+
+def Wavelet(X):
+  '''
+  n = 124600
+  [0]: (31150, 1)
+
+  [1][0]: (31150, 1)
+  [1][1]: (31150, 1)
+  [1][2]: (31150, 1)
+
+  [2][0]: (62300, 1)
+  [2][1]: (62300, 1)
+  [2][2]: (62300, 1)
+  '''
+    n = 2
+    w = 'db1'
+    coeffs = pywt.wavedec2(X, wavelet=w, level=n)
+
+    coeffs_0 = coeffs[0]
+    coeffs_1 = np.concatenate((coeffs[1][0], coeffs[1][1], coeffs[1][2]), axis=1)
+    coeffs_2 = np.concatenate((coeffs[2][0], coeffs[2][1], coeffs[2][2]), axis=1)
+    return coeffs_0, coeffs_1, coeffs_2
