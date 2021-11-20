@@ -5,8 +5,8 @@ import tensorflow as tf
 After 200 epochs merge_network() was more overstanding than network(), 
 with reach up more than 93% validation accuracy while the accuracy of network() was just ~40%.
 
-network+None | merge_network+None | merge_network+Fourier  | merge_network+SVD_denoise | merge_network+Wavelet(level=2)
-40%           93%                   ~100% (After 6 epochs)  ~90%                        ~95%
+network+None | merge_network+None | merge_network+Fourier  | merge_network+SVD_denoise
+40%           93%                   ~100% (After 6 epochs)  ~90%
 '''
 
 def network():
@@ -30,8 +30,8 @@ def merge_network(use_network=False, use_Wavelet=False, use_Fourier=False):
     model = keras.models.Model(inputs=[input_], outputs=[output])
   else:
     if use_Wavelet:
-      input_A = keras.layers.Input(shape=[150], name="wide_input")
-      input_B = keras.layers.Input(shape=[150], name="deep_input") 
+      input_A = keras.layers.Input(shape=[300], name="wide_input")
+      input_B = keras.layers.Input(shape=[300], name="deep_input") 
     if use_Fourier:
       input_A = keras.layers.Input(shape=[200], name="wide_input")
       input_B = keras.layers.Input(shape=[200], name="deep_input") 
