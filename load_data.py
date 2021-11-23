@@ -1,14 +1,15 @@
 import numpy as np
 import pandas as pd
 import scipy.io
-from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet
+from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise
 import matplotlib.pyplot as plt
 
 use_network=False
 
 # actived merge_network()
-use_Fourier=True
-use_Wavelet=True
+use_Fourier         = False
+use_Wavelet         = False
+use_Wavelet_denoise = True
 '''
 For all files, the following item in the variable name indicates:
     DE - drive end accelerometer data
@@ -95,11 +96,11 @@ if use_Fourier:
   OR007_12_0_X122_DE_time = Fourier(f=OR007_12_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
   OR007_12_0_X122_FE_time = Fourier(f=OR007_12_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
   
+  if use_Wavelet==False:
+    DE_time = np.concatenate((Normal_0_X097_DE_time.reshape(int(num/n), n), B007_0_X122_DE_time.reshape(int(num/n), n), IR007_0_X122_DE_time.reshape(int(num/n), n), OR007_3_0_X122_DE_time.reshape(int(num/n), n), OR007_6_0_X122_DE_time.reshape(int(num/n), n), OR007_12_0_X122_DE_time.reshape(int(num/n), n)))
+    FE_time = np.concatenate((Normal_0_X097_FE_time.reshape(int(num/n), n), B007_0_X122_FE_time.reshape(int(num/n), n), IR007_0_X122_FE_time.reshape(int(num/n), n), OR007_3_0_X122_FE_time.reshape(int(num/n), n), OR007_6_0_X122_FE_time.reshape(int(num/n), n), OR007_12_0_X122_FE_time.reshape(int(num/n), n)))
 
-  # DE_time = np.concatenate((Normal_0_X097_DE_time.reshape(int(num/n), n), B007_0_X122_DE_time.reshape(int(num/n), n), IR007_0_X122_DE_time.reshape(int(num/n), n), OR007_3_0_X122_DE_time.reshape(int(num/n), n), OR007_6_0_X122_DE_time.reshape(int(num/n), n), OR007_12_0_X122_DE_time.reshape(int(num/n), n)))
-  # FE_time = np.concatenate((Normal_0_X097_FE_time.reshape(int(num/n), n), B007_0_X122_FE_time.reshape(int(num/n), n), IR007_0_X122_FE_time.reshape(int(num/n), n), OR007_3_0_X122_FE_time.reshape(int(num/n), n), OR007_6_0_X122_FE_time.reshape(int(num/n), n), OR007_12_0_X122_FE_time.reshape(int(num/n), n)))
-
-  # merge_data = np.concatenate((DE_time, FE_time), axis=1)
+    merge_data = np.concatenate((DE_time, FE_time), axis=1)
 
 if use_Wavelet:
   Normal_0_X097_DE_time_0, Normal_0_X097_DE_time_1, Normal_0_X097_DE_time_2 = Wavelet(Normal_0_X097_DE_time)
@@ -118,7 +119,7 @@ if use_Wavelet:
   OR007_6_0_X122_FE_time_0, OR007_6_0_X122_FE_time_1, OR007_6_0_X122_FE_time_2 = Wavelet(OR007_6_0_X122_FE_time)
 
   OR007_12_0_X122_DE_time_0, OR007_12_0_X122_DE_time_1, OR007_12_0_X122_DE_time_2 = Wavelet(OR007_12_0_X122_DE_time)
-  OR007_12_0_X122_FE_time_0, OR007_12_0_X122_FE_time_1, OR007_12_0_X122_FE_time_2 = Wavelet(OR007_12_0_X122_DE_time)
+  OR007_12_0_X122_FE_time_0, OR007_12_0_X122_FE_time_1, OR007_12_0_X122_FE_time_2 = Wavelet(OR007_12_0_X122_FE_time)
 
   m = int(n/4)
   num = 31150
@@ -144,3 +145,27 @@ if use_Wavelet:
   OR007_12_0_name  = [[0, 0, 0, 0, 0, 1]]*int(num/(n/2))
 
   label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
+
+if use_Wavelet_denoise:
+  Normal_0_X097_DE_time = Wavelet_denoise(Normal_0_X097_DE_time)
+  Normal_0_X097_FE_time = Wavelet_denoise(Normal_0_X097_FE_time)
+
+  B007_0_X122_DE_time = Wavelet_denoise(B007_0_X122_DE_time)
+  B007_0_X122_FE_time = Wavelet_denoise(B007_0_X122_FE_time)
+
+  IR007_0_X122_DE_time = Wavelet_denoise(IR007_0_X122_DE_time)
+  IR007_0_X122_FE_time = Wavelet_denoise(IR007_0_X122_FE_time)
+
+  OR007_3_0_X122_DE_time = Wavelet_denoise(OR007_3_0_X122_DE_time)
+  OR007_3_0_X122_FE_time = Wavelet_denoise(OR007_3_0_X122_FE_time)
+
+  OR007_6_0_X122_DE_time = Wavelet_denoise(OR007_6_0_X122_DE_time)
+  OR007_6_0_X122_FE_time = Wavelet_denoise(OR007_6_0_X122_FE_time)
+
+  OR007_12_0_X122_DE_time = Wavelet_denoise(OR007_12_0_X122_DE_time)
+  OR007_12_0_X122_FE_time = Wavelet_denoise(OR007_12_0_X122_FE_time)
+  if use_Wavelet==False:
+    DE_time = np.concatenate((Normal_0_X097_DE_time.reshape(int(num/n), n), B007_0_X122_DE_time.reshape(int(num/n), n), IR007_0_X122_DE_time.reshape(int(num/n), n), OR007_3_0_X122_DE_time.reshape(int(num/n), n), OR007_6_0_X122_DE_time.reshape(int(num/n), n), OR007_12_0_X122_DE_time.reshape(int(num/n), n)))
+    FE_time = np.concatenate((Normal_0_X097_FE_time.reshape(int(num/n), n), B007_0_X122_FE_time.reshape(int(num/n), n), IR007_0_X122_FE_time.reshape(int(num/n), n), OR007_3_0_X122_FE_time.reshape(int(num/n), n), OR007_6_0_X122_FE_time.reshape(int(num/n), n), OR007_12_0_X122_FE_time.reshape(int(num/n), n)))
+
+    merge_data = np.concatenate((DE_time, FE_time), axis=1)
