@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import scipy.io
+import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise
 import matplotlib.pyplot as plt
 
@@ -9,7 +10,29 @@ use_network=False
 # actived merge_network()
 use_Fourier         = False
 use_Wavelet         = False
-use_Wavelet_denoise = True
+use_Wavelet_denoise = False
+
+def get_spectrogram(waveform):
+  waveform = waveform.reshape(int(waveform.shape[0]), )
+  # Zero-padding for an audio waveform with less than 16,000 samples.
+  input_len = 124600
+  waveform = waveform[:input_len]
+  zero_padding = tf.zeros([124600] - tf.shape(waveform), dtype=tf.float32)
+  # Cast the waveform tensors' dtype to float32.
+  waveform = tf.cast(waveform, dtype=tf.float32)
+  # Concatenate the waveform with `zero_padding`, which ensures all audio
+  # clips are of the same length.
+  equal_length = tf.concat([waveform, zero_padding], 0)
+  # Convert the waveform to a spectrogram via a STFT.
+  spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=128)
+  # Obtain the magnitude of the STFT.
+  spectrogram = tf.abs(spectrogram)
+  # Add a `channels` dimension, so that the spectrogram can be used
+  # as image-like input data with convolution layers (which expect
+  # shape (`batch_size`, `height`, `width`, `channels`).
+  spectrogram = spectrogram[..., tf.newaxis]
+  return spectrogram
+
 '''
 For all files, the following item in the variable name indicates:
     DE - drive end accelerometer data
@@ -61,6 +84,10 @@ IR007_0_X122RPM        = IR007_0['X109RPM']
 OR007_3_0_X122RPM      = OR007_3_0['X148RPM']
 OR007_6_0_X122RPM      = OR007_6_0['X135RPM']
 OR007_12_0_X122RPM     = OR007_12_0['X161RPM']
+
+print('get_spectrogram')
+spec = get_spectrogram(Normal_0_X097_DE_time)
+print(spec)
 
 if use_network:
   Normal_0_group     = np.concatenate((Normal_0_X097_DE_time.reshape(1, num), Normal_0_X097_FE_time.reshape(1, num)), axis=0)
