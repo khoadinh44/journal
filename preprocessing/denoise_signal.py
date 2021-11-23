@@ -78,10 +78,28 @@ def Wavelet(X):
     [2][2]: (62300, 1)
     '''
     n = 2
-    w = 'db1'
+    w = 'db1' #
     coeffs = pywt.wavedec2(X, wavelet=w, level=n)
 
     coeffs_0 = coeffs[0]
     coeffs_1 = np.concatenate((coeffs[1][0], coeffs[1][1], coeffs[1][2]), axis=1)
     coeffs_2 = np.concatenate((coeffs[2][0], coeffs[2][1], coeffs[2][2]), axis=1)
     return coeffs_0, coeffs_1, coeffs_2
+
+def Wavelet_denoise(X):
+  # Create wavelet object and define parameters
+  X = X.reshape(int(X.shape[0]),)
+  w = pywt.Wavelet('sym4')
+  maxlev = 2 # Override if desired
+  print("maximum level is " + str(maxlev))
+  threshold = 0.04 # Threshold for filtering
+
+  # Decompose into wavelet components, to the level selected:
+  coeffs = pywt.wavedec(X, 'sym4', level=maxlev)
+
+  #cA = pywt.threshold(cA, threshold*max(cA))
+  for i in range(1, len(coeffs)):
+      coeffs[i] = pywt.threshold(coeffs[i], threshold*max(coeffs[i]))
+
+  datarec = pywt.waverec(coeffs, 'sym4')
+  return datarec
