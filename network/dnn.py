@@ -14,7 +14,7 @@ def network():
   
   return model
 
-def merge_network(use_network=False, use_Wavelet=False, use_Fourier=False, use_Wavelet_denoise=False):
+def merge_network(use_network=False, use_Wavelet=False, use_Fourier=False, use_Wavelet_denoise=False, use_SVD=False):
   if use_network:
     input_ = keras.layers.Input(shape=[1246, ])
     hidden1 = keras.layers.Dense(500, activation=tf.keras.layers.ReLU(), kernel_regularizer='l1_l2', kernel_initializer="lecun_normal")(input_) # "lecun_normal"
@@ -32,7 +32,7 @@ def merge_network(use_network=False, use_Wavelet=False, use_Fourier=False, use_W
     if use_Wavelet:
       input_A = keras.layers.Input(shape=[300], name="wide_input")
       input_B = keras.layers.Input(shape=[300], name="deep_input") 
-    if use_Fourier or use_Wavelet_denoise:
+    if use_Fourier or use_Wavelet_denoise or use_SVD:
       input_A = keras.layers.Input(shape=[200], name="wide_input")
       input_B = keras.layers.Input(shape=[200], name="deep_input") 
     hidden1 = keras.layers.Dense(30, activation="relu")(input_B)
