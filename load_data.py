@@ -2,16 +2,15 @@ import numpy as np
 import pandas as pd
 import scipy.io
 import tensorflow as tf
-from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise
+from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
 
-use_network=False
-
-# actived merge_network()
-use_Fourier         = True
+use_network         = False
+use_Fourier         = False
+use_savitzky_golay  = True
 use_Wavelet         = False
 use_Wavelet_denoise = False
-use_SVD             = True
+use_SVD             = False
 
 def get_spectrogram(waveform):
   waveform = waveform.reshape(int(waveform.shape[0]), )
@@ -130,6 +129,32 @@ if use_Fourier:
 
     merge_data = np.concatenate((DE_time, FE_time), axis=1)
 
+if use_savitzky_golay:
+#   ysg = savitzky_golay(y, window_size=31, order=4)
+  Normal_0_X097_DE_time   = savitzky_golay(Normal_0_X097_DE_time, window_size=31, order=4).reshape(num, 1)
+  Normal_0_X097_FE_time   = savitzky_golay(Normal_0_X097_FE_time, window_size=31, order=4).reshape(num, 1)
+
+  B007_0_X122_DE_time     = savitzky_golay(B007_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
+  B007_0_X122_FE_time     = savitzky_golay(B007_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+
+  IR007_0_X122_DE_time    = savitzky_golay(IR007_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
+  IR007_0_X122_FE_time    = savitzky_golay(IR007_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+
+  OR007_3_0_X122_DE_time  = savitzky_golay(OR007_3_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
+  OR007_3_0_X122_FE_time  = savitzky_golay(OR007_3_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+
+  OR007_6_0_X122_DE_time  = savitzky_golay(OR007_6_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
+  OR007_6_0_X122_FE_time  = savitzky_golay(OR007_6_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+
+  OR007_12_0_X122_DE_time = savitzky_golay(OR007_12_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
+  OR007_12_0_X122_FE_time = savitzky_golay(OR007_12_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+  
+  if use_Wavelet==False:
+    DE_time = np.concatenate((Normal_0_X097_DE_time.reshape(int(num/n), n), B007_0_X122_DE_time.reshape(int(num/n), n), IR007_0_X122_DE_time.reshape(int(num/n), n), OR007_3_0_X122_DE_time.reshape(int(num/n), n), OR007_6_0_X122_DE_time.reshape(int(num/n), n), OR007_12_0_X122_DE_time.reshape(int(num/n), n)))
+    FE_time = np.concatenate((Normal_0_X097_FE_time.reshape(int(num/n), n), B007_0_X122_FE_time.reshape(int(num/n), n), IR007_0_X122_FE_time.reshape(int(num/n), n), OR007_3_0_X122_FE_time.reshape(int(num/n), n), OR007_6_0_X122_FE_time.reshape(int(num/n), n), OR007_12_0_X122_FE_time.reshape(int(num/n), n)))
+
+    merge_data = np.concatenate((DE_time, FE_time), axis=1)
+    
 if use_Wavelet:
   Normal_0_X097_DE_time_0, Normal_0_X097_DE_time_1, Normal_0_X097_DE_time_2 = Wavelet(Normal_0_X097_DE_time)
   Normal_0_X097_FE_time_0, Normal_0_X097_FE_time_1, Normal_0_X097_FE_time_2 = Wavelet(Normal_0_X097_FE_time)
