@@ -6,7 +6,7 @@ from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_
 import matplotlib.pyplot as plt
 
 use_network         = False
-use_Fourier         = False
+use_Fourier         = True
 use_savitzky_golay  = True
 use_Wavelet         = False
 use_Wavelet_denoise = False
@@ -85,10 +85,6 @@ OR007_3_0_X122RPM      = OR007_3_0['X148RPM']
 OR007_6_0_X122RPM      = OR007_6_0['X135RPM']
 OR007_12_0_X122RPM     = OR007_12_0['X161RPM']
 
-print('get_spectrogram')
-spec = get_spectrogram(Normal_0_X097_DE_time)
-print(spec)
-
 if use_network:
   Normal_0_group     = np.concatenate((Normal_0_X097_DE_time.reshape(1, num), Normal_0_X097_FE_time.reshape(1, num)), axis=0)
   Normal_0_reshape   = Normal_0_group.reshape(n, int(num/n)*2)
@@ -130,24 +126,24 @@ if use_Fourier:
     merge_data = np.concatenate((DE_time, FE_time), axis=1)
 
 if use_savitzky_golay:
-#   ysg = savitzky_golay(y, window_size=31, order=4)
-  Normal_0_X097_DE_time   = savitzky_golay(Normal_0_X097_DE_time, window_size=31, order=4).reshape(num, 1)
-  Normal_0_X097_FE_time   = savitzky_golay(Normal_0_X097_FE_time, window_size=31, order=4).reshape(num, 1)
+  window_size=15
+  Normal_0_X097_DE_time   = savitzky_golay(y=Normal_0_X097_DE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
+  Normal_0_X097_FE_time   = savitzky_golay(y=Normal_0_X097_FE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
 
-  B007_0_X122_DE_time     = savitzky_golay(B007_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
-  B007_0_X122_FE_time     = savitzky_golay(B007_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+  B007_0_X122_DE_time     = savitzky_golay(y=B007_0_X122_DE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
+  B007_0_X122_FE_time     = savitzky_golay(y=B007_0_X122_FE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
 
-  IR007_0_X122_DE_time    = savitzky_golay(IR007_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
-  IR007_0_X122_FE_time    = savitzky_golay(IR007_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+  IR007_0_X122_DE_time    = savitzky_golay(y=IR007_0_X122_DE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
+  IR007_0_X122_FE_time    = savitzky_golay(y=IR007_0_X122_FE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
 
-  OR007_3_0_X122_DE_time  = savitzky_golay(OR007_3_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
-  OR007_3_0_X122_FE_time  = savitzky_golay(OR007_3_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+  OR007_3_0_X122_DE_time  = savitzky_golay(y=OR007_3_0_X122_DE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
+  OR007_3_0_X122_FE_time  = savitzky_golay(y=OR007_3_0_X122_FE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
 
-  OR007_6_0_X122_DE_time  = savitzky_golay(OR007_6_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
-  OR007_6_0_X122_FE_time  = savitzky_golay(OR007_6_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+  OR007_6_0_X122_DE_time  = savitzky_golay(y=OR007_6_0_X122_DE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
+  OR007_6_0_X122_FE_time  = savitzky_golay(y=OR007_6_0_X122_FE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
 
-  OR007_12_0_X122_DE_time = savitzky_golay(OR007_12_0_X122_DE_time, window_size=31, order=4).reshape(num, 1)
-  OR007_12_0_X122_FE_time = savitzky_golay(OR007_12_0_X122_FE_time, window_size=31, order=4).reshape(num, 1)
+  OR007_12_0_X122_DE_time = savitzky_golay(y=OR007_12_0_X122_DE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
+  OR007_12_0_X122_FE_time = savitzky_golay(y=OR007_12_0_X122_FE_time, window_size=window_size, order=4, range_y=num).reshape(num, 1)
   
   if use_Wavelet==False:
     DE_time = np.concatenate((Normal_0_X097_DE_time.reshape(int(num/n), n), B007_0_X122_DE_time.reshape(int(num/n), n), IR007_0_X122_DE_time.reshape(int(num/n), n), OR007_3_0_X122_DE_time.reshape(int(num/n), n), OR007_6_0_X122_DE_time.reshape(int(num/n), n), OR007_12_0_X122_DE_time.reshape(int(num/n), n)))
