@@ -12,6 +12,8 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
     It has the advantage of preserving the original shape and
     features of the signal better than other types of filtering
     approaches, such as moving averages techniques.
+    
+    https://gist.github.com/krvajal/1ca6adc7c8ed50f5315fee687d57c3eb
     Parameters
     ----------
     y : array_like, shape (N,)
