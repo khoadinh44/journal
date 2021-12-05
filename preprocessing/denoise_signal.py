@@ -6,8 +6,8 @@ from matplotlib.image import imread
 import numpy as np
 from math import factorial
 
-def savitzky_golay(y, window_size, order, deriv=0, rate=1):
-    r"""Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
+def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_y=None):
+    """Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
     The Savitzky-Golay filter removes high frequency noise from data.
     It has the advantage of preserving the original shape and
     features of the signal better than other types of filtering
@@ -56,11 +56,11 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
        W.H. Press, S.A. Teukolsky, W.T. Vetterling, B.P. Flannery
        Cambridge University Press ISBN-13: 9780521880688
     """
-
+    y = y.reshape(range_y, )
     try:
         window_size = np.abs(np.int(window_size))
         order = np.abs(np.int(order))
-    except ValueError, msg:
+    except msg:
         raise ValueError("window_size and order have to be of type int")
     if window_size % 2 != 1 or window_size < 1:
         raise TypeError("window_size size must be a positive odd number")
