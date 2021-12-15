@@ -14,7 +14,7 @@ def network():
             keras.layers.Flatten(),
             keras.layers.Dense(units=512, activation='relu'),
             keras.layers.Dropout(0.5),
-            keras.layers.Dense(units=10, activation='softmax'),])
+            keras.layers.Dense(units=6, activation='softmax'),])
 
   model.summary()
   return model
