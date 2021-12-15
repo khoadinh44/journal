@@ -105,4 +105,4 @@ OR007_6_0_X122 = np.array([get_spectrogram(i) for i in OR007_6_0_X122])
 OR007_12_0_X122 = np.array([get_spectrogram(i) for i in OR007_12_0_X122])
 
 merge_data = np.concatenate((Normal_0_X097, B007_0_X122, IR007_0_X122, OR007_3_0_X122, OR007_6_0_X122, OR007_12_0_X122))
-print(merge_data.shape)
+# print(merge_data.shape)
