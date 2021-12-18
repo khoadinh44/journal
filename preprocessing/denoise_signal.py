@@ -93,7 +93,7 @@ def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
 #   indices = PSD > thres       # Find all freqs with large power
 #   PSDclean = PSD * indices  # Zero out all others
 #   fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
-  PSD_real = PSD.real()
+  PSD_real = PSD.real.reshape(-1, 1)
   kmeans = KMeans(n_clusters=2, random_state=0).fit(PSD_real)
   thres = np.array(kmeans.labels_).astype(np.float32) > 0.5
     
