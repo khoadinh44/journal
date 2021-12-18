@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 use_network         = False
 use_Fourier         = True
-use_savitzky_golay  = True
+use_savitzky_golay  = False
 use_Wavelet         = False
 use_Wavelet_denoise = False
 use_SVD             = False
