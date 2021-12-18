@@ -5,6 +5,7 @@ import pywt
 from matplotlib.image import imread
 import numpy as np
 from math import factorial
+from sklearn.cluster import KMeans
 
 def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_y=None):
     """Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
@@ -89,9 +90,14 @@ def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
   freq = np.arange(num)
 
   ## Use the PSD to filter out noise
-  indices = PSD > thres       # Find all freqs with large power
-  PSDclean = PSD * indices  # Zero out all others
-  fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
+#   indices = PSD > thres       # Find all freqs with large power
+#   PSDclean = PSD * indices  # Zero out all others
+#   fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
+  PSD_real = PSD.real()
+  kmeans = KMeans(n_clusters=2, random_state=0).fit(PSD_real)
+  thres = np.array(kmeans.labels_).astype(np.float32) > 0.5
+    
+  fhat = thres * fhat
   ffilt = np.fft.ifft(fhat) # Inverse FFT for filtered time signal
 
   if get_PSD:
