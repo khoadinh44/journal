@@ -96,16 +96,18 @@ def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
   L = np.arange(0, np.floor(num/2),dtype='int') # Only plot the first half of freqs
   freq = np.arange(num)
 
-  ## Use the PSD to filter out noise
-  # indices = PSD > thres       # Find all freqs with large power
-  # PSDclean = PSD * indices  # Zero out all others
-  # fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
-  PSD_real = PSD.real.reshape(-1, 1)
-  kmeans = KMeans(n_clusters=2, random_state=0).fit(PSD_real)
-  thres = np.array(kmeans.labels_).astype(np.int32) > 0.5
-  PSDclean = PSD * thres
-  fhat = thres * fhat
-  # flat = np.where(thres, fhat, 0)
+  # Use the PSD to filter out noise
+  indices = PSD > thres       # Find all freqs with large power
+  PSDclean = PSD * indices  # Zero out all others
+  fhat = indices * fhat     # Zero out small Fourier coeffs. in Y
+
+  # PSD_real = PSD.real.reshape(-1, 1)
+  # kmeans = KMeans(n_clusters=2, random_state=0).fit(PSD_real)
+  # thres = np.array(kmeans.labels_).astype(np.int32) > 0.5
+  # PSDclean = PSD * thres
+  # fhat = thres * fhat
+
+  flat = np.where(thres, fhat, 0)
   ffilt = np.fft.ifft(fhat) # Inverse FFT for filtered time signal
 
   if get_PSD:
