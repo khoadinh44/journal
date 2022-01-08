@@ -10,8 +10,8 @@ use_Fourier         = False
 use_savitzky_golay  = False
 use_Wavelet         = False
 use_Wavelet_denoise = False
-use_SVD             = False
-none                = True
+use_SVD             = True
+none                = False
 
 def get_spectrogram(waveform):
   waveform = waveform.reshape(int(waveform.shape[0]), )
