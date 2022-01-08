@@ -16,12 +16,8 @@ def network():
 
 def merge_network(use_network=False, use_Wavelet=False, use_Fourier=False, use_Wavelet_denoise=False, use_SVD=False, use_savitzky_golay=False, none=False):
   if use_network:
-    input_ = keras.layers.Input(shape=[1246, ])
-    hidden1 = keras.layers.Dense(500, activation=tf.keras.layers.ReLU(), kernel_regularizer='l1_l2', kernel_initializer="lecun_normal")(input_) # "lecun_normal"
-    norm1 = keras.layers.BatchNormalization()(hidden1)
-    hidden2 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU(), kernel_regularizer='l1_l2', kernel_initializer="lecun_normal")(norm1) # "lecun_normal"
-    norm2 = keras.layers.BatchNormalization()(hidden2)
-    hidden3 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU(), kernel_regularizer='l1_l2', kernel_initializer="lecun_normal")(norm2)
+    input_ = keras.layers.Input(shape=[400, ])
+    hidden3 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU(), kernel_regularizer='l1_l2', kernel_initializer="lecun_normal")(input_)
     norm3 = keras.layers.BatchNormalization()(hidden3)
     hidden4 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU(), kernel_regularizer='l1_l2', kernel_initializer="lecun_normal")(norm3)
     norm4 = keras.layers.BatchNormalization()(hidden4)
