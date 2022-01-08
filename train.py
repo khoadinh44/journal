@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 from network.dnn import network, merge_network
 from sklearn.model_selection import train_test_split
+from preprocessing.denoise_signal import signaltonoise_dB
 from load_data import label, use_network, use_Wavelet, use_Fourier, use_Wavelet_denoise, use_SVD, use_savitzky_golay
 
 if use_Wavelet:
@@ -27,10 +28,13 @@ def train(data=None, labels=None,\
           val_data=None, val_labels=None,\
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
-  model = network(use_savitzky_golay=use_savitzky_golay)
+  model = network(use_Fourier=use_Fourier)
   model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
   history = model.fit(data, labels, epochs=num_epochs,
                     validation_data=(val_data, val_labels))
   model.save(name_saver)
 
-train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 200, 32, True, 'model.h5')
+train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 10, 32, True, 'model.h5')
+
+#Test noise:
+print(f'Level of noise in One signal: {signaltonoise_dB(X_train)}')
