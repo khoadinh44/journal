@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 from preprocessing.denoise_signal import signaltonoise_dB
 from load_data import label, use_network, use_Wavelet, use_Fourier, use_Wavelet_denoise, use_SVD, use_savitzky_golay, none
 
+use_network = False
+
 if use_Wavelet:
   from load_data import merge_data_0, merge_data_1, merge_data_2
 if use_Fourier or use_Wavelet_denoise or use_SVD or use_savitzky_golay or none:
@@ -23,19 +25,33 @@ if use_Fourier or use_Wavelet_denoise or use_SVD or use_savitzky_golay or none:
   X_train_A, X_train_B             = X_train[:, :200], X_train[:, 200:]
   X_test_A, X_test_B               = X_test[:, :200],  X_test[:, 200:]
 
-# Load model------------------------------------------------------------------------------------
-def train(data=None, labels=None,\
+if use_network:
+  def train(data=None, labels=None,\
           val_data=None, val_labels=None,\
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
 
-  model = network(none = none)
-  model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
-  history = model.fit(data, labels, epochs=num_epochs,
-                    validation_data=(val_data, val_labels))
-  model.save(name_saver)
+    model = network(use_network = use_network)
+    model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
+    history = model.fit(data, labels, epochs=num_epochs,
+                      validation_data=(val_data, val_labels))
+    model.save(name_saver)
 
-train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 50, 32, True, 'model.h5')
+  train(X_train, y_train, X_test, y_test, merge_network, 50, 32, True, 'model.h5')
+
+else:
+  def train(data=None, labels=None,\
+            val_data=None, val_labels=None,\
+            network=None, num_epochs=20,\
+            batch_size=32, show_metric=True, name_saver=None):
+
+    model = network(use_SVD = use_SVD)
+    model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
+    history = model.fit(data, labels, epochs=num_epochs,
+                      validation_data=(val_data, val_labels))
+    model.save(name_saver)
+
+  train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 50, 32, True, 'model.h5')
 
 #Test noise:
 print(f'Level of noise in One signal: {signaltonoise_dB(X_train)}')
