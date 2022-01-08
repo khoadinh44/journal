@@ -11,7 +11,7 @@ if use_Fourier or use_Wavelet_denoise or use_SVD or use_savitzky_golay:
   from load_data import merge_data
 
 if use_Wavelet:
-  X_train, X_test, y_train, y_test = train_test_split(merge_data_2, label, test_size=0.1, random_state=42, shuffle=True)
+  X_train, X_test, y_train, y_test = train_test_split(merge_data_2, label, test_size=0.25, random_state=42, shuffle=True)
   X_train_A, X_train_B             = X_train[:, :100, :], X_train[:, 100:, :]
   X_test_A, X_test_B               = X_test[:, :100, :],  X_test[:, 100:, :]
 
@@ -19,7 +19,7 @@ if use_Wavelet:
   X_test_A, X_test_B               = X_test_A.reshape(int(X_test_A.shape[0]), 300),  X_test_B.reshape(int(X_test_B.shape[0]), 300)
 
 if use_Fourier or use_Wavelet_denoise or use_SVD or use_savitzky_golay:
-  X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.1, random_state=42, shuffle=True)
+  X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.25, random_state=42, shuffle=True)
   X_train_A, X_train_B             = X_train[:, :200], X_train[:, 200:]
   X_test_A, X_test_B               = X_test[:, :200],  X_test[:, 200:]
 
