@@ -51,7 +51,7 @@ else:
                       validation_data=(val_data, val_labels))
     model.save(name_saver)
 
-  train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 50, 32, True, 'model.h5')
+  train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 19, 32, True, 'model.h5')
 
 #Test noise:
 print(f'Level of noise in One signal: {signaltonoise_dB(X_train)}')
