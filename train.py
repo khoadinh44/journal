@@ -40,7 +40,8 @@ if use_network:
 
     _, dnn_train_acc, dnn_train_f1_m, dnn_train_precision_m, dnn_train_recall_m = model.evaluate(data, labels, verbose=0)
     _, dnn_test_acc, dnn_test_f1_m, dnn_test_precision_m, dnn_test_recall_m = model.evaluate(val_data, val_labels, verbose=0)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_history.npy', history)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_history', 'wb') as file_pi:
+      pickle.dump(history.history, file_pi)
 
     np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_train_acc.npy', dnn_train_acc)
     np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_train_f1_m.npy', dnn_train_f1_m)
@@ -73,8 +74,9 @@ else:
 
     _, best_train_acc, best_train_f1_m, best_train_precision_m, best_train_recall_m = model.evaluate(data, labels, verbose=0)
     _, best_test_acc, best_test_f1_m, best_test_precision_m, best_test_recall_m = model.evaluate(val_data, val_labels, verbose=0)
-
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/best_history.npy', history)
+    
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/best_history', 'wb') as file_pi:
+      pickle.dump(history.history, file_pi)
     
     np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/best_train_acc.npy', best_train_acc)
     np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/best_train_f1_m.npy', best_train_f1_m)
