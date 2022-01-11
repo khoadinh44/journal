@@ -40,19 +40,18 @@ if use_network:
 
     _, dnn_train_acc, dnn_train_f1_m, dnn_train_precision_m, dnn_train_recall_m = model.evaluate(data, labels, verbose=0)
     _, dnn_test_acc, dnn_test_f1_m, dnn_test_precision_m, dnn_test_recall_m = model.evaluate(val_data, val_labels, verbose=0)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_history.npy', history)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_history.npy', history)
 
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_acc.npy', dnn_train_acc)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_f1_m.npy', dnn_train_f1_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_precision_m.npy', dnn_train_precision_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_recall_m.npy', dnn_train_recall_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_train_acc.npy', dnn_train_acc)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_train_f1_m.npy', dnn_train_f1_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_train_precision_m.npy', dnn_train_precision_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_train_recall_m.npy', dnn_train_recall_m)
 
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_acc.npy', dnn_test_acc)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_f1_m.npy', dnn_test_f1_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_precision_m.npy', dnn_test_precision_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_recall_m.npy', dnn_test_recall_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_test_acc.npy', dnn_test_acc)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_test_f1_m.npy', dnn_test_f1_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_test_precision_m.npy', dnn_test_precision_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/dnn_test_recall_m.npy', dnn_test_recall_m)
     print('Train: %.3f, Test: %.3f' % (dnn_train_acc, dnn_test_acc))
-
     # pyplot.plot(history.history['loss'], label='train')
     # pyplot.plot(history.history['val_loss'], label='test')
     # pyplot.legend()
