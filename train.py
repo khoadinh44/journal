@@ -32,13 +32,29 @@ if use_network:
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
 
-    model = network(use_network = use_network)
-    model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
+    model = network(use_Fourier = use_Fourier)
+    model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels, epochs=num_epochs,
                       validation_data=(val_data, val_labels))
     model.save(name_saver)
 
-  train(X_train, y_train, X_test, y_test, merge_network, 50, 32, True, 'model.h5')
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_acc.npy', dnn_train_acc)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_f1_m.npy', dnn_train_f1_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_precision_m.npy', dnn_train_precision_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_recall_m.npy', dnn_train_recall_m)
+
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_acc.npy', dnn_test_acc)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_f1_m.npy', dnn_test_f1_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_precision_m.npy', dnn_test_precision_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_test_recall_m.npy', dnn_test_recall_m)
+    print('Train: %.3f, Test: %.3f' % (dnn_train_acc, dnn_test_acc))
+
+    # pyplot.plot(history.history['loss'], label='train')
+    # pyplot.plot(history.history['val_loss'], label='test')
+    # pyplot.legend()
+    # pyplot.show()
+
+  train(X_train, y_train, X_test, y_test, merge_network, 100, 32, True, 'model.h5')
 
 else:
   def train(data=None, labels=None,\
@@ -46,13 +62,29 @@ else:
             network=None, num_epochs=20,\
             batch_size=32, show_metric=True, name_saver=None):
 
-    model = network(use_SVD = use_SVD)
+    model = network(none = none)
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels, epochs=num_epochs,
                       validation_data=(val_data, val_labels))
     model.save(name_saver)
 
-  train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 19, 32, True, 'model.h5')
+    _, best_train_acc, best_train_f1_m, best_train_precision_m, best_train_recall_m = model.evaluate(data, labels, verbose=0)
+    _, best_test_acc, best_test_f1_m, best_test_precision_m, best_test_recall_m = model.evaluate(val_data, val_labels, verbose=0)
 
-#Test noise:
-print(f'Level of noise in One signal: {signaltonoise_dB(X_train)}')
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_train_acc.npy', best_train_acc)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_train_f1_m.npy', best_train_f1_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_train_precision_m.npy', best_train_precision_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_train_recall_m.npy', best_train_recall_m)
+
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_test_acc.npy', best_test_acc)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_test_f1_m.npy', best_test_f1_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_test_precision_m.npy', best_test_precision_m)
+    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/best_test_recall_m.npy', best_test_recall_m)
+    print('Train: %.3f, Test: %.3f' % (best_train_acc, best_test_acc))
+
+    # pyplot.plot(history.history['loss'], label='train')
+    # pyplot.plot(history.history['val_loss'], label='test')
+    # pyplot.legend()
+    # pyplot.show()
+  train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 100, 32, True, 'model.h5')
+
