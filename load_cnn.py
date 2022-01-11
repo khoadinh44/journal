@@ -4,7 +4,9 @@ import scipy.io
 import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
+from preprocessing.denoise_signal import Fourier
 
+use_Fourier = True
 def get_spectrogram(waveform):
   # Zero-padding for an audio waveform with less than 16,000 samples.
   input_len = 300
@@ -59,28 +61,67 @@ OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
 OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
 all_labels = {0: 'Normal_0', 1: 'B007_0', 2: 'IR007_0', 3: 'OR007_3_0', 4: 'OR007_6_0', 5: 'OR007_12_0'}
 
-Normal_0_X097_DE_time   = Normal_0['X097_DE_time'][:num].reshape((num//200, 200))
-Normal_0_X097_FE_time   = Normal_0['X097_FE_time'][:num].reshape((num//200, 200))
+
+Normal_0_X097_DE_time = Normal_0['X097_DE_time'][:num]
+Normal_0_X097_FE_time = Normal_0['X097_FE_time'][:num]
+
+B007_0_X122_DE_time     = B007_0['X122_DE_time'][:num]
+B007_0_X122_FE_time     = B007_0['X122_FE_time'][:num]
+
+IR007_0_X122_DE_time    = IR007_0['X109_DE_time'][:num]
+IR007_0_X122_FE_time    = IR007_0['X109_FE_time'][:num]
+
+OR007_3_0_X122_DE_time  = OR007_3_0['X148_DE_time'][:num]
+OR007_3_0_X122_FE_time  = OR007_3_0['X148_FE_time'][:num]
+
+OR007_6_0_X122_DE_time  = OR007_6_0['X135_DE_time'][:num]
+OR007_6_0_X122_FE_time  = OR007_6_0['X135_FE_time'][:num]
+
+OR007_12_0_X122_DE_time = OR007_12_0['X161_DE_time'][:num]
+OR007_12_0_X122_FE_time = OR007_12_0['X161_FE_time'][:num]
+
+if use_Fourier:
+  Normal_0_X097_DE_time   = Fourier(f=Normal_0_X097_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
+  Normal_0_X097_FE_time   = Fourier(f=Normal_0_X097_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
+
+  B007_0_X122_DE_time     = Fourier(f=B007_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
+  B007_0_X122_FE_time     = Fourier(f=B007_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
+
+  IR007_0_X122_DE_time    = Fourier(f=IR007_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
+  IR007_0_X122_FE_time    = Fourier(f=IR007_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
+
+  OR007_3_0_X122_DE_time  = Fourier(f=OR007_3_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
+  OR007_3_0_X122_FE_time  = Fourier(f=OR007_3_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
+
+  OR007_6_0_X122_DE_time  = Fourier(f=OR007_6_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
+  OR007_6_0_X122_FE_time  = Fourier(f=OR007_6_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
+
+  OR007_12_0_X122_DE_time = Fourier(f=OR007_12_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
+  OR007_12_0_X122_FE_time = Fourier(f=OR007_12_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
+  
+
+Normal_0_X097_DE_time   = Normal_0_X097_DE_time.reshape((num//200, 200))
+Normal_0_X097_FE_time   = Normal_0_X097_FE_time.reshape((num//200, 200))
 Normal_0_X097 = np.concatenate((Normal_0_X097_DE_time, Normal_0_X097_FE_time), axis=1)
 
-B007_0_X122_DE_time     = B007_0['X122_DE_time'][:num].reshape((num//200, 200))
-B007_0_X122_FE_time     = B007_0['X122_FE_time'][:num].reshape((num//200, 200))
+B007_0_X122_DE_time     = B007_0_X122_DE_time.reshape((num//200, 200))
+B007_0_X122_FE_time     = B007_0_X122_FE_time.reshape((num//200, 200))
 B007_0_X122 = np.concatenate((B007_0_X122_DE_time, B007_0_X122_FE_time), axis=1)
 
-IR007_0_X122_DE_time    = IR007_0['X109_DE_time'][:num].reshape((num//200, 200))
-IR007_0_X122_FE_time    = IR007_0['X109_FE_time'][:num].reshape((num//200, 200))
+IR007_0_X122_DE_time    = IR007_0_X122_DE_time.reshape((num//200, 200))
+IR007_0_X122_FE_time    = IR007_0_X122_FE_time.reshape((num//200, 200))
 IR007_0_X122 = np.concatenate((IR007_0_X122_DE_time, IR007_0_X122_FE_time), axis=1)
 
-OR007_3_0_X122_DE_time  = OR007_3_0['X148_DE_time'][:num].reshape((num//200, 200))
-OR007_3_0_X122_FE_time  = OR007_3_0['X148_FE_time'][:num].reshape((num//200, 200))
+OR007_3_0_X122_DE_time  = OR007_3_0_X122_DE_time.reshape((num//200, 200))
+OR007_3_0_X122_FE_time  = OR007_3_0_X122_FE_time.reshape((num//200, 200))
 OR007_3_0_X122 = np.concatenate((OR007_3_0_X122_DE_time, OR007_3_0_X122_FE_time), axis=1)
 
-OR007_6_0_X122_DE_time  = OR007_6_0['X135_DE_time'][:num].reshape((num//200, 200))
-OR007_6_0_X122_FE_time  = OR007_6_0['X135_FE_time'][:num].reshape((num//200, 200))
+OR007_6_0_X122_DE_time  = OR007_6_0_X122_DE_time.reshape((num//200, 200))
+OR007_6_0_X122_FE_time  = OR007_6_0_X122_FE_time.reshape((num//200, 200))
 OR007_6_0_X122 = np.concatenate((OR007_6_0_X122_DE_time, OR007_6_0_X122_FE_time), axis=1)
 
-OR007_12_0_X122_DE_time = OR007_12_0['X161_DE_time'][:num].reshape((num//200, 200))
-OR007_12_0_X122_FE_time = OR007_12_0['X161_FE_time'][:num].reshape((num//200, 200))
+OR007_12_0_X122_DE_time = OR007_12_0_X122_DE_time.reshape((num//200, 200))
+OR007_12_0_X122_FE_time = OR007_12_0_X122_FE_time.reshape((num//200, 200))
 OR007_12_0_X122 = np.concatenate((OR007_12_0_X122_DE_time, OR007_12_0_X122_FE_time), axis=1)
 
 Normal_0_X097RPM       = Normal_0['X097RPM']
@@ -98,4 +139,3 @@ OR007_6_0_X122 = np.array([get_spectrogram(i) for i in OR007_6_0_X122])
 OR007_12_0_X122 = np.array([get_spectrogram(i) for i in OR007_12_0_X122])
 
 merge_data = np.concatenate((Normal_0_X097, B007_0_X122, IR007_0_X122, OR007_3_0_X122, OR007_6_0_X122, OR007_12_0_X122))
-# print(merge_data.shape)
