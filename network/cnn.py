@@ -1,5 +1,6 @@
 from functools import partial
 import keras
+import tensorflow as tf
 
 def network():
   DefaultConv2D = partial(keras.layers.Conv2D, kernel_size=3, activation='relu', padding="SAME")
