@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
 from load_cnn import merge_data, label
-from preprecessing.utils import recall_m, precision_m, f1_m
+from preprocessing.utils import recall_m, precision_m, f1_m
 
 X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.1, random_state=42, shuffle=True)
 
