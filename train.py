@@ -3,6 +3,7 @@ import numpy as np
 from network.dnn import network, merge_network
 from sklearn.model_selection import train_test_split
 from preprocessing.denoise_signal import signaltonoise_dB
+from preprecessing.utils import recall_m, precision_m, f1_m
 from load_data import label, use_network, use_Wavelet, use_Fourier, use_Wavelet_denoise, use_SVD, use_savitzky_golay, none
 
 use_network = False
@@ -46,7 +47,7 @@ else:
             batch_size=32, show_metric=True, name_saver=None):
 
     model = network(use_SVD = use_SVD)
-    model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
+    model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels, epochs=num_epochs,
                       validation_data=(val_data, val_labels))
     model.save(name_saver)
