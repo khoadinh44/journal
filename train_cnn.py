@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
 from load_cnn import merge_data, label
+from preprecessing.utils import recall_m, precision_m, f1_m
 
 X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.1, random_state=42, shuffle=True)
 # Load model------------------------------------------------------------------------------------
@@ -13,7 +14,7 @@ def train(data=None, labels=None,\
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
   model = network()
-  model.compile(optimizer="Adam", loss="mse", metrics=["mae", "acc"])
+  model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
   history = model.fit(data, labels, epochs=num_epochs,
                     validation_data=(val_data, val_labels))
   model.save(name_saver)
