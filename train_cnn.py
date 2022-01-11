@@ -1,141 +1,41 @@
-import numpy as np
-import pandas as pd
-import scipy.io
 import tensorflow as tf
-from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
-import matplotlib.pyplot as plt
-from preprocessing.denoise_signal import Fourier
+import numpy as np
+from network.cnn import network
+from sklearn.model_selection import train_test_split
+from preprocessing.denoise_signal import signaltonoise_dB
+from preprocessing.utils import recall_m, precision_m, f1_m
+from load_cnn import merge_data, label
 
-use_Fourier = False
-def get_spectrogram(waveform):
-  # Zero-padding for an audio waveform with less than 16,000 samples.
-  input_len = 300
-  respect_input_len = 128*128 
-  waveform = waveform[:input_len]
-  zero_padding = tf.zeros([(respect_input_len)] - tf.shape(waveform), dtype=tf.float32)
-  # Cast the waveform tensors' dtype to float32.
-  waveform = tf.cast(waveform, dtype=tf.float32)
-  # Concatenate the waveform with `zero_padding`, which ensures all audio
-  # clips are of the same length.
-  equal_length = tf.concat([waveform, zero_padding], 0)
-  # Convert the waveform to a spectrogram via a STFT.
-  spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=127, fft_length=128*2-1)
-  # spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=128-1)
-  # Obtain the magnitude of the STFT.
-  spectrogram = tf.abs(spectrogram)
-  # Add a `channels` dimension, so that the spectrogram can be used
-  # as image-like input data with convolution layers (which expect
-  # shape (`batch_size`, `height`, `width`, `channels`).
-  spectrogram = spectrogram[..., tf.newaxis]
-  return spectrogram
-
-'''
-For all files, the following item in the variable name indicates:
-    DE - drive end accelerometer data
-    FE - fan end accelerometer data
-    BA - base accelerometer data
-    time - time series data
-    RPM - rpm during testing
-
-    Fault Diameter: 0.007"
-    Motor Load (HP): 0
-    Approx. Motor Speed (rpm): 1797
-'''
-num = 124600
-n   = 200
-
-Normal_0_name    = [[1, 0, 0, 0, 0, 0]]*int(num/n)
-B007_0_name      = [[0, 1, 0, 0, 0, 0]]*int(num/n)
-IR007_0_name     = [[0, 0, 1, 0, 0, 0]]*int(num/n)
-OR007_3_0_name   = [[0, 0, 0, 1, 0, 0]]*int(num/n)
-OR007_6_0_name   = [[0, 0, 0, 0, 1, 0]]*int(num/n)
-OR007_12_0_name  = [[0, 0, 0, 0, 0, 1]]*int(num/n)
-
-label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
-
-Normal_0 = scipy.io.loadmat('./data/Normal_0.mat')
-B007_0 = scipy.io.loadmat('./data/B007_0.mat')
-IR007_0 = scipy.io.loadmat('./data/IR007_0.mat')
-OR007_3_0 = scipy.io.loadmat('./data/OR007_3_0.mat')
-OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
-OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
-all_labels = {0: 'Normal_0', 1: 'B007_0', 2: 'IR007_0', 3: 'OR007_3_0', 4: 'OR007_6_0', 5: 'OR007_12_0'}
+X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.25, random_state=42, shuffle=True)
 
 
-Normal_0_X097_DE_time = Normal_0['X097_DE_time'][:num]
-Normal_0_X097_FE_time = Normal_0['X097_FE_time'][:num]
+def train(data=None,     labels=None,\
+          val_data=None, val_labels=None,\
+          network=None,  num_epochs=20,\
+          batch_size=32, show_metric=True, name_saver=None):
 
-B007_0_X122_DE_time     = B007_0['X122_DE_time'][:num]
-B007_0_X122_FE_time     = B007_0['X122_FE_time'][:num]
+  model = network(use_network = use_network)
+  model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
+  history = model.fit(data, labels, 
+                      epochs=num_epochs,
+                      validation_data=(val_data, val_labels))
+  model.save(name_saver)
 
-IR007_0_X122_DE_time    = IR007_0['X109_DE_time'][:num]
-IR007_0_X122_FE_time    = IR007_0['X109_FE_time'][:num]
+  _, cnn_train_acc, cnn_train_f1_m, cnn_train_precision_m, cnn_train_recall_m = model.evaluate(data, labels, verbose=0)
+  _, cnn_test_acc, cnn_test_f1_m, cnn_test_precision_m, cnn_test_recall_m = model.evaluate(val_data, val_labels, verbose=0)
+  with open('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_history', 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
 
-OR007_3_0_X122_DE_time  = OR007_3_0['X148_DE_time'][:num]
-OR007_3_0_X122_FE_time  = OR007_3_0['X148_FE_time'][:num]
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_train_acc.npy', cnn_train_acc)
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_train_f1_m.npy', cnn_train_f1_m)
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_train_precision_m.npy', cnn_train_precision_m)
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_train_recall_m.npy', cnn_train_recall_m)
 
-OR007_6_0_X122_DE_time  = OR007_6_0['X135_DE_time'][:num]
-OR007_6_0_X122_FE_time  = OR007_6_0['X135_FE_time'][:num]
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_test_acc.npy', cnn_test_acc)
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_test_f1_m.npy', cnn_test_f1_m)
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_test_precision_m.npy', cnn_test_precision_m)
+  np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_test_recall_m.npy', cnn_test_recall_m)
+  print('Train: %.3f, Test: %.3f' % (cnn_train_acc, cnn_test_acc))
+train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
 
-OR007_12_0_X122_DE_time = OR007_12_0['X161_DE_time'][:num]
-OR007_12_0_X122_FE_time = OR007_12_0['X161_FE_time'][:num]
 
-if use_Fourier:
-  Normal_0_X097_DE_time   = Fourier(f=Normal_0_X097_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  Normal_0_X097_FE_time   = Fourier(f=Normal_0_X097_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  B007_0_X122_DE_time     = Fourier(f=B007_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  B007_0_X122_FE_time     = Fourier(f=B007_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  IR007_0_X122_DE_time    = Fourier(f=IR007_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  IR007_0_X122_FE_time    = Fourier(f=IR007_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  OR007_3_0_X122_DE_time  = Fourier(f=OR007_3_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  OR007_3_0_X122_FE_time  = Fourier(f=OR007_3_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  OR007_6_0_X122_DE_time  = Fourier(f=OR007_6_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  OR007_6_0_X122_FE_time  = Fourier(f=OR007_6_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  OR007_12_0_X122_DE_time = Fourier(f=OR007_12_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  OR007_12_0_X122_FE_time = Fourier(f=OR007_12_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-  
-
-Normal_0_X097_DE_time   = Normal_0_X097_DE_time.reshape((num//200, 200))
-Normal_0_X097_FE_time   = Normal_0_X097_FE_time.reshape((num//200, 200))
-Normal_0_X097 = np.concatenate((Normal_0_X097_DE_time, Normal_0_X097_FE_time), axis=1)
-
-B007_0_X122_DE_time     = B007_0_X122_DE_time.reshape((num//200, 200))
-B007_0_X122_FE_time     = B007_0_X122_FE_time.reshape((num//200, 200))
-B007_0_X122 = np.concatenate((B007_0_X122_DE_time, B007_0_X122_FE_time), axis=1)
-
-IR007_0_X122_DE_time    = IR007_0_X122_DE_time.reshape((num//200, 200))
-IR007_0_X122_FE_time    = IR007_0_X122_FE_time.reshape((num//200, 200))
-IR007_0_X122 = np.concatenate((IR007_0_X122_DE_time, IR007_0_X122_FE_time), axis=1)
-
-OR007_3_0_X122_DE_time  = OR007_3_0_X122_DE_time.reshape((num//200, 200))
-OR007_3_0_X122_FE_time  = OR007_3_0_X122_FE_time.reshape((num//200, 200))
-OR007_3_0_X122 = np.concatenate((OR007_3_0_X122_DE_time, OR007_3_0_X122_FE_time), axis=1)
-
-OR007_6_0_X122_DE_time  = OR007_6_0_X122_DE_time.reshape((num//200, 200))
-OR007_6_0_X122_FE_time  = OR007_6_0_X122_FE_time.reshape((num//200, 200))
-OR007_6_0_X122 = np.concatenate((OR007_6_0_X122_DE_time, OR007_6_0_X122_FE_time), axis=1)
-
-OR007_12_0_X122_DE_time = OR007_12_0_X122_DE_time.reshape((num//200, 200))
-OR007_12_0_X122_FE_time = OR007_12_0_X122_FE_time.reshape((num//200, 200))
-OR007_12_0_X122 = np.concatenate((OR007_12_0_X122_DE_time, OR007_12_0_X122_FE_time), axis=1)
-
-Normal_0_X097RPM       = Normal_0['X097RPM']
-B007_0_X122RPM         = B007_0['X122RPM']
-IR007_0_X122RPM        = IR007_0['X109RPM']
-OR007_3_0_X122RPM      = OR007_3_0['X148RPM']
-OR007_6_0_X122RPM      = OR007_6_0['X135RPM']
-OR007_12_0_X122RPM     = OR007_12_0['X161RPM']
-
-Normal_0_X097 = np.array([get_spectrogram(i) for i in Normal_0_X097])
-B007_0_X122 = np.array([get_spectrogram(i) for i in B007_0_X122])
-IR007_0_X122 = np.array([get_spectrogram(i) for i in IR007_0_X122])
-OR007_3_0_X122 = np.array([get_spectrogram(i) for i in OR007_3_0_X122])
-OR007_6_0_X122 = np.array([get_spectrogram(i) for i in OR007_6_0_X122])
-OR007_12_0_X122 = np.array([get_spectrogram(i) for i in OR007_12_0_X122])
-
-merge_data = np.concatenate((Normal_0_X097, B007_0_X122, IR007_0_X122, OR007_3_0_X122, OR007_6_0_X122, OR007_12_0_X122))
