@@ -5,13 +5,6 @@ import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
 
-use_network         = False
-use_Fourier         = True
-use_savitzky_golay  = True
-use_Wavelet         = False
-use_Wavelet_denoise = False
-use_SVD             = False
-
 def get_spectrogram(waveform):
   # Zero-padding for an audio waveform with less than 16,000 samples.
   input_len = 300
