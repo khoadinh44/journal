@@ -33,9 +33,9 @@ def train(data=None, labels=None,\
   np.save('/content/drive/Shareddrives/newpro112233/signal_machine/evaluate/cnn_test_recall_m.npy', cnn_test_recall_m)
   print('Train: %.3f, Test: %.3f' % (cnn_train_acc, cnn_test_acc))
   # plot training history
-  pyplot.plot(history.history['loss'], label='train')
-  pyplot.plot(history.history['val_loss'], label='test')
-  pyplot.legend()
-  pyplot.show()
+  # pyplot.plot(history.history['loss'], label='train')
+  # pyplot.plot(history.history['val_loss'], label='test')
+  # pyplot.legend()
+  # pyplot.show()
 
 train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
