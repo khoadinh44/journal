@@ -32,11 +32,14 @@ if use_network:
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
 
-    model = network(use_Fourier = use_Fourier)
+    model = network(use_network = use_network)
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels, epochs=num_epochs,
                       validation_data=(val_data, val_labels))
     model.save(name_saver)
+
+    _, dnn_train_acc, dnn_train_f1_m, dnn_train_precision_m, dnn_train_recall_m = model.evaluate(data, labels, verbose=0)
+    _, dnn_test_acc, dnn_test_f1_m, dnn_test_precision_m, dnn_test_recall_m = model.evaluate(val_data, val_labels, verbose=0)
 
     np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_acc.npy', dnn_train_acc)
     np.save('/content/drive/Shareddrives/newpro112233/signal_machine/dnn_train_f1_m.npy', dnn_train_f1_m)
@@ -87,4 +90,3 @@ else:
     # pyplot.legend()
     # pyplot.show()
   train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, merge_network, 100, 32, True, 'model.h5')
-
