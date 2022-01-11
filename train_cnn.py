@@ -18,4 +18,4 @@ def train(data=None, labels=None,\
                     validation_data=(val_data, val_labels))
   model.save(name_saver)
 
-train(X_train, y_train, X_test, y_test, network, 200, 32, True, 'model.h5')
+train(X_train, y_train, X_test, y_test, network, 19, 32, True, 'model.h5')
