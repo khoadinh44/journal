@@ -7,7 +7,7 @@ from preprocessing.denoise_signal import signaltonoise_dB
 from preprocessing.utils import recall_m, precision_m, f1_m
 from load_data import use_model_A, use_model_B, \
                       label, merge_data, \
-                      use_Wavelet, use_Fourier, use_Wavelet_denoise, use_SVD, use_savitzky_golay, none
+                      use_Wavelet, use_Fourier, use_Wavelet_denoise, use_SVD, use_savitzky_golay
 if use_Wavelet:
   from load_data import merge_data_0, merge_data_1, merge_data_2
 
@@ -22,13 +22,10 @@ elif use_savitzky_golay:
 else:
   folder = 'evaluate' 
 
-
 X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.25, random_state=42, shuffle=True)
-
 if use_Wavelet:
   X_train_A, X_train_B             = X_train[:, :100, :], X_train[:, 100:, :]
   X_test_A, X_test_B               = X_test[:, :100, :],  X_test[:, 100:, :]
-
   X_train_A, X_train_B             = X_train_A.reshape(int(X_train_A.shape[0]), 300), X_train_B.reshape(int(X_train_B.shape[0]), 300)   
   X_test_A, X_test_B               = X_test_A.reshape(int(X_test_A.shape[0]), 300),  X_test_B.reshape(int(X_test_B.shape[0]), 300)
 
@@ -44,7 +41,7 @@ if use_model_A:
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
 
-    model = network(use_network = use_model_A)
+    model = network(use_model_A = use_model_A)
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels,
                         epochs=num_epochs,
@@ -76,7 +73,7 @@ else:
             network=None, num_epochs=20,\
             batch_size=32, show_metric=True, name_saver=None):
 
-    model = network(none = none)
+    model = network(use_model_B = use_model_B)
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels, 
                         epochs=num_epochs,
