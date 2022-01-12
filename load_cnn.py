@@ -5,8 +5,14 @@ import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
 from preprocessing.denoise_signal import Fourier
+from load_data import label, Normal_0_X097_DE_time, Normal_0_X097_FE_time,\
+                             B007_0_X122_DE_time,   B007_0_X122_FE_time,\
+                             IR007_0_X122_DE_time,  IR007_0_X122_FE_time,\
+                             OR007_3_0_X122_DE_time, OR007_3_0_X122_FE_time,\
+                             OR007_6_0_X122_DE_time, OR007_6_0_X122_FE_time,\
+                             OR007_12_0_X122_DE_time, OR007_12_0_X122_FE_time
 
-use_Fourier = True
+
 def get_spectrogram(waveform):
   # Zero-padding for an audio waveform with less than 16,000 samples.
   input_len = 300
@@ -29,76 +35,6 @@ def get_spectrogram(waveform):
   spectrogram = spectrogram[..., tf.newaxis]
   return spectrogram
 
-'''
-For all files, the following item in the variable name indicates:
-    DE - drive end accelerometer data
-    FE - fan end accelerometer data
-    BA - base accelerometer data
-    time - time series data
-    RPM - rpm during testing
-
-    Fault Diameter: 0.007"
-    Motor Load (HP): 0
-    Approx. Motor Speed (rpm): 1797
-'''
-num = 124600
-n   = 200
-
-Normal_0_name    = [[1, 0, 0, 0, 0, 0]]*int(num/n)
-B007_0_name      = [[0, 1, 0, 0, 0, 0]]*int(num/n)
-IR007_0_name     = [[0, 0, 1, 0, 0, 0]]*int(num/n)
-OR007_3_0_name   = [[0, 0, 0, 1, 0, 0]]*int(num/n)
-OR007_6_0_name   = [[0, 0, 0, 0, 1, 0]]*int(num/n)
-OR007_12_0_name  = [[0, 0, 0, 0, 0, 1]]*int(num/n)
-
-label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
-
-Normal_0 = scipy.io.loadmat('./data/Normal_0.mat')
-B007_0 = scipy.io.loadmat('./data/B007_0.mat')
-IR007_0 = scipy.io.loadmat('./data/IR007_0.mat')
-OR007_3_0 = scipy.io.loadmat('./data/OR007_3_0.mat')
-OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
-OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
-all_labels = {0: 'Normal_0', 1: 'B007_0', 2: 'IR007_0', 3: 'OR007_3_0', 4: 'OR007_6_0', 5: 'OR007_12_0'}
-
-
-Normal_0_X097_DE_time = Normal_0['X097_DE_time'][:num]
-Normal_0_X097_FE_time = Normal_0['X097_FE_time'][:num]
-
-B007_0_X122_DE_time     = B007_0['X122_DE_time'][:num]
-B007_0_X122_FE_time     = B007_0['X122_FE_time'][:num]
-
-IR007_0_X122_DE_time    = IR007_0['X109_DE_time'][:num]
-IR007_0_X122_FE_time    = IR007_0['X109_FE_time'][:num]
-
-OR007_3_0_X122_DE_time  = OR007_3_0['X148_DE_time'][:num]
-OR007_3_0_X122_FE_time  = OR007_3_0['X148_FE_time'][:num]
-
-OR007_6_0_X122_DE_time  = OR007_6_0['X135_DE_time'][:num]
-OR007_6_0_X122_FE_time  = OR007_6_0['X135_FE_time'][:num]
-
-OR007_12_0_X122_DE_time = OR007_12_0['X161_DE_time'][:num]
-OR007_12_0_X122_FE_time = OR007_12_0['X161_FE_time'][:num]
-
-if use_Fourier:
-  Normal_0_X097_DE_time   = Fourier(f=Normal_0_X097_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  Normal_0_X097_FE_time   = Fourier(f=Normal_0_X097_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  B007_0_X122_DE_time     = Fourier(f=B007_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  B007_0_X122_FE_time     = Fourier(f=B007_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  IR007_0_X122_DE_time    = Fourier(f=IR007_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  IR007_0_X122_FE_time    = Fourier(f=IR007_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  OR007_3_0_X122_DE_time  = Fourier(f=OR007_3_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  OR007_3_0_X122_FE_time  = Fourier(f=OR007_3_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  OR007_6_0_X122_DE_time  = Fourier(f=OR007_6_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  OR007_6_0_X122_FE_time  = Fourier(f=OR007_6_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-
-  OR007_12_0_X122_DE_time = Fourier(f=OR007_12_0_X122_DE_time, num=num, get_result=True, thres=25).reshape(num, 1)
-  OR007_12_0_X122_FE_time = Fourier(f=OR007_12_0_X122_FE_time, num=num, get_result=True, thres=85).reshape(num, 1)
-  
 
 Normal_0_X097_DE_time   = Normal_0_X097_DE_time.reshape((num//200, 200))
 Normal_0_X097_FE_time   = Normal_0_X097_FE_time.reshape((num//200, 200))
