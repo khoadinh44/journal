@@ -6,6 +6,7 @@ from preprocessing.denoise_signal import signaltonoise_dB
 from preprocessing.utils import recall_m, precision_m, f1_m
 from load_cnn import merge_data, label
 import pickle
+from load_data import use_Fourier, use_Wavelet_denoise, use_SVD, use_savitzky_golay
 
 X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=0.25, random_state=42, shuffle=True)
 
@@ -48,5 +49,3 @@ def train(data=None,     labels=None,\
   np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/cnn_test_recall_m.npy', cnn_test_recall_m)
   print('Train: %.3f, Test: %.3f' % (cnn_train_acc, cnn_test_acc))
 train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
-
-
