@@ -5,7 +5,7 @@ import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
 from preprocessing.denoise_signal import Fourier
-from load_data import label,num,\
+from load_data import label, num,\
                       Normal_0_X097_DE_time, Normal_0_X097_FE_time,\
                       B007_0_X122_DE_time,   B007_0_X122_FE_time,\
                       IR007_0_X122_DE_time,  IR007_0_X122_FE_time,\
