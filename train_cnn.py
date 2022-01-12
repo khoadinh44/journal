@@ -42,7 +42,7 @@ def train(data=None,     labels=None,\
 
   _, cnn_train_acc, cnn_train_f1_m, cnn_train_precision_m, cnn_train_recall_m = model.evaluate(data, labels, verbose=0)
   _, cnn_test_acc, cnn_test_f1_m, cnn_test_precision_m, cnn_test_recall_m = model.evaluate(val_data, val_labels, verbose=0)
-  with open('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/cnn_history', 'wb') as file_pi:
+  with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/cnn_history', 'wb') as file_pi:
     pickle.dump(history.history, file_pi)
 
   np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/cnn_train_acc.npy', cnn_train_acc)
