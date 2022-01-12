@@ -21,6 +21,12 @@ elif use_savitzky_golay:
 else:
   folder = 'evaluate' 
 
+use_callback = False
+if use_callback:  
+  callback = [tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
+else:
+  callback = None
+
 def train(data=None,     labels=None,\
           val_data=None, val_labels=None,\
           network=None,  num_epochs=20,\
@@ -30,6 +36,7 @@ def train(data=None,     labels=None,\
   model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
   history = model.fit(data, labels, 
                       epochs=num_epochs,
+                      callback=callback,
                       validation_data=(val_data, val_labels))
   model.save(name_saver)
 
