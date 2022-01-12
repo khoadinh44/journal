@@ -15,7 +15,7 @@ def train(data=None,     labels=None,\
           network=None,  num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
 
-  model = network(use_network = use_network)
+  model = network()
   model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
   history = model.fit(data, labels, 
                       epochs=num_epochs,
