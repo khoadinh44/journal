@@ -5,12 +5,13 @@ import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
 from preprocessing.denoise_signal import Fourier
-from load_data import label, Normal_0_X097_DE_time, Normal_0_X097_FE_time,\
-                             B007_0_X122_DE_time,   B007_0_X122_FE_time,\
-                             IR007_0_X122_DE_time,  IR007_0_X122_FE_time,\
-                             OR007_3_0_X122_DE_time, OR007_3_0_X122_FE_time,\
-                             OR007_6_0_X122_DE_time, OR007_6_0_X122_FE_time,\
-                             OR007_12_0_X122_DE_time, OR007_12_0_X122_FE_time
+from load_data import label,num,\
+                      Normal_0_X097_DE_time, Normal_0_X097_FE_time,\
+                      B007_0_X122_DE_time,   B007_0_X122_FE_time,\
+                      IR007_0_X122_DE_time,  IR007_0_X122_FE_time,\
+                      OR007_3_0_X122_DE_time, OR007_3_0_X122_FE_time,\
+                      OR007_6_0_X122_DE_time, OR007_6_0_X122_FE_time,\
+                      OR007_12_0_X122_DE_time, OR007_12_0_X122_FE_time
 
 
 def get_spectrogram(waveform):
@@ -59,13 +60,6 @@ OR007_6_0_X122 = np.concatenate((OR007_6_0_X122_DE_time, OR007_6_0_X122_FE_time)
 OR007_12_0_X122_DE_time = OR007_12_0_X122_DE_time.reshape((num//200, 200))
 OR007_12_0_X122_FE_time = OR007_12_0_X122_FE_time.reshape((num//200, 200))
 OR007_12_0_X122 = np.concatenate((OR007_12_0_X122_DE_time, OR007_12_0_X122_FE_time), axis=1)
-
-Normal_0_X097RPM       = Normal_0['X097RPM']
-B007_0_X122RPM         = B007_0['X122RPM']
-IR007_0_X122RPM        = IR007_0['X109RPM']
-OR007_3_0_X122RPM      = OR007_3_0['X148RPM']
-OR007_6_0_X122RPM      = OR007_6_0['X135RPM']
-OR007_12_0_X122RPM     = OR007_12_0['X161RPM']
 
 Normal_0_X097 = np.array([get_spectrogram(i) for i in Normal_0_X097])
 B007_0_X122 = np.array([get_spectrogram(i) for i in B007_0_X122])
