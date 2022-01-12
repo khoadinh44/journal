@@ -36,7 +36,7 @@ def train(data=None,     labels=None,\
   model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
   history = model.fit(data, labels, 
                       epochs=num_epochs,
-                      callback=callback,
+                      callbacks=callback,
                       validation_data=(val_data, val_labels))
   model.save(name_saver)
 
