@@ -51,7 +51,7 @@ if use_model_A:
 
     _, model_A_train_acc, model_A_train_f1_m, model_A_train_precision_m, model_A_train_recall_m = model.evaluate(data,    labels, verbose=0)
     _, model_A_test_acc,  model_A_test_f1_m,  model_A_test_precision_m,  model_A_test_recall_m  = model.evaluate(val_data, val_labels, verbose=0)
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/dnn_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_A_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
 
     np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_A_train_acc.npy', model_A_train_acc)
@@ -84,18 +84,18 @@ else:
     _, model_B_train_acc, model_B_train_f1_m, model_B_train_precision_m, model_B_train_recall_m = model.evaluate(data,    labels, verbose=0)
     _, model_B_test_acc,  model_B_test_f1_m,  model_B_test_precision_m,  model_B_test_recall_m  = model.evaluate(val_data, val_labels, verbose=0)
     
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
     
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_acc.npy', model_B_train_acc)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_f1_m.npy', model_B_train_f1_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_precision_m.npy', model_B_train_precision_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_recall_m.npy', model_B_train_recall_m)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_acc.npy', model_B_train_acc)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_f1_m.npy', model_B_train_f1_m)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_precision_m.npy', model_B_train_precision_m)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_train_recall_m.npy', model_B_train_recall_m)
 
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_acc.npy', model_B_test_acc)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_f1_m.npy', model_B_test_f1_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_precision_m.npy', model_B_test_precision_m)
-    np.save('/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_recall_m.npy', model_B_test_recall_m)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_acc.npy', model_B_test_acc)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_f1_m.npy', model_B_test_f1_m)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_precision_m.npy', model_B_test_precision_m)
+    np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_recall_m.npy', model_B_test_recall_m)
     print('Train: %.3f, Test: %.3f' % (best_train_acc, best_test_acc))
 
   train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, network, 100, 32, True, 'model.h5')
