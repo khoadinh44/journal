@@ -13,27 +13,6 @@ use_Wavelet_denoise = False
 use_SVD             = False
 none                = True
 
-def get_spectrogram(waveform):
-  waveform = waveform.reshape(int(waveform.shape[0]), )
-  # Zero-padding for an audio waveform with less than 16,000 samples.
-  input_len = 124600
-  waveform = waveform[:input_len]
-  zero_padding = tf.zeros([124600] - tf.shape(waveform), dtype=tf.float32)
-  # Cast the waveform tensors' dtype to float32.
-  waveform = tf.cast(waveform, dtype=tf.float32)
-  # Concatenate the waveform with `zero_padding`, which ensures all audio
-  # clips are of the same length.
-  equal_length = tf.concat([waveform, zero_padding], 0)
-  # Convert the waveform to a spectrogram via a STFT.
-  spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=128)
-  # Obtain the magnitude of the STFT.
-  spectrogram = tf.abs(spectrogram)
-  # Add a `channels` dimension, so that the spectrogram can be used
-  # as image-like input data with convolution layers (which expect
-  # shape (`batch_size`, `height`, `width`, `channels`).
-  spectrogram = spectrogram[..., tf.newaxis]
-  return spectrogram
-
 '''
 For all files, the following item in the variable name indicates:
     DE - drive end accelerometer data
