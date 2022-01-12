@@ -11,6 +11,7 @@ from load_data import use_model_A, use_model_B, \
 if use_Wavelet:
   from load_data import merge_data_0, merge_data_1, merge_data_2
 
+use_callback = False
 if use_Fourier:
   folder = 'Fourier'
 elif use_Wavelet_denoise:
@@ -33,7 +34,10 @@ if use_model_B:
   X_train_A, X_train_B             = X_train[:, :200], X_train[:, 200:]
   X_test_A, X_test_B               = X_test[:, :200],  X_test[:, 200:]
 
-callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
+if use_callback:  
+  callback = [tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
+else:
+  callback = None
 
 if use_model_A:
   def train(data=None, labels=None,\
@@ -45,7 +49,7 @@ if use_model_A:
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels,
                         epochs=num_epochs,
-                        callbacks=[callback],
+                        callbacks=callback,
                         validation_data=(val_data, val_labels))
     model.save(name_saver)
 
@@ -63,7 +67,6 @@ if use_model_A:
     np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_A_test_f1_m.npy', model_A_test_f1_m)
     np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_A_test_precision_m.npy', model_A_test_precision_m)
     np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_A_test_recall_m.npy', model_A_test_recall_m)
-    print('Train: %.3f, Test: %.3f' % (dnn_train_acc, dnn_test_acc))
 
   train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
 
@@ -77,7 +80,7 @@ else:
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     history = model.fit(data, labels, 
                         epochs=num_epochs,
-                        callbacks=[callback],
+                        callbacks=callback,
                         validation_data=(val_data, val_labels))
     model.save(name_saver)
 
@@ -96,6 +99,5 @@ else:
     np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_f1_m.npy', model_B_test_f1_m)
     np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_precision_m.npy', model_B_test_precision_m)
     np.save(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_B_test_recall_m.npy', model_B_test_recall_m)
-    print('Train: %.3f, Test: %.3f' % (best_train_acc, best_test_acc))
 
   train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, network, 100, 32, True, 'model.h5')
