@@ -5,10 +5,10 @@ import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
 
-use_model_A         = True
+use_model_A         = False
 use_model_B         = False
 
-use_Fourier         = False
+use_Fourier         = True
 use_savitzky_golay  = False
 use_Wavelet         = False
 use_Wavelet_denoise = False
