@@ -40,11 +40,16 @@ OR007_12_0_name  = [[0, 0, 0, 0, 0, 1]]*int(num/n)
 label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
 
 Normal_0 = scipy.io.loadmat('./data/Normal_0.mat')
-B007_0 = scipy.io.loadmat('./data/B007_0.mat')
-IR007_0 = scipy.io.loadmat('./data/IR007_0.mat')
-OR007_3_0 = scipy.io.loadmat('./data/OR007_3_0.mat')
-OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
-OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
+# B007_0 = scipy.io.loadmat('./data/B007_0.mat')
+# IR007_0 = scipy.io.loadmat('./data/IR007_0.mat')
+# OR007_3_0 = scipy.io.loadmat('./data/OR007_3_0.mat')
+# OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
+# OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
+B007_0 = scipy.io.loadmat('./data/21/B021_0.mat')
+IR007_0 = scipy.io.loadmat('./data/21/IR021_0.mat')
+OR007_3_0 = scipy.io.loadmat('./data/21/OR021_3_0.mat')
+OR007_6_0 = scipy.io.loadmat('./data/21/OR021_6_0.mat')
+OR007_12_0 = scipy.io.loadmat('./data/21/OR021_12_0.mat')
 all_labels = {0: 'Normal_0', 1: 'B007_0', 2: 'IR007_0', 3: 'OR007_3_0', 4: 'OR007_6_0', 5: 'OR007_12_0'}
 
 Normal_0_X097_DE_time   = Normal_0['X097_DE_time'][:num]
