@@ -17,6 +17,7 @@ def network():
             keras.layers.Dense(units=512, activation='relu'),
             keras.layers.Dropout(0.5),
             keras.layers.Dense(units=6, activation='softmax'),])
+  return model
   
   
 def network_1D():
@@ -27,7 +28,4 @@ def network_1D():
   concat = concatenate([input_, hidden2])
   output = Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
   model = keras.models.Model(inputs=[input_], outputs=[output])
-  return model
-
-  model.summary()
-  return model
+  return model  
