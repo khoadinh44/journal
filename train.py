@@ -46,12 +46,19 @@ if use_model_A:
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
 
-#     model = network(use_model_A = use_model_A)
+    # model = network(use_model_A = use_model_A)
     model = network_1D()
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
+    model.summary()
+    
+    data = np.expand_dims(data, axis=1)
+    labels = np.expand_dims(labels, axis=1)
+    val_data = np.expand_dims(val_data, axis=1)
+    val_labels = np.expand_dims(val_labels, axis=1)
     history = model.fit(data, labels,
-                        epochs    = num_epochs,
-                        callbacks = callback,
+                        epochs     = num_epochs,
+                        callbacks  = callback,
+                        batch_size = 32,
                         validation_data=(val_data, val_labels))
     model.save(name_saver)
 
