@@ -1,6 +1,7 @@
 from functools import partial
 import keras
 import tensorflow as tf
+from tensorflow.keras.layers import Conv1D, Activation, Dense, concatenate
 
 def network():
   DefaultConv2D = partial(keras.layers.Conv2D, kernel_size=3, activation='relu', padding="SAME")
@@ -19,24 +20,14 @@ def network():
   
   
 def network_1D():
-  model = keras.models.Sequential()
-  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True, input_shape=(400, )))
-  model.add(Activation('relu'))
-  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
-  model.add(Activation('relu'))
-  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
-  model.add(Activation('relu'))
-  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
-  model.add(Activation('relu'))
-  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
-  model.add(Activation('relu'))
-  model.add(Dense(50))
-  model.add(Activation('relu'))
-  model.add(Dense(50))
-  model.add(Activation('relu'))
-  model.add(Dense(6, activation=tf.keras.layers.Softmax()))
-  y = model(X)
-  return y
+  input_ = keras.layers.Input(shape=[1, 400])
+  Conv1D_ = Conv1D(64, 4, strides=1, padding='same', use_bias=True, activation=tf.keras.layers.ReLU())(input_)
+  hidden1 = Dense(300, activation=tf.keras.layers.ReLU())(Conv1D_)
+  hidden2 = Dense(100, activation=tf.keras.layers.ReLU())(hidden1)
+  concat = concatenate([input_, hidden2])
+  output = Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
+  model = keras.models.Model(inputs=[input_], outputs=[output])
+  return model
 
   model.summary()
   return model
