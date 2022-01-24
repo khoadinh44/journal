@@ -5,10 +5,10 @@ import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
 import matplotlib.pyplot as plt
 
-use_model_A         = False
+use_model_A         = True
 use_model_B         = False
 
-use_Fourier         = True
+use_Fourier         = False
 use_savitzky_golay  = False
 use_Wavelet         = False
 use_Wavelet_denoise = False
@@ -40,48 +40,51 @@ OR007_12_0_name  = [[0, 0, 0, 0, 0, 1]]*int(num/n)
 label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
 
 Normal_0 = scipy.io.loadmat('./data/Normal_0.mat')
-# B007_0 = scipy.io.loadmat('./data/B007_0.mat')
-# IR007_0 = scipy.io.loadmat('./data/IR007_0.mat')
-# OR007_3_0 = scipy.io.loadmat('./data/OR007_3_0.mat')
-# OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
-# OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
-B007_0 = scipy.io.loadmat('./data/21/B021_0.mat')
-IR007_0 = scipy.io.loadmat('./data/21/IR021_0.mat')
-OR007_3_0 = scipy.io.loadmat('./data/21/OR021_3_0.mat')
-OR007_6_0 = scipy.io.loadmat('./data/21/OR021_6_0.mat')
-OR007_12_0 = scipy.io.loadmat('./data/21/OR021_12_0.mat')
+B007_0 = scipy.io.loadmat('./data/B007_0.mat')
+IR007_0 = scipy.io.loadmat('./data/IR007_0.mat')
+OR007_3_0 = scipy.io.loadmat('./data/OR007_3_0.mat')
+OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
+OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
+
+# Data 21-----------------------------------------------
+# B007_0 = scipy.io.loadmat('./data/21/B021_0.mat')
+# IR007_0 = scipy.io.loadmat('./data/21/IR021_0.mat')
+# OR007_3_0 = scipy.io.loadmat('./data/21/OR021_3_0.mat')
+# OR007_6_0 = scipy.io.loadmat('./data/21/OR021_6_0.mat')
+# OR007_12_0 = scipy.io.loadmat('./data/21/OR021_12_0.mat')
 all_labels = {0: 'Normal_0', 1: 'B007_0', 2: 'IR007_0', 3: 'OR007_3_0', 4: 'OR007_6_0', 5: 'OR007_12_0'}
 
 Normal_0_X097_DE_time   = Normal_0['X097_DE_time'][:num]
 Normal_0_X097_FE_time   = Normal_0['X097_FE_time'][:num]
-# B007_0_X122_DE_time     = B007_0['X122_DE_time'][:num]
-# B007_0_X122_FE_time     = B007_0['X122_FE_time'][:num]
-# IR007_0_X122_DE_time    = IR007_0['X109_DE_time'][:num]
-# IR007_0_X122_FE_time    = IR007_0['X109_FE_time'][:num]
-# OR007_3_0_X122_DE_time  = OR007_3_0['X148_DE_time'][:num]
-# OR007_3_0_X122_FE_time  = OR007_3_0['X148_FE_time'][:num]
-# OR007_6_0_X122_DE_time  = OR007_6_0['X135_DE_time'][:num]
-# OR007_6_0_X122_FE_time  = OR007_6_0['X135_FE_time'][:num]
-# OR007_12_0_X122_DE_time = OR007_12_0['X161_DE_time'][:num]
-# OR007_12_0_X122_FE_time = OR007_12_0['X161_FE_time'][:num]
+B007_0_X122_DE_time     = B007_0['X122_DE_time'][:num]
+B007_0_X122_FE_time     = B007_0['X122_FE_time'][:num]
+IR007_0_X122_DE_time    = IR007_0['X109_DE_time'][:num]
+IR007_0_X122_FE_time    = IR007_0['X109_FE_time'][:num]
+OR007_3_0_X122_DE_time  = OR007_3_0['X148_DE_time'][:num]
+OR007_3_0_X122_FE_time  = OR007_3_0['X148_FE_time'][:num]
+OR007_6_0_X122_DE_time  = OR007_6_0['X135_DE_time'][:num]
+OR007_6_0_X122_FE_time  = OR007_6_0['X135_FE_time'][:num]
+OR007_12_0_X122_DE_time = OR007_12_0['X161_DE_time'][:num]
+OR007_12_0_X122_FE_time = OR007_12_0['X161_FE_time'][:num]
 
-B007_0_X122_DE_time     = B007_0['X226_DE_time'][:num]
-B007_0_X122_FE_time     = B007_0['X226_FE_time'][:num]
-IR007_0_X122_DE_time    = IR007_0['X213_DE_time'][:num]
-IR007_0_X122_FE_time    = IR007_0['X213_FE_time'][:num]
-OR007_3_0_X122_DE_time  = OR007_3_0['X250_DE_time'][:num]
-OR007_3_0_X122_FE_time  = OR007_3_0['X250_FE_time'][:num]
-OR007_6_0_X122_DE_time  = OR007_6_0['X238_DE_time'][:num]
-OR007_6_0_X122_FE_time  = OR007_6_0['X238_FE_time'][:num]
-OR007_12_0_X122_DE_time = OR007_12_0['X262_DE_time'][:num]
-OR007_12_0_X122_FE_time = OR007_12_0['X262_FE_time'][:num]
+#data 21--------------------------------------------------------------
+# B007_0_X122_DE_time     = B007_0['X226_DE_time'][:num]
+# B007_0_X122_FE_time     = B007_0['X226_FE_time'][:num]
+# IR007_0_X122_DE_time    = IR007_0['X213_DE_time'][:num]
+# IR007_0_X122_FE_time    = IR007_0['X213_FE_time'][:num]
+# OR007_3_0_X122_DE_time  = OR007_3_0['X250_DE_time'][:num]
+# OR007_3_0_X122_FE_time  = OR007_3_0['X250_FE_time'][:num]
+# OR007_6_0_X122_DE_time  = OR007_6_0['X238_DE_time'][:num]
+# OR007_6_0_X122_FE_time  = OR007_6_0['X238_FE_time'][:num]
+# OR007_12_0_X122_DE_time = OR007_12_0['X262_DE_time'][:num]
+# OR007_12_0_X122_FE_time = OR007_12_0['X262_FE_time'][:num]
 
 Normal_0_X097RPM       = Normal_0['X097RPM']
-B007_0_X122RPM         = B007_0['X226RPM']
-IR007_0_X122RPM        = IR007_0['X213RPM']
-OR007_3_0_X122RPM      = OR007_3_0['X250RPM']
-OR007_6_0_X122RPM      = OR007_6_0['X238RPM']
-OR007_12_0_X122RPM     = OR007_12_0['X262RPM']
+# B007_0_X122RPM         = B007_0['X226RPM']
+# IR007_0_X122RPM        = IR007_0['X213RPM']
+# OR007_3_0_X122RPM      = OR007_3_0['X250RPM']
+# OR007_6_0_X122RPM      = OR007_6_0['X238RPM']
+# OR007_12_0_X122RPM     = OR007_12_0['X262RPM']
 
 
 if use_Fourier:
