@@ -45,16 +45,21 @@ if use_model_A:
           val_data=None, val_labels=None,\
           network=None, num_epochs=20,\
           batch_size=32, show_metric=True, name_saver=None):
-
+    # data = np.concatenate((data, np.zeros((data.shape[0], int(32000-data.shape[1])))), axis=1)
+    # val_data = np.concatenate((val_data, np.zeros((val_data.shape[0], int(32000-val_data.shape[1])))), axis=1)
+    
+    data = np.expand_dims(data, axis=-1)
+    # labels = np.expand_dims(labels, axis=-1)
+    val_data = np.expand_dims(val_data, axis=-1)
+    # val_labels = np.expand_dims(val_labels, axis=-1)
+    print(val_data.shape)
     # model = network(use_model_A = use_model_A)
     model = network_1D()
     model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
     model.summary()
 
-    data = np.expand_dims(data, axis=1)
-    labels = np.expand_dims(labels, axis=1)
-    val_data = np.expand_dims(val_data, axis=1)
-    val_labels = np.expand_dims(val_labels, axis=1)
+    
+
     history = model.fit(data, labels,
                         epochs     = num_epochs,
                         callbacks  = callback,
