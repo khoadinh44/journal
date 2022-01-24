@@ -16,6 +16,27 @@ def network():
             keras.layers.Dense(units=512, activation='relu'),
             keras.layers.Dropout(0.5),
             keras.layers.Dense(units=6, activation='softmax'),])
+  
+  
+def network_1D():
+  model = keras.models.Sequential()
+  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True, input_shape=(400, )))
+  model.add(Activation('relu'))
+  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
+  model.add(Activation('relu'))
+  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
+  model.add(Activation('relu'))
+  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
+  model.add(Activation('relu'))
+  model.add(Conv1D(64, 50, strides=1, padding='same', use_bias=True))
+  model.add(Activation('relu'))
+  model.add(Dense(50))
+  model.add(Activation('relu'))
+  model.add(Dense(50))
+  model.add(Activation('relu'))
+  model.add(Dense(6, activation=tf.keras.layers.Softmax()))
+  y = model(X)
+  return y
 
   model.summary()
   return model
