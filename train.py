@@ -1,7 +1,7 @@
 import tensorflow as tf
 import pickle
 import numpy as np
-from network.dnn import network
+from network.dnn import DNN
 from network.cnn import network_A
 from sklearn.model_selection import train_test_split
 from preprocessing.denoise_signal import signaltonoise_dB
@@ -50,9 +50,8 @@ def train_CNN_A(data=None, labels=None,\
 
   data = np.expand_dims(data, axis=-1)
   val_data = np.expand_dims(val_data, axis=-1)
-  model = network_A()
+  model = network()
   model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
-  model.summary()
 
   history = model.fit(data, labels,
                       epochs     = num_epochs,
@@ -60,6 +59,7 @@ def train_CNN_A(data=None, labels=None,\
                       batch_size = 32,
                       validation_data=(val_data, val_labels))
   model.save(name_saver)
+  model.summary()
 
 #   _, model_A_train_acc, model_A_train_f1_m, model_A_train_precision_m, model_A_train_recall_m = model.evaluate(data,     labels,     verbose=0)
 #   _, model_A_test_acc,  model_A_test_f1_m,  model_A_test_precision_m,  model_A_test_recall_m  = model.evaluate(val_data, val_labels, verbose=0)
@@ -103,8 +103,8 @@ def train_model_B(data=None, labels=None,\
     pickle.dump(history.history, file_pi)
 
 if use_model_A:
-  train_model_A(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
+  train_model_A(X_train, y_train, X_test, y_test, DNN, 100, 32, True, 'model.h5')
 elif use_model_B:
-  train_model_B((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, network, 100, 32, True, 'model.h5')
+  train_model_B((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN, 100, 32, True, 'model.h5')
 elif use_CNN_A:
-  train_CNN_A(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
+  train_CNN_A(X_train, y_train, X_test, y_test, network_A, 100, 32, True, 'model.h5')
