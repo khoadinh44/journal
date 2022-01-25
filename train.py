@@ -43,27 +43,6 @@ else:
   callback = None
   
 # Neural Network: DNN_A, DNN_B, CNN_A---------------------------------------
-def train_model_A(data=None, labels=None,\
-        val_data=None, val_labels=None,\
-        network=None, num_epochs=20,\
-        batch_size=32, show_metric=True, name_saver=None):
-  
-  model = network(use_model_A = use_model_A)
-  model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
-  model.summary()
-
-  history = model.fit(data, labels,
-                      epochs     = num_epochs,
-                      callbacks  = callback,
-                      batch_size = 32,
-                      validation_data = (val_data, val_labels))
-  model.save(name_saver)
-  
-  # Save the result-----------------------------
-  with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_A_history', 'wb') as file_pi:
-    pickle.dump(history.history, file_pi)
-
-
 def train_CNN_A(data=None, labels=None,\
         val_data=None, val_labels=None,\
         network=None, num_epochs=20,\
@@ -87,6 +66,25 @@ def train_CNN_A(data=None, labels=None,\
   with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
     pickle.dump(history.history, file_pi)
 
+def train_model_A(data=None, labels=None,\
+        val_data=None, val_labels=None,\
+        network=None, num_epochs=20,\
+        batch_size=32, show_metric=True, name_saver=None):
+  
+  model = network(use_model_A = use_model_A)
+  model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
+  model.summary()
+
+  history = model.fit(data, labels,
+                      epochs     = num_epochs,
+                      callbacks  = callback,
+                      batch_size = 32,
+                      validation_data = (val_data, val_labels))
+  model.save(name_saver)
+  
+  # Save the result-----------------------------
+  with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/model_A_history', 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
   
 def train_model_B(data=None, labels=None,\
           val_data=None, val_labels=None,\
