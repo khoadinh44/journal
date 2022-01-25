@@ -49,7 +49,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     return x
 
 
-def network_1D(num_classes=6):
+def network_A(num_classes=6):
     inputs = Input(shape=[400, 1])
     x = Conv1D(48,
                kernel_size=80,
@@ -86,7 +86,7 @@ def network_1D(num_classes=6):
     m = Model(inputs, x, name='resnet34')
     return m
 
-def network():
+def network_B():
   DefaultConv2D = partial(keras.layers.Conv2D, kernel_size=3, activation='relu', padding="SAME")
   model = keras.models.Sequential([
             DefaultConv2D(filters=256, kernel_size=7, input_shape=[128, 128, 1]), #
@@ -102,14 +102,3 @@ def network():
             keras.layers.Dense(units=6, activation='softmax'),])
   return model
   
-  
-# def network_1D():
-#   input_ = keras.layers.Input(shape=[1, 400])
-#   Conv1D_ = Conv1D(64, 4, strides=1, padding='same', use_bias=True, activation=tf.keras.layers.ReLU())(input_)
-#   hidden1 = Dense(300, activation=tf.keras.layers.ReLU())(Conv1D_)
-#   hidden2 = Dense(100, activation=tf.keras.layers.ReLU())(hidden1)
-#   concat = concatenate([input_, hidden2])
-#   output = Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
-#   model = keras.models.Model(inputs=[input_], outputs=[output])
-#   return model
-
