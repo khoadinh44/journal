@@ -39,7 +39,7 @@ def train(data=None,     labels=None,\
                       callbacks=callback,
                       validation_data=(val_data, val_labels))
   model.save(name_saver)
-  with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/cnn_history', 'wb') as file_pi:
+  with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/cnn_B_history', 'wb') as file_pi:
     pickle.dump(history.history, file_pi)
 
 train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
