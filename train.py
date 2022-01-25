@@ -93,6 +93,7 @@ def train_model_B(data=None, labels=None,\
 
   model = network(use_model_B = use_model_B)
   model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
+  model.summary()
   history = model.fit(data, labels, 
                       epochs=num_epochs,
                       callbacks=callback,
