@@ -6,7 +6,7 @@ from network.cnn import network_A
 from sklearn.model_selection import train_test_split
 from preprocessing.denoise_signal import signaltonoise_dB
 from preprocessing.utils import recall_m, precision_m, f1_m
-from load_data import use_model_A, use_model_B, use_CNN_A\
+from load_data import use_model_A, use_model_B, use_CNN_A,\
                       label, merge_data, \
                       use_Wavelet, use_Fourier, use_Wavelet_denoise, use_SVD, use_savitzky_golay
 if use_Wavelet:
@@ -102,8 +102,8 @@ def train_model_B(data=None, labels=None,\
     pickle.dump(history.history, file_pi)
 
 if use_model_A:
-  train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
+  train_model_A(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
 elif use_model_B:
-  train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, network, 100, 32, True, 'model.h5')
+  train_model_B((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, network, 100, 32, True, 'model.h5')
 elif use_CNN_A:
-  train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
+  train_CNN_A(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
