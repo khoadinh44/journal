@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from network.cnn import network
+from network.cnn import CNN_B
 from sklearn.model_selection import train_test_split
 from preprocessing.denoise_signal import signaltonoise_dB
 from preprocessing.utils import recall_m, precision_m, f1_m
@@ -42,4 +42,4 @@ def train(data=None,     labels=None,\
   with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
     pickle.dump(history.history, file_pi)
 
-train(X_train, y_train, X_test, y_test, network, 100, 32, True, 'model.h5')
+train(X_train, y_train, X_test, y_test, CNN_B, 100, 32, True, 'model.h5')
