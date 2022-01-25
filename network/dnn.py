@@ -1,7 +1,7 @@
 import keras
 import tensorflow as tf
 
-def network(use_model_A=False, use_model_B=False, use_Wavelet=False):
+def DNN(use_model_A=False, use_model_B=False, use_Wavelet=False):
     if use_Wavelet:
       input_A = keras.layers.Input(shape=[300], name="wide_input")
       input_B = keras.layers.Input(shape=[300], name="deep_input") 
