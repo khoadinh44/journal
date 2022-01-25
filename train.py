@@ -104,7 +104,7 @@ def train_model_B(data=None, labels=None,\
 
 if use_model_A:
   train_model_A(X_train, y_train, X_test, y_test, DNN, 100, 32, True, 'model.h5')
-elif use_model_B:
+if use_model_B:
   train_model_B((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN, 100, 32, True, 'model.h5')
-elif use_CNN_A:
+if use_CNN_A:
   train_CNN_A(X_train, y_train, X_test, y_test, network_A, 100, 32, True, 'model.h5')
