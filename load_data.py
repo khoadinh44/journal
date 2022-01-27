@@ -3,11 +3,10 @@ import pandas as pd
 import scipy.io
 import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
-from preprocessing.utils import signal_to_IFMs
 import matplotlib.pyplot as plt
 
-use_model_A         = False
-use_model_B         = False
+use_model_A         = True
+use_model_B         = True
 use_CNN_A           = True
 
 use_Fourier         = False
@@ -56,18 +55,18 @@ OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
 # OR007_12_0 = scipy.io.loadmat('./data/21/OR021_12_0.mat')
 all_labels = {0: 'Normal_0', 1: 'B007_0', 2: 'IR007_0', 3: 'OR007_3_0', 4: 'OR007_6_0', 5: 'OR007_12_0'}
 
-Normal_0_X097_DE_time   = signal_to_IFMs(Normal_0['X097_DE_time'][:num])
-Normal_0_X097_FE_time   = signal_to_IFMs(Normal_0['X097_FE_time'][:num])
-B007_0_X122_DE_time     = signal_to_IFMs(B007_0['X122_DE_time'][:num])
-B007_0_X122_FE_time     = signal_to_IFMs(B007_0['X122_FE_time'][:num])
-IR007_0_X122_DE_time    = signal_to_IFMs(IR007_0['X109_DE_time'][:num])
-IR007_0_X122_FE_time    = signal_to_IFMs(IR007_0['X109_FE_time'][:num])
-OR007_3_0_X122_DE_time  = signal_to_IFMs(OR007_3_0['X148_DE_time'][:num])
-OR007_3_0_X122_FE_time  = signal_to_IFMs(OR007_3_0['X148_FE_time'][:num])
-OR007_6_0_X122_DE_time  = signal_to_IFMs(OR007_6_0['X135_DE_time'][:num])
-OR007_6_0_X122_FE_time  = signal_to_IFMs(OR007_6_0['X135_FE_time'][:num])
-OR007_12_0_X122_DE_time = signal_to_IFMs(OR007_12_0['X161_DE_time'][:num])
-OR007_12_0_X122_FE_time = signal_to_IFMs(OR007_12_0['X161_FE_time'][:num])
+Normal_0_X097_DE_time   = Normal_0['X097_DE_time'][:num]
+Normal_0_X097_FE_time   = Normal_0['X097_FE_time'][:num]
+B007_0_X122_DE_time     = B007_0['X122_DE_time'][:num]
+B007_0_X122_FE_time     = B007_0['X122_FE_time'][:num]
+IR007_0_X122_DE_time    = IR007_0['X109_DE_time'][:num]
+IR007_0_X122_FE_time    = IR007_0['X109_FE_time'][:num]
+OR007_3_0_X122_DE_time  = OR007_3_0['X148_DE_time'][:num]
+OR007_3_0_X122_FE_time  = OR007_3_0['X148_FE_time'][:num]
+OR007_6_0_X122_DE_time  = OR007_6_0['X135_DE_time'][:num]
+OR007_6_0_X122_FE_time  = OR007_6_0['X135_FE_time'][:num]
+OR007_12_0_X122_DE_time = OR007_12_0['X161_DE_time'][:num]
+OR007_12_0_X122_FE_time = OR007_12_0['X161_FE_time'][:num]
 
 #data 21--------------------------------------------------------------
 # B007_0_X122_DE_time     = B007_0['X226_DE_time'][:num]
