@@ -16,3 +16,13 @@ def f1_m(y_true, y_pred):
     precision = precision_m(y_true, y_pred)
     recall = recall_m(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
+
+def signal_to_IFMs(x):
+    '''
+    x: input signal
+    The input signal is normalized to the bound of [0, 1]
+    https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9211470
+    '''
+    min = np.min(x)
+    max = np.max(x)
+    return (x-min)/(max-min)
