@@ -27,3 +27,25 @@ def signal_to_IFMs(x):
     min = np.min(x)
     max = np.max(x)
     return (x-min)/(max-min)
+
+def get_spectrogram(waveform):
+  # Zero-padding for an audio waveform with less than 16,000 samples.
+  input_len = 300
+  respect_input_len = 128*128 
+  waveform = waveform[:input_len]
+  zero_padding = tf.zeros([(respect_input_len)] - tf.shape(waveform), dtype=tf.float32)
+  # Cast the waveform tensors' dtype to float32.
+  waveform = tf.cast(waveform, dtype=tf.float32)
+  # Concatenate the waveform with `zero_padding`, which ensures all audio
+  # clips are of the same length.
+  equal_length = tf.concat([waveform, zero_padding], 0)
+  # Convert the waveform to a spectrogram via a STFT.
+  spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=127, fft_length=128*2-1)
+  # spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=128-1)
+  # Obtain the magnitude of the STFT.
+  spectrogram = tf.abs(spectrogram)
+  # Add a `channels` dimension, so that the spectrogram can be used
+  # as image-like input data with convolution layers (which expect
+  # shape (`batch_size`, `height`, `width`, `channels`).
+  spectrogram = spectrogram[..., tf.newaxis]
+  return spectrogram
