@@ -1,5 +1,6 @@
 from keras import backend as K
 import numpy as np
+import tensorflow as tf
 
 def signaltonoise_dB(a, axis=0, ddof=0):
     a = np.asanyarray(a[0, :])
