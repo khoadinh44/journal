@@ -28,16 +28,16 @@ def train(data, labels,
 #   _, model_A_train_acc, model_A_train_f1_m, model_A_train_precision_m, model_A_train_recall_m = model.evaluate(data,     labels,     verbose=0)
 #   _, model_A_test_acc,  model_A_test_f1_m,  model_A_test_precision_m,  model_A_test_recall_m  = model.evaluate(val_data, val_labels, verbose=0)
 
-  if opt.type == 'use_DNN_A':
+  if opt.use_DNN_A:
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
-  elif opt.type == 'use_DNN_B':
+  elif opt.use_DNN_B:
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
-  if opt.type == 'use_CNN_A':
+  elif opt.use_CNN_A:
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
-  elif opt.type == 'use_CNN_A':
+  elif opt.use_CNN_B:
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   
