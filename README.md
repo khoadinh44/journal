@@ -1,6 +1,7 @@
 # Journal 1
 
 **NOTE:**
+
 use_DNN_A, use_DNN_B, use_CNN_A, use_CNN_B are represented for DNN A, DNN B, CNN A, CNN B model
 
 # if the DNN A is choosen:
