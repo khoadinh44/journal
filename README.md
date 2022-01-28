@@ -1,6 +1,6 @@
 # Journal 1
 
-**NOTE:**\
+**NOTE:**
 - use_DNN_A, use_DNN_B, use_CNN_A, use_CNN_B are represented for DNN A, DNN B, CNN A, CNN B model
 - DFK, Wavelet_denoise, SVD, savitzky_golay, None are represented for denoising methods. In those methods.\
 **DFK** is our proposal, **None** means that nothing denoising method is used to denoise
