@@ -49,7 +49,11 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     return x
 
 
-def network_A(num_classes=6):
+def CNN_A(num_classes=6):
+    '''
+    The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
+    https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
+    '''
     inputs = Input(shape=[400, 1])
     x = Conv1D(48,
                kernel_size=80,
@@ -67,26 +71,13 @@ def network_A(num_classes=6):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    # for i in range(4):
-    #     x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
-
-    # x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-    # for i in range(6):
-    #     x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
-
-    # x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-    # for i in range(3):
-    #     x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
-
     x = GlobalAveragePooling1D()(x)
     x = Dense(num_classes, activation='softmax')(x)
 
     m = Model(inputs, x, name='resnet34')
     return m
 
-def network_B():
+def CNN_B():
   DefaultConv2D = partial(keras.layers.Conv2D, kernel_size=3, activation='relu', padding="SAME")
   model = keras.models.Sequential([
             DefaultConv2D(filters=256, kernel_size=7, input_shape=[128, 128, 1]), #
@@ -101,4 +92,33 @@ def network_B():
             keras.layers.Dropout(0.5),
             keras.layers.Dense(units=6, activation='softmax'),])
   return model
-  
+
+def DNN_A():
+  input_ = keras.layers.Input(shape=[400, ])
+  hidden3 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_)
+  hidden4 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden3)
+  concat = keras.layers.concatenate([input_, hidden4])
+  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax())(concat)
+  model = keras.models.Model(inputs=[input_], outputs=[output])
+  return model
+
+def DNN_B():
+  input_A = keras.layers.Input(shape=[200], name="wide_input")
+  input_B = keras.layers.Input(shape=[200], name="deep_input") 
+  hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_B)
+  hidden2 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden1)
+  concat = keras.layers.concatenate([input_A, hidden2])
+  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
+  model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
+  return model
+
+# Not use------------------------------------------
+def DNN_for Wavelet():
+  input_A = keras.layers.Input(shape=[300], name="wide_input")
+  input_B = keras.layers.Input(shape=[300], name="deep_input") 
+  hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_B)
+  hidden2 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden1)
+  concat = keras.layers.concatenate([input_A, hidden2])
+  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
+  model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
+  return model
