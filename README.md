@@ -12,6 +12,6 @@
 #### if DFK is choosen:
     --denoise DFK
     
-# Training with 7 ls diameter faults data:
+## Training with 7 ls diameter faults data:
     %cd /signal_machine
     !python train.py --use_DNN_B True --denoise DFK
