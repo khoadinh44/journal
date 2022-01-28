@@ -7,8 +7,7 @@ from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB
 
 def train(data, labels,\
           val_data, val_label,\
-          network, num_epochs=100,\
-          batch_size=32, name_saver, folder):
+          network, num_epochs=100, batch_size=32, name_saver, folder, opt):
   
   if opt.type == 'use_CNN_A':
     data = np.expand_dims(data, axis=-1)
@@ -68,13 +67,13 @@ def main(opt):
   
 
   if opt.use_DNN_A:
-    train(X_train, y_train, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, True, opt.save, folder, opt)
+    train(X_train, y_train, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_DNN_B:
-    train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN_B, opt.epochs, opt.batch_size, True, opt.save, folder, opt)
+    train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_A:
-    train(X_train, y_train, X_test, y_test, CNN_A, opt.epochs, opt.batch_size, True, opt.save, folder, opt)
+    train(X_train, y_train, X_test, y_test, CNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_B:
-    train(X_train, y_train, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, True, opt.save, folder, opt)
+    train(X_train, y_train, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
     
   
 def parse_opt(known=False):
@@ -97,11 +96,6 @@ def parse_opt(known=False):
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
 
-def run(**kwargs):
-    opt = parse_opt(True)
-    for k, v in kwargs.items():
-        setattr(opt, k, v)
-    main(opt)
     
 if __name__ == "__main__":
     opt = parse_opt()
