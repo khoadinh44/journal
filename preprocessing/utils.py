@@ -2,12 +2,6 @@ from keras import backend as K
 import numpy as np
 import tensorflow as tf
 
-def signaltonoise_dB(a, axis=0, ddof=0):
-    a = np.asanyarray(a[0, :])
-    m = a.mean(axis)
-    sd = a.std(axis=axis, ddof=ddof)
-    return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
-
 def recall_m(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
@@ -34,6 +28,12 @@ def signal_to_IFMs(x):
     min = np.min(x)
     max = np.max(x)
     return (x-min)/(max-min)
+
+def signaltonoise_dB(a, axis=0, ddof=0):
+    a = np.asanyarray(a[0, :])
+    m = a.mean(axis)
+    sd = a.std(axis=axis, ddof=ddof)
+    return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
 
 def get_spectrogram(waveform):
   # Zero-padding for an audio waveform with less than 16,000 samples.
