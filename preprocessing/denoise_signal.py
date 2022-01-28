@@ -7,13 +7,6 @@ import numpy as np
 from math import factorial
 from sklearn.cluster import KMeans
 
-def signaltonoise_dB(a, axis=0, ddof=0):
-    a = np.asanyarray(a[0, :])
-    print(a.shape)
-    m = a.mean(axis)
-    sd = a.std(axis=axis, ddof=ddof)
-    return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
-
 def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_y=None):
     """Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
     The Savitzky-Golay filter removes high frequency noise from data.
