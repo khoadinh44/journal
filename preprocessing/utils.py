@@ -1,6 +1,12 @@
 from keras import backend as K
 import numpy as np
 
+def signaltonoise_dB(a, axis=0, ddof=0):
+    a = np.asanyarray(a[0, :])
+    m = a.mean(axis)
+    sd = a.std(axis=axis, ddof=ddof)
+    return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
+
 def recall_m(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
