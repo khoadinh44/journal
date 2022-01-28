@@ -111,14 +111,3 @@ def DNN_B():
   output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
-
-# Not use------------------------------------------
-def DNN_for Wavelet():
-  input_A = keras.layers.Input(shape=[300], name="wide_input")
-  input_B = keras.layers.Input(shape=[300], name="deep_input") 
-  hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_B)
-  hidden2 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden1)
-  concat = keras.layers.concatenate([input_A, hidden2])
-  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
-  model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
-  return model
