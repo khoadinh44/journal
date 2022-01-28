@@ -1,15 +1,17 @@
 import tensorflow as tf
 import pickle
 import numpy as np
+import argparse
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B
 from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB
+from load_data import load_all
 
-def train(data, labels,\
-          val_data, val_label,\
-          network, num_epochs=100, batch_size=32, name_saver, folder, opt):
+def train(data, labels,
+          val_data, val_labels,
+          network, num_epochs, batch_size, name_saver, folder, opt):
   
-  if opt.type == 'use_CNN_A':
+  if opt.use_CNN_A:
     data = np.expand_dims(data, axis=-1)
     val_data = np.expand_dims(val_data, axis=-1)
     
@@ -58,7 +60,8 @@ def main(opt):
    
 
   # Loading data-----------------------------------------------------------------------
-  X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=opt.test_size, random_state=42, shuffle=True)
+  merge_data, label = load_all(opt)
+  X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=opt.test_rate, random_state=42, shuffle=True)
 
   if opt.use_DNN_B:
     X_train_A, X_train_B             = X_train[:, :200], X_train[:, 200:]
@@ -90,7 +93,7 @@ def parse_opt(known=False):
     parser.add_argument('--save', type=str, default='model.h5', help='Position to save weights')
     parser.add_argument('--epochs', type=int, default=100, help='Number of iterations for training')
     parser.add_argument('--batch_size', type=int, default=32, help='Number of batch size for training')
-    parser.add_argument('--batch_size', type=float, default=0.25, help='rate of split data for testing')
+    parser.add_argument('--test_rate', type=float, default=0.25, help='rate of split data for testing')
     parser.add_argument('--use_type', type=str, default=None, help='types of NN: use_CNN_A')
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
