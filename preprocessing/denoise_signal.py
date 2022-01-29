@@ -7,6 +7,11 @@ import numpy as np
 from math import factorial
 from sklearn.cluster import KMeans
 
+def f_to_mels(f):
+    return 2595*np.log10(1+f/700)
+def mels_to_f(mels):
+    return 700*(np.power(10, mels/2595)-1)
+
 def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_y=None):
     """Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
     The Savitzky-Golay filter removes high frequency noise from data.
@@ -82,6 +87,7 @@ def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_
 def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
   t = np.linspace(0, 1, num=num).astype(np.float32)
   f = f.reshape(num, )
+  f = f_to_mels(f)
 
   ## Compute the Fast Fourier Transform (FFT)
   fhat = np.fft.fft(f, num)                     # Compute the FFT
@@ -134,7 +140,7 @@ def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
     plt.savefig('plot_all.png')
   
   if get_result:
-    return ffilt.real
+    return mels_to_f(ffilt.real)
 
 def SVD_denoise(Xnoisy):
     sigma = 1
