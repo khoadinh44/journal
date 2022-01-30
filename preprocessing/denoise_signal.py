@@ -143,10 +143,17 @@ def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
     return mels_to_f(ffilt.real)
 
 def SVD_denoise(Xnoisy):
+    m, n = Xnoisy.shape
+    if m > n:
+        n, m = Xnoisy.shape
+        
+    belta = m/n
     sigma = 1
+    
+    lambda_ = np.sqrt(2*(belta+1) + (8*belta)/((belta + 1) + np.sqrt(belta**2 + 14*belta + 1)))
+    cutoff = lambda_ * np.sqrt(n) * sigma
+    
     U, S, VT = np.linalg.svd(Xnoisy, full_matrices=0)
-    N = Xnoisy.shape[1]
-    cutoff = (4/np.sqrt(3)) * np.sqrt(N) * sigma # Hard threshold
     r = np.max(np.where(S > cutoff)) # Keep modes w/ sig > cutoff 
 
     Xclean = U[:,:(r+1)] @ np.diag(S[:(r+1)]) @ VT[:(r+1),:]
