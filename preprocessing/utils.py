@@ -29,11 +29,17 @@ def signal_to_IFMs(x):
     max = np.max(x)
     return (x-min)/(max-min)
 
-def signaltonoise_dB(a, axis=0, ddof=0):
-    a = np.asanyarray(a[0, :])
-    m = a.mean(axis)
-    sd = a.std(axis=axis, ddof=ddof)
-    return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
+def signaltonoise_dB(x, y):
+    '''
+    x: pure signal
+    y: noised signal
+    '''
+    return np.sqrt(np.sum(y), np.sum(x))
+#     a = np.asanyarray(a[0, :])
+#     m = a.mean(axis)
+#     sd = a.std(axis=axis, ddof=ddof)
+#     return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
+    
 
 def get_spectrogram(waveform):
   # Zero-padding for an audio waveform with less than 16,000 samples.
