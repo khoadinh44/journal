@@ -34,11 +34,11 @@ def signaltonoise_dB(x, y):
     x: pure signal
     y: noised signal
     '''
-    return np.sqrt(np.sum(y), np.sum(x))
 #     a = np.asanyarray(a[0, :])
 #     m = a.mean(axis)
 #     sd = a.std(axis=axis, ddof=ddof)
 #     return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
+    return np.sqrt(np.abs(np.sum(y))/ np.sum(np.square(x)))
     
 
 def get_spectrogram(waveform):
