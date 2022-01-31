@@ -40,6 +40,9 @@ def train(data, labels,
   elif opt.use_CNN_B:
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
+  elif opt.use_CNN_C:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+      pickle.dump(history.history, file_pi)
   
 
     
@@ -77,6 +80,8 @@ def main(opt):
     train(X_train, y_train, X_test, y_test, CNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_B:
     train(X_train, y_train, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
+  elif opt.use_CNN_C:
+    train(X_train, y_train, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
     
   
 def parse_opt(known=False):
@@ -87,14 +92,15 @@ def parse_opt(known=False):
     parser.add_argument('--use_DNN_B', default=False, type=bool)
     parser.add_argument('--use_CNN_A', default=False, type=bool)
     parser.add_argument('--use_CNN_B', default=False, type=bool)
+    parser.add_argument('--use_CNN_C', default=False, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
     # Parameters---------------------------------------------
-    parser.add_argument('--save', type=str, default='model.h5', help='Position to save weights')
-    parser.add_argument('--epochs', type=int, default=100, help='Number of iterations for training')
-    parser.add_argument('--batch_size', type=int, default=32, help='Number of batch size for training')
-    parser.add_argument('--test_rate', type=float, default=0.25, help='rate of split data for testing')
-    parser.add_argument('--use_type', type=str, default=None, help='types of NN: use_CNN_A')
+    parser.add_argument('--save',       type=str,   default='model.h5', help='Position to save weights')
+    parser.add_argument('--epochs',     type=int,   default=100,        help='Number of iterations for training')
+    parser.add_argument('--batch_size', type=int,   default=32,         help='Number of batch size for training')
+    parser.add_argument('--test_rate',  type=float, default=0.25,       help='rate of split data for testing')
+    parser.add_argument('--use_type',   type=str,   default=None,       help='types of NN: use_CNN_A')
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
