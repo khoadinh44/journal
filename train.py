@@ -2,7 +2,7 @@ import tensorflow as tf
 import pickle
 import numpy as np
 import argparse
-from network.nn import DNN_A, DNN_B, CNN_A, CNN_B
+from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
 from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB
 from load_data import load_all
@@ -81,7 +81,7 @@ def main(opt):
   elif opt.use_CNN_B:
     train(X_train, y_train, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_C:
-    train(X_train, y_train, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_test, y_test, CNN_C, opt.epochs, opt.batch_size, opt.save, folder, opt)
     
   
 def parse_opt(known=False):
