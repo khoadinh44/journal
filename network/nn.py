@@ -1,17 +1,26 @@
 from functools import partial
 import keras
 import tensorflow as tf
+from tensorflow_addons.layers import MultiHeadAttention
 from tensorflow.keras.layers import Conv1D, Activation, Dense, concatenate
 import keras.backend as K
 from keras import layers
 from keras import regularizers
-from keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, \
-    Lambda
+from keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda
 from keras.models import Model
 
+def TransformerLayer(x=None, c=48, num_heads=4):
+    # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
+    q   = Dense(c, use_bias=False)(x)
+    k   = Dense(c, use_bias=False)(x)
+    v   = Dense(c, use_bias=False)(x)
+    ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
+    # ma1  = layers.add([ma, x])
+    fc1 = Dense(c, use_bias=False)(ma)
+    fc2 = Dense(c, use_bias=False)(fc1) + x
+    return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
-
 def identity_block(input_tensor, kernel_size, filters, stage, block):
     conv_name_base = 'res' + str(stage) + str(block) + '_branch'
     bn_name_base = 'bn' + str(stage) + str(block) + '_branch'
@@ -47,7 +56,6 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
     return x
-
 
 def CNN_A(num_classes=6):
     '''
@@ -111,3 +119,32 @@ def DNN_B():
   output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
+
+def CNN_C(num_classes=6):
+    '''
+    The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
+    https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
+    '''
+    inputs = Input(shape=[400, 1])
+    x = Conv1D(48,
+               kernel_size=80,
+               strides=4,
+               padding='same',
+               kernel_initializer='glorot_uniform',
+               kernel_regularizer=regularizers.l2(l=0.0001))(inputs)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(3):
+        # x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+        x = TransformerLayer(x)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    x = GlobalAveragePooling1D()(x)
+    x = Dense(num_classes, activation='softmax')(x)
+
+    m = Model(inputs, x, name='resnet34')
+    return m
