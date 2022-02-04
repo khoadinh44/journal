@@ -21,6 +21,7 @@ def load_all(opt):
     '''
     num = 124600
     n   = 200
+    
 
     Normal_0_name    = [[1, 0, 0, 0, 0, 0]]*int(num/n)
     B007_0_name      = [[0, 1, 0, 0, 0, 0]]*int(num/n)
@@ -31,13 +32,62 @@ def load_all(opt):
 
     label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
 
-    Normal_0 = scipy.io.loadmat('./data/Normal_0.mat')
-    B007_0 = scipy.io.loadmat('./data/B007_0.mat')
-    IR007_0 = scipy.io.loadmat('./data/IR007_0.mat')
-    OR007_3_0 = scipy.io.loadmat('./data/OR007_3_0.mat')
-    OR007_6_0 = scipy.io.loadmat('./data/OR007_6_0.mat')
-    OR007_12_0 = scipy.io.loadmat('./data/OR007_12_0.mat')
-
+    Normal_0 = scipy.io.loadmat('./data/normal/Normal_0.mat')
+    Normal_1 = scipy.io.loadmat('./data/normal/Normal_1.mat')
+    Normal_2 = scipy.io.loadmat('./data/normal/Normal_2.mat')
+    Normal_3 = scipy.io.loadmat('./data/normal/Normal_3.mat')
+    
+    # 12k------------------------------------------------------------
+    B007_0 = scipy.io.loadmat('./data/12k/B007_0.mat')
+    B007_1 = scipy.io.loadmat('./data/12k/B007_1.mat')
+    B007_2 = scipy.io.loadmat('./data/12k/B007_2.mat')
+    B007_3 = scipy.io.loadmat('./data/12k/B007_3.mat')
+    
+    B014_0 = scipy.io.loadmat('./data/12k/B014_0.mat')
+    B014_1 = scipy.io.loadmat('./data/12k/B014_1.mat')
+    B014_2 = scipy.io.loadmat('./data/12k/B014_2.mat')
+    B014_3 = scipy.io.loadmat('./data/12k/B014_3.mat')
+    
+    B021_0 = scipy.io.loadmat('./data/12k/B021_0.mat')
+    B021_1 = scipy.io.loadmat('./data/12k/B021_1.mat')
+    B021_2 = scipy.io.loadmat('./data/12k/B021_2.mat')
+    B021_3 = scipy.io.loadmat('./data/12k/B021_3.mat')
+    
+    IR007_0 = scipy.io.loadmat('./data/12k/IR007_0.mat')
+    IR007_1 = scipy.io.loadmat('./data/12k/IR007_1.mat')
+    IR007_2 = scipy.io.loadmat('./data/12k/IR007_2.mat')
+    IR007_3 = scipy.io.loadmat('./data/12k/IR007_3.mat')
+    
+    IR014_0 = scipy.io.loadmat('./data/12k/IR014_0.mat')
+    IR014_1 = scipy.io.loadmat('./data/12k/IR014_1.mat')
+    IR014_2 = scipy.io.loadmat('./data/12k/IR014_2.mat')
+    IR014_3 = scipy.io.loadmat('./data/12k/IR014_3.mat')
+    
+    IR021_0 = scipy.io.loadmat('./data/12k/IR021_0.mat')
+    IR021_1 = scipy.io.loadmat('./data/12k/IR021_1.mat')
+    IR021_2 = scipy.io.loadmat('./data/12k/IR021_2.mat')
+    IR021_3 = scipy.io.loadmat('./data/12k/IR021_3.mat')
+    
+    OR007_12_0 = scipy.io.loadmat('./data/12k/OR007@12_0.mat')
+    OR007_12_1 = scipy.io.loadmat('./data/12k/OR007@12_1.mat')
+    OR007_12_2 = scipy.io.loadmat('./data/12k/OR007@12_2.mat')
+    OR007_12_3 = scipy.io.loadmat('./data/12k/OR007@12_3.mat')
+    
+    OR007_3_0 = scipy.io.loadmat('./data/12k/OR007@3_0.mat')
+    OR007_3_1 = scipy.io.loadmat('./data/12k/OR007@3_1.mat')
+    OR007_3_2 = scipy.io.loadmat('./data/12k/OR007@3_2.mat')
+    OR007_3_3 = scipy.io.loadmat('./data/12k/OR007@3_3.mat')
+    
+    OR007_6_0 = scipy.io.loadmat('./data/12k/OR007@6_0.mat')
+    OR007_6_1 = scipy.io.loadmat('./data/12k/OR007@6_1.mat')
+    OR007_6_2 = scipy.io.loadmat('./data/12k/OR007@6_2.mat')
+    OR007_6_3 = scipy.io.loadmat('./data/12k/OR007@6_3.mat')
+    
+    OR0014_3_0 = scipy.io.loadmat('./data/12k/OR014@3_0.mat')
+    OR0014_3_1 = scipy.io.loadmat('./data/12k/OR014@3_1.mat')
+    OR0014_3_2 = scipy.io.loadmat('./data/12k/OR014@3_2.mat')
+    OR0014_3_3 = scipy.io.loadmat('./data/12k/OR014@3_3.mat')
+    
     # Data 21-----------------------------------------------
     # B007_0 = scipy.io.loadmat('./data/21/B021_0.mat')
     # IR007_0 = scipy.io.loadmat('./data/21/IR021_0.mat')
