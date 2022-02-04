@@ -6,7 +6,21 @@ from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_
 from preprocessing.utils import get_spectrogram
 import matplotlib.pyplot as plt
 
-def load_all(opt):
+def one_hot(pos, num_class):
+    num = np.zero((1, num_class))
+    num[0, num_class] = 1
+    return num
+
+def concatenate_data(x):
+  data=None
+  for idx, i in enumerate(x):
+    if idx == 3:
+      data = x[i]
+    if idx > 3:
+      data = np.concatenate((data, x[i]), axis=0)
+  return data.reshape((1, -1))
+
+def load_all(opt, data_12k=False, data_48k=False, data_normal=False):
     '''
     For all files, the following item in the variable name indicates:
         DE - drive end accelerometer data
@@ -31,87 +45,148 @@ def load_all(opt):
     OR007_12_0_name  = [[0, 0, 0, 0, 0, 1]]*int(num/n)
 
     label = np.concatenate((Normal_0_name, B007_0_name, IR007_0_name, OR007_3_0_name, OR007_6_0_name, OR007_12_0_name))
+    
+    if data_normal:
+        Normal_0 = concatenate_data(scipy.io.loadmat('./data/normal/Normal_0.mat'))
+        Normal_1 = concatenate_data(scipy.io.loadmat('./data/normal/Normal_1.mat'))
+        Normal_2 = concatenate_data(scipy.io.loadmat('./data/normal/Normal_2.mat'))
+        Normal_3 = concatenate_data(scipy.io.loadmat('./data/normal/Normal_3.mat'))
+    
+    if data_12k:
+        B007_0 = concatenate_data(scipy.io.loadmat('./data/12k/B007_0.mat'))
+        B007_0_label = one_hot(0, 60)
+        B007_1 = concatenate_data(scipy.io.loadmat('./data/12k/B007_1.mat'))
+        B007_1_label = one_hot(1, 60)
+        B007_2 = concatenate_data(scipy.io.loadmat('./data/12k/B007_2.mat'))
+        B007_2_label = one_hot(2, 60)
+        B007_3 = concatenate_data(scipy.io.loadmat('./data/12k/B007_3.mat'))
+        B007_3_label = one_hot(3, 60)
 
-    Normal_0 = scipy.io.loadmat('./data/normal/Normal_0.mat')
-    Normal_1 = scipy.io.loadmat('./data/normal/Normal_1.mat')
-    Normal_2 = scipy.io.loadmat('./data/normal/Normal_2.mat')
-    Normal_3 = scipy.io.loadmat('./data/normal/Normal_3.mat')
-    
-    # 12k------------------------------------------------------------
-    B007_0 = scipy.io.loadmat('./data/12k/B007_0.mat')
-    B007_1 = scipy.io.loadmat('./data/12k/B007_1.mat')
-    B007_2 = scipy.io.loadmat('./data/12k/B007_2.mat')
-    B007_3 = scipy.io.loadmat('./data/12k/B007_3.mat')
-    
-    B014_0 = scipy.io.loadmat('./data/12k/B014_0.mat')
-    B014_1 = scipy.io.loadmat('./data/12k/B014_1.mat')
-    B014_2 = scipy.io.loadmat('./data/12k/B014_2.mat')
-    B014_3 = scipy.io.loadmat('./data/12k/B014_3.mat')
-    
-    B021_0 = scipy.io.loadmat('./data/12k/B021_0.mat')
-    B021_1 = scipy.io.loadmat('./data/12k/B021_1.mat')
-    B021_2 = scipy.io.loadmat('./data/12k/B021_2.mat')
-    B021_3 = scipy.io.loadmat('./data/12k/B021_3.mat')
-    
-    B028_0 = scipy.io.loadmat('./data/12k/B028_0.mat')
-    B028_1 = scipy.io.loadmat('./data/12k/B028_1.mat')
-    B028_2 = scipy.io.loadmat('./data/12k/B028_2.mat')
-    B028_3 = scipy.io.loadmat('./data/12k/B028_3.mat')
-    
-    IR007_0 = scipy.io.loadmat('./data/12k/IR007_0.mat')
-    IR007_1 = scipy.io.loadmat('./data/12k/IR007_1.mat')
-    IR007_2 = scipy.io.loadmat('./data/12k/IR007_2.mat')
-    IR007_3 = scipy.io.loadmat('./data/12k/IR007_3.mat')
-    
-    IR014_0 = scipy.io.loadmat('./data/12k/IR014_0.mat')
-    IR014_1 = scipy.io.loadmat('./data/12k/IR014_1.mat')
-    IR014_2 = scipy.io.loadmat('./data/12k/IR014_2.mat')
-    IR014_3 = scipy.io.loadmat('./data/12k/IR014_3.mat')
-    
-    IR021_0 = scipy.io.loadmat('./data/12k/IR021_0.mat')
-    IR021_1 = scipy.io.loadmat('./data/12k/IR021_1.mat')
-    IR021_2 = scipy.io.loadmat('./data/12k/IR021_2.mat')
-    IR021_3 = scipy.io.loadmat('./data/12k/IR021_3.mat')
-    
-    IR028_0 = scipy.io.loadmat('./data/12k/IR028_0.mat')
-    IR028_1 = scipy.io.loadmat('./data/12k/IR028_1.mat')
-    IR028_2 = scipy.io.loadmat('./data/12k/IR028_2.mat')
-    IR028_3 = scipy.io.loadmat('./data/12k/IR028_3.mat')
-    
-    OR007_12_0 = scipy.io.loadmat('./data/12k/OR007@12_0.mat')
-    OR007_12_1 = scipy.io.loadmat('./data/12k/OR007@12_1.mat')
-    OR007_12_2 = scipy.io.loadmat('./data/12k/OR007@12_2.mat')
-    OR007_12_3 = scipy.io.loadmat('./data/12k/OR007@12_3.mat')
-    
-    OR007_3_0 = scipy.io.loadmat('./data/12k/OR007@3_0.mat')
-    OR007_3_1 = scipy.io.loadmat('./data/12k/OR007@3_1.mat')
-    OR007_3_2 = scipy.io.loadmat('./data/12k/OR007@3_2.mat')
-    OR007_3_3 = scipy.io.loadmat('./data/12k/OR007@3_3.mat')
-    
-    OR007_6_0 = scipy.io.loadmat('./data/12k/OR007@6_0.mat')
-    OR007_6_1 = scipy.io.loadmat('./data/12k/OR007@6_1.mat')
-    OR007_6_2 = scipy.io.loadmat('./data/12k/OR007@6_2.mat')
-    OR007_6_3 = scipy.io.loadmat('./data/12k/OR007@6_3.mat')
-    
-    OR0014_6_0 = scipy.io.loadmat('./data/12k/OR014@6_0.mat')
-    OR0014_6_1 = scipy.io.loadmat('./data/12k/OR014@6_1.mat')
-    OR0014_6_2 = scipy.io.loadmat('./data/12k/OR014@6_2.mat')
-    OR0014_6_3 = scipy.io.loadmat('./data/12k/OR014@6_3.mat')
-    
-    OR0021_6_0 = scipy.io.loadmat('./data/12k/OR021@6_0.mat')
-    OR0021_6_1 = scipy.io.loadmat('./data/12k/OR021@6_1.mat')
-    OR0021_6_2 = scipy.io.loadmat('./data/12k/OR021@6_2.mat')
-    OR0021_6_3 = scipy.io.loadmat('./data/12k/OR021@6_3.mat')
-    
-    OR0021_3_0 = scipy.io.loadmat('./data/12k/OR021@3_0.mat')
-    OR0021_3_1 = scipy.io.loadmat('./data/12k/OR021@3_1.mat')
-    OR0021_3_2 = scipy.io.loadmat('./data/12k/OR021@3_2.mat')
-    OR0021_3_3 = scipy.io.loadmat('./data/12k/OR021@3_3.mat')
-    
-    OR0021_12_0 = scipy.io.loadmat('./data/12k/OR021@12_0.mat')
-    OR0021_12_1 = scipy.io.loadmat('./data/12k/OR021@12_1.mat')
-    OR0021_12_2 = scipy.io.loadmat('./data/12k/OR021@12_2.mat')
-    OR0021_12_3 = scipy.io.loadmat('./data/12k/OR021@12_3.mat')
+        B014_0 = concatenate_data(scipy.io.loadmat('./data/12k/B014_0.mat'))
+        B014_0_label = one_hot(4, 60)
+        B014_1 = concatenate_data(scipy.io.loadmat('./data/12k/B014_1.mat'))
+        B014_1_label = one_hot(5, 60)
+        B014_2 = concatenate_data(scipy.io.loadmat('./data/12k/B014_2.mat'))
+        B014_2_label = one_hot(6, 60)
+        B014_3 = concatenate_data(scipy.io.loadmat('./data/12k/B014_3.mat'))
+        B014_3_label = one_hot(7, 60)
+        
+        B021_0 = concatenate_data(scipy.io.loadmat('./data/12k/B021_0.mat'))
+        B021_0_label = one_hot(8, 60)
+        B021_1 = concatenate_data(scipy.io.loadmat('./data/12k/B021_1.mat'))
+        B021_1_label = one_hot(9, 60)
+        B021_2 = concatenate_data(scipy.io.loadmat('./data/12k/B021_2.mat'))
+        B021_2_label = one_hot(10, 60)
+        B021_3 = concatenate_data(scipy.io.loadmat('./data/12k/B021_3.mat'))
+        B021_3_label = one_hot(11, 60)
+
+        B028_0 = concatenate_data(scipy.io.loadmat('./data/12k/B028_0.mat'))
+        B028_0_label = one_hot(12, 60)
+        B028_1 = concatenate_data(scipy.io.loadmat('./data/12k/B028_1.mat'))
+        B028_1_label = one_hot(13, 60)
+        B028_2 = concatenate_data(scipy.io.loadmat('./data/12k/B028_2.mat'))
+        B028_2_label = one_hot(14, 60)
+        B028_3 = concatenate_data(scipy.io.loadmat('./data/12k/B028_3.mat'))
+        B028_3_label = one_hot(15, 60)
+
+        IR007_0 = concatenate_data(scipy.io.loadmat('./data/12k/IR007_0.mat'))
+        IR007_0_label = one_hot(16, 60)
+        IR007_1 = concatenate_data(scipy.io.loadmat('./data/12k/IR007_1.mat'))
+        IR007_1_label = one_hot(17, 60)
+        IR007_2 = concatenate_data(scipy.io.loadmat('./data/12k/IR007_2.mat'))
+        IR007_2_label = one_hot(18, 60)
+        IR007_3 = concatenate_data(scipy.io.loadmat('./data/12k/IR007_3.mat'))
+        IR007_3_label = one_hot(19, 60)
+
+        IR014_0 = concatenate_data(scipy.io.loadmat('./data/12k/IR014_0.mat'))
+        IR014_0_label = one_hot(20, 60)
+        IR014_1 = concatenate_data(scipy.io.loadmat('./data/12k/IR014_1.mat'))
+        IR014_1_label = one_hot(21, 60)
+        IR014_2 = concatenate_data(scipy.io.loadmat('./data/12k/IR014_2.mat'))
+        IR014_2_label = one_hot(22, 60)
+        IR014_3 = concatenate_data(scipy.io.loadmat('./data/12k/IR014_3.mat'))
+        IR014_3_label = one_hot(23, 60)
+
+        IR021_0 = concatenate_data(scipy.io.loadmat('./data/12k/IR021_0.mat'))
+        IR021_0_label = one_hot(24, 60)
+        IR021_1 = concatenate_data(scipy.io.loadmat('./data/12k/IR021_1.mat'))
+        IR021_1_label = one_hot(25, 60)
+        IR021_2 = concatenate_data(scipy.io.loadmat('./data/12k/IR021_2.mat'))
+        IR021_2_label = one_hot(26, 60)
+        IR021_3 = concatenate_data(scipy.io.loadmat('./data/12k/IR021_3.mat'))
+        IR021_3_label = one_hot(27, 60)
+
+        IR028_0 = concatenate_data(scipy.io.loadmat('./data/12k/IR028_0.mat'))
+        IR028_0_label = one_hot(28, 60)
+        IR028_1 = concatenate_data(scipy.io.loadmat('./data/12k/IR028_1.mat'))
+        IR028_1_label = one_hot(29, 60)
+        IR028_2 = concatenate_data(scipy.io.loadmat('./data/12k/IR028_2.mat'))
+        IR028_2_label = one_hot(30, 60)
+        IR028_3 = concatenate_data(scipy.io.loadmat('./data/12k/IR028_3.mat'))
+        IR028_3_label = one_hot(31, 60)
+
+        OR007_12_0 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@12_0.mat'))
+        OR007_12_0_label = one_hot(32, 60)
+        OR007_12_1 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@12_1.mat'))
+        OR007_12_1_label = one_hot(33, 60)
+        OR007_12_2 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@12_2.mat'))
+        OR007_12_2_label = one_hot(34, 60)
+        OR007_12_3 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@12_3.mat'))
+        OR007_12_3_label = one_hot(35, 60)
+
+        OR007_3_0 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@3_0.mat'))
+        OR007_3_0_label = one_hot(36, 60)
+        OR007_3_1 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@3_1.mat'))
+        OR007_3_1_label = one_hot(37, 60)
+        OR007_3_2 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@3_2.mat'))
+        OR007_3_2_label = one_hot(38, 60)
+        OR007_3_3 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@3_3.mat'))
+        OR007_3_3_label = one_hot(39, 60)
+
+        OR007_6_0 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@6_0.mat'))
+        OR007_6_0_label = one_hot(40, 60)
+        OR007_6_1 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@6_1.mat'))
+        OR007_6_1_label = one_hot(41, 60)
+        OR007_6_2 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@6_2.mat'))
+        OR007_6_2_label = one_hot(42, 60)
+        OR007_6_3 = concatenate_data(scipy.io.loadmat('./data/12k/OR007@6_3.mat'))
+        OR007_6_3_label = one_hot(43, 60)
+
+        OR0014_6_0 = concatenate_data(scipy.io.loadmat('./data/12k/OR014@6_0.mat'))
+        OR0014_6_0_label = one_hot(44, 60)
+        OR0014_6_1 = concatenate_data(scipy.io.loadmat('./data/12k/OR014@6_1.mat'))
+        OR0014_6_1_label = one_hot(45, 60)
+        OR0014_6_2 = concatenate_data(scipy.io.loadmat('./data/12k/OR014@6_2.mat'))
+        OR0014_6_2_label = one_hot(46, 60)
+        OR0014_6_3 = concatenate_data(scipy.io.loadmat('./data/12k/OR014@6_3.mat'))
+        OR0014_6_3_label = one_hot(47, 60)
+
+        OR0021_6_0 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@6_0.mat'))
+        OR0021_6_0_label = one_hot(48, 60)
+        OR0021_6_1 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@6_1.mat'))
+        OR0021_6_1_label = one_hot(49, 60)
+        OR0021_6_2 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@6_2.mat'))
+        OR0021_6_2_label = one_hot(50, 60)
+        OR0021_6_3 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@6_3.mat'))
+        OR0021_6_3_label = one_hot(51, 60)
+
+        OR0021_3_0 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@3_0.mat'))
+        OR0021_3_0_label = one_hot(52, 60)
+        OR0021_3_1 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@3_1.mat'))
+        OR0021_3_1_label = one_hot(53, 60)
+        OR0021_3_2 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@3_2.mat'))
+        OR0021_3_2_label = one_hot(54, 60)
+        OR0021_3_3 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@3_3.mat'))
+        OR0021_3_3_label = one_hot(55, 60)
+
+        OR0021_12_0 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@12_0.mat'))
+        OR0021_12_0_label = one_hot(56, 60)
+        OR0021_12_1 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@12_1.mat'))
+        OR0021_12_1_label = one_hot(57, 60)
+        OR0021_12_2 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@12_2.mat'))
+        OR0021_12_2_label = one_hot(58, 60)
+        OR0021_12_3 = concatenate_data(scipy.io.loadmat('./data/12k/OR021@12_3.mat'))
+        OR0021_12_3_label = one_hot(59, 60)
     # Data 21-----------------------------------------------
     # B007_0 = scipy.io.loadmat('./data/21/B021_0.mat')
     # IR007_0 = scipy.io.loadmat('./data/21/IR021_0.mat')
