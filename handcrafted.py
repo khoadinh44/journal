@@ -1,9 +1,12 @@
 from sklearn.model_selection import train_test_split
+from preprocessing.utils import convert_one_hot
+from sklearn.ensemble import RandomForestClassifier
 import argparse
+import numpy as np
 
 def main(opt):
   if opt.data_normal:
-    from load_data import Normal_0, Normal_1 Normal_2, Normal_3,\
+    from load_data import Normal_0, Normal_1, Normal_2, Normal_3,\
                           Normal_0_label, Normal_1_label, Normal_2_label, Normal_3_label
   if opt.data_12k:
     from load_data import B007_0, B007_0_label, B007_1, B007_1_label, B007_2, B007_2_label, B007_3, B007_3_label,\
@@ -23,15 +26,13 @@ def main(opt):
                           OR0021_12_0, OR0021_12_0_label, OR0021_12_1, OR0021_12_1_label, OR0021_12_2, OR0021_12_2_label, OR0021_12_3, OR0021_12_3_label
     
     all_data = np.concatenate((Normal_0, IR007_0, B007_0, OR007_6_0, OR007_3_0, OR007_12_0))
-    
-    Normal_0_label = Normal_0_label * Normal_0.shape[0]
-    IR007_0_label = IR007_0_label * IR007_0.shape[0]
-    B007_0_label = B007_0_label * B007_0.shape[0]
-    OR007_6_0_label = OR007_6_0_label * OR007_6_0.shape[0]
-    OR007_3_0_label = OR007_3_0_label * OR007_3_0.shape[0]
-    OR007_12_0_label = OR007_12_0_label * OR007_12_0.shape[0]
-    
-    all_labels = np.concatenate((Normal_0_label, IR007_0_label, B007_0_label, OR007_6_0_label, OR007_3_0_label, OR007_12_0_label))
+    Normal_0_label_all = convert_one_hot(Normal_0_label) * Normal_0.shape[0]
+    IR007_0_label_all = convert_one_hot(IR007_0_label) * IR007_0.shape[0]
+    B007_0_label_all = convert_one_hot(B007_0_label) * B007_0.shape[0]
+    OR007_6_0_label_all = convert_one_hot(OR007_6_0_label) * OR007_6_0.shape[0]
+    OR007_3_0_label_all = convert_one_hot(OR007_3_0_label) * OR007_3_0.shape[0]
+    OR007_12_0_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_0.shape[0]
+    all_labels = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
     
     X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=0.33, random_state=42)
     
