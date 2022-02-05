@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def one_hot(pos, num_class):
     num = np.zeros((1, num_class))
-    num[0, num_class] = 1
+    num[0, pos] = 1
     return num
 
 def concatenate_data(x):
