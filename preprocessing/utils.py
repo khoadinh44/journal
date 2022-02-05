@@ -62,3 +62,42 @@ def get_spectrogram(waveform):
   # shape (`batch_size`, `height`, `width`, `channels`).
   spectrogram = spectrogram[..., tf.newaxis]
   return spectrogram
+
+def one_hot(pos, num_class):
+    num = np.zeros((1, num_class))
+    num[0, pos] = 1
+    return num
+
+def divide_sample(x, window_length, hop_length):
+  '''
+  The shape of x must be (n_sample, )
+  '''
+  a = []
+  window = 0
+  all_hop_length = 0
+  num_window = (x.shape[0]-(window_length-hop_length))//hop_length
+  while window < num_window:
+    a.append(x[all_hop_length: all_hop_length+window_length])
+    all_hop_length += hop_length
+    window += 1
+  return np.array(a)
+
+def concatenate_data(x=None, scale=None, test_size=0.2, window_length=400, hop_length=200):
+  data=None
+  for idx, i in enumerate(x):
+    if idx == 3:
+      data = x[i]
+    if idx == 4:
+      data = np.concatenate((data, x[i]), axis=1)
+      data = data.reshape((-1, 1))
+    if idx == 5:
+      data = np.concatenate((data, x[i]), axis=0)
+  data = scale.fit_transform(data)
+  data = data.reshape((-1, ))
+  
+  data = divide_sample(data, window_length, hop_length)
+  pos_test_size = int(test_size * data.shape[0])
+
+  test_data  = data[:pos_test_size, :]
+  train_data = data[pos_test_size:, :]
+  return train_data, test_data
