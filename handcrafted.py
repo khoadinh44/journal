@@ -111,11 +111,6 @@ def main(opt):
   
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
-    
-    # Models and denoising methods--------------------------
-    parser.add_argument('--data_normal', default=True, type=bool)
-    parser.add_argument('--data_12k', default=True, type=bool)
-    parser.add_argument('--data_48k', default=False, type=bool)
 
     # Run case------------------------------------------------
     parser.add_argument('--case_0', default=True, type=bool)
