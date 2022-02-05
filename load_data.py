@@ -6,7 +6,6 @@ from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_
 from preprocessing.utils import get_spectrogram, one_hot, concatenate_data
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import minmax_scale
 from sklearn.preprocessing import MaxAbsScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import RobustScaler
