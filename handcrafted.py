@@ -9,7 +9,7 @@ from sklearn.preprocessing import PowerTransformer
 
 def main(opt):
   if opt.data_normal:
-    from load_data import Normal_0, Normal_1, Normal_2, Normal_3,\
+    from load_data import Normal_0, Normal_1 Normal_2, Normal_3,\
                           Normal_0_label, Normal_1_label, Normal_2_label, Normal_3_label
   if opt.data_12k:
     from load_data import B007_0, B007_0_label, B007_1, B007_1_label, B007_2, B007_2_label, B007_3, B007_3_label,\
