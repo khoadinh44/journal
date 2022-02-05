@@ -83,25 +83,24 @@ def divide_sample(x, window_length, hop_length):
   return np.array(a)
 
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
-  data=None
+  data = []
   for idx, i in enumerate(x):
-    if idx == 3:
-      data = x[i]
-    if idx == 4:
-      data = np.concatenate((data, x[i]), axis=1)
-      data = data.reshape((-1, 1))
-    if idx == 5:
-      data = np.concatenate((data, x[i]), axis=0)
-  data = scale.fit_transform(data)
+    if len(x[i]) > 80:
+      if data == []:
+        data = x[i]
+      else:
+        data = np.concatenate((data, x[i]), axis=0)
+
   data = data.reshape((-1, ))
-  
   data = divide_sample(data, window_length, hop_length)
 
   return data
 
 def convert_one_hot(x):
   index = None
+  x = np.squeeze(x)
+
   for idx, i in enumerate(x):
     if i == 1:
       index = idx
-  return index
+  return [index]
