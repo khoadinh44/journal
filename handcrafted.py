@@ -32,64 +32,73 @@ def main(opt):
                           OR0021_3_0, OR0021_3_0_label, OR0021_3_1, OR0021_3_1_label, OR0021_3_2, OR0021_3_2_label, OR0021_3_3, OR0021_3_3_label,\
                           OR0021_12_0, OR0021_12_0_label, OR0021_12_1, OR0021_12_1_label, OR0021_12_2, OR0021_12_2_label, OR0021_12_3, OR0021_12_3_label
     
-    if opt.case == 'case 0':
-      all_data = np.concatenate((Normal_0, IR007_0, B007_0, OR007_6_0, OR007_3_0, OR007_12_0))
+    if opt.case_0 == True:
+      all_data_0 = np.concatenate((Normal_0, IR007_0, B007_0, OR007_6_0, OR007_3_0, OR007_12_0))
       Normal_0_label_all = convert_one_hot(Normal_0_label) * Normal_0.shape[0]
       IR007_0_label_all = convert_one_hot(IR007_0_label) * IR007_0.shape[0]
       B007_0_label_all = convert_one_hot(B007_0_label) * B007_0.shape[0]
       OR007_6_0_label_all = convert_one_hot(OR007_6_0_label) * OR007_6_0.shape[0]
       OR007_3_0_label_all = convert_one_hot(OR007_3_0_label) * OR007_3_0.shape[0]
       OR007_12_0_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_0.shape[0]
-      all_labels = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
-    
-    if opt.case == 'case 1':
-      all_data = np.concatenate((Normal_1, IR007_1, B007_1, OR007_6_1, OR007_3_1, OR007_12_1))
+      all_labels_0 = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
+      X_train, X_test, y_train, y_test = train_test_split(all_data_0, all_labels_0, test_size=opt.test_rate, random_state=42)
+
+    if opt.case_1 == True:
+      all_data_1 = np.concatenate((Normal_1, IR007_1, B007_1, OR007_6_1, OR007_3_1, OR007_12_1))
       Normal_1_label_all = convert_one_hot(Normal_1_label) * Normal_1.shape[0]
       IR007_1_label_all = convert_one_hot(IR007_1_label) * IR007_1.shape[0]
       B007_1_label_all = convert_one_hot(B007_1_label) * B007_1.shape[0]
       OR007_6_1_label_all = convert_one_hot(OR007_6_1_label) * OR007_6_1.shape[0]
       OR007_3_1_label_all = convert_one_hot(OR007_3_1_label) * OR007_3_1.shape[0]
       OR007_12_1_label_all = convert_one_hot(OR007_12_1_label) * OR007_12_1.shape[0]
-      all_labels = np.concatenate((Normal_1_label_all, IR007_1_label_all, B007_1_label_all, OR007_6_1_label_all, OR007_3_1_label_all, OR007_12_1_label_all))
-    
-    if opt.case == 'case 2':
-      all_data = np.concatenate((Normal_2, IR007_2, B007_2, OR007_6_2, OR007_3_2, OR007_12_2))
+      all_labels_1 = np.concatenate((Normal_1_label_all, IR007_1_label_all, B007_1_label_all, OR007_6_1_label_all, OR007_3_1_label_all, OR007_12_1_label_all))
+      X_train, X_test, y_train, y_test = train_test_split(all_data_1, all_labels_1, test_size=opt.test_rate, random_state=42)
+
+    if opt.case_2 == True:
+      all_data_2 = np.concatenate((Normal_2, IR007_2, B007_2, OR007_6_2, OR007_3_2, OR007_12_2))
       Normal_2_label_all = convert_one_hot(Normal_2_label) * Normal_2.shape[0]
       IR007_2_label_all = convert_one_hot(IR007_2_label) * IR007_2.shape[0]
       B007_2_label_all = convert_one_hot(B007_2_label) * B007_2.shape[0]
       OR007_6_2_label_all = convert_one_hot(OR007_6_2_label) * OR007_6_2.shape[0]
       OR007_3_2_label_all = convert_one_hot(OR007_3_2_label) * OR007_3_2.shape[0]
       OR007_12_2_label_all = convert_one_hot(OR007_12_2_label) * OR007_12_2.shape[0]
-      all_labels = np.concatenate((Normal_2_label_all, IR007_2_label_all, B007_2_label_all, OR007_6_2_label_all, OR007_3_2_label_all, OR007_12_2_label_all))
+      all_labels_2 = np.concatenate((Normal_2_label_all, IR007_2_label_all, B007_2_label_all, OR007_6_2_label_all, OR007_3_2_label_all, OR007_12_2_label_all))
+      X_train, X_test, y_train, y_test = train_test_split(all_data_2, all_labels_2, test_size=opt.test_rate, random_state=42)
 
-    if opt.case == 'case 3':
-      all_data = np.concatenate((Normal_3, IR007_3, B007_3, OR007_6_3, OR007_3_3, OR007_12_3))
+    if opt.case_3 == True:
+      all_data_3 = np.concatenate((Normal_3, IR007_3, B007_3, OR007_6_3, OR007_3_3, OR007_12_3))
       Normal_3_label_all = convert_one_hot(Normal_3_label) * Normal_3.shape[0]
       IR007_3_label_all = convert_one_hot(IR007_3_label) * IR007_3.shape[0]
       B007_3_label_all = convert_one_hot(B007_3_label) * B007_3.shape[0]
       OR007_6_3_label_all = convert_one_hot(OR007_6_3_label) * OR007_6_3.shape[0]
       OR007_3_3_label_all = convert_one_hot(OR007_3_3_label) * OR007_3_3.shape[0]
       OR007_12_3_label_all = convert_one_hot(OR007_12_3_label) * OR007_12_3.shape[0]
-      all_labels = np.concatenate((Normal_3_label_all, IR007_3_label_all, B007_3_label_all, OR007_6_3_label_all, OR007_3_3_label_all, OR007_12_3_label_all))
-    
-    if opt.case == 'case 4':
-      Normal_4 = np.concatenate((Normal_0, Normal_1, Normal_2, Normal_3))
-      IR007_4 = np.concatenate((IR007_0, IR007_1, IR007_2, IR007_3))
-      B007_4 = np.concatenate((B007_0, B007_1, B007_2, B007_3))
-      OR007_6_4 = np.concatenate((OR007_6_0, OR007_6_1, OR007_6_2, OR007_6_3))
-      OR007_3_4 = np.concatenate((OR007_3_0, OR007_3_1, OR007_3_2, OR007_3_3))
-      OR007_12_4 = np.concatenate((OR007_12_0, OR007_12_1, OR007_12_2, OR007_12_3))
+      all_labels_3 = np.concatenate((Normal_3_label_all, IR007_3_label_all, B007_3_label_all, OR007_6_3_label_all, OR007_3_3_label_all, OR007_12_3_label_all))
+      X_train, X_test, y_train, y_test = train_test_split(all_data_3, all_labels_3, test_size=opt.test_rate, random_state=42)
 
-      all_data = np.concatenate((Normal_4, IR007_4, B007_4, OR007_6_4, OR007_3_4, OR007_12_4))
-      Normal_3_label_all = convert_one_hot(Normal_3_label) * Normal_4.shape[0]
-      IR007_3_label_all = convert_one_hot(IR007_3_label) * IR007_4.shape[0]
-      B007_3_label_all = convert_one_hot(B007_3_label) * B007_4.shape[0]
-      OR007_6_3_label_all = convert_one_hot(OR007_6_3_label) * OR007_6_4.shape[0]
-      OR007_3_3_label_all = convert_one_hot(OR007_3_3_label) * OR007_3_4.shape[0]
-      OR007_12_3_label_all = convert_one_hot(OR007_12_3_label) * OR007_12_4.shape[0]
-      all_labels = np.concatenate((Normal_3_label_all, IR007_3_label_all, B007_3_label_all, OR007_6_3_label_all, OR007_3_3_label_all, OR007_12_3_label_all))
+    if opt.case_4 == True:
+      all_data_4 = np.concatenate((all_data_0, all_data_1, all_data_2, all_data_3))
+      all_labels_4 = np.concatenate((all_labels_0, all_labels_1, all_labels_2, all_labels_3))
+      X_train, X_test, y_train, y_test = train_test_split(all_data_4, all_labels_4, test_size=opt.test_rate, random_state=42)
 
-    X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=opt.test_rate, random_state=42)
+    if opt.case_5 == True:
+      Normal_5 = np.concatenate((Normal_0, Normal_1, Normal_2, Normal_3))
+      IR007_5 = np.concatenate((IR007_0, IR007_1, IR007_2, IR007_3))
+      B007_5 = np.concatenate((B007_0, B007_1, B007_2, B007_3))
+      OR007_6_5 = np.concatenate((OR007_6_0, OR007_6_1, OR007_6_2, OR007_6_3))
+      OR007_3_5 = np.concatenate((OR007_3_0, OR007_3_1, OR007_3_2, OR007_3_3))
+      OR007_12_5 = np.concatenate((OR007_12_0, OR007_12_1, OR007_12_2, OR007_12_3))
+
+      all_data = np.concatenate((Normal_5, IR007_5, B007_5, OR007_6_5, OR007_3_5, OR007_12_5))
+      Normal_5_label_all = convert_one_hot(Normal_5_label) * Normal_5.shape[0]
+      IR007_5_label_all = convert_one_hot(IR007_5_label) * IR007_5.shape[0]
+      B007_5_label_all = convert_one_hot(B007_5_label) * B007_5.shape[0]
+      OR007_6_5_label_all = convert_one_hot(OR007_6_5_label) * OR007_6_5.shape[0]
+      OR007_3_5_label_all = convert_one_hot(OR007_3_5_label) * OR007_3_5.shape[0]
+      OR007_12_5_label_all = convert_one_hot(OR007_12_5_label) * OR007_12_5.shape[0]
+      all_labels_5 = np.concatenate((Normal_5_label_all, IR007_5_label_all, B007_5_label_all, OR007_6_5_label_all, OR007_3_5_label_all, OR007_12_5_label_all))
+
+      X_train, X_test, y_train, y_test = train_test_split(all_data_5, all_labels_5, test_size=opt.test_rate, random_state=42)
     
     # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
     # model = LogisticRegression(random_state=1)
@@ -107,7 +116,19 @@ def parse_opt(known=False):
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k', default=True, type=bool)
     parser.add_argument('--data_48k', default=False, type=bool)
-    parser.add_argument('--case', default='case 4', type=str)     
+
+    # Run case------------------------------------------------
+    parser.add_argument('--case_0', default=True, type=bool)
+    parser.add_argument('--case_1', default=True, type=bool)
+    parser.add_argument('--case_2', default=True, type=bool)
+    parser.add_argument('--case_3', default=True, type=bool)
+    parser.add_argument('--case_4', default=True, type=bool)
+    parser.add_argument('--case_5', default=False, type=bool)
+    parser.add_argument('--case_6', default=False, type=bool)
+    parser.add_argument('--case_7', default=False, type=bool)
+    parser.add_argument('--case_8', default=False, type=bool)
+    parser.add_argument('--case_9', default=False, type=bool)
+
     # Parameters---------------------------------------------
     parser.add_argument('--save',       type=str,   default='model.h5', help='Position to save weights')
     parser.add_argument('--epochs',     type=int,   default=100,        help='Number of iterations for training')
