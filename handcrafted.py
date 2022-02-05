@@ -1,11 +1,4 @@
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import minmax_scale
-from sklearn.preprocessing import MaxAbsScaler
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import RobustScaler
-from sklearn.preprocessing import Normalizer
-from sklearn.preprocessing import QuantileTransformer
-from sklearn.preprocessing import PowerTransformer
+from sklearn.model_selection import train_test_split
 
 def main(opt):
   if opt.data_normal:
@@ -28,7 +21,25 @@ def main(opt):
                           OR0021_3_0, OR0021_3_0_label, OR0021_3_1, OR0021_3_1_label, OR0021_3_2, OR0021_3_2_label, OR0021_3_3, OR0021_3_3_label,\
                           OR0021_12_0, OR0021_12_0_label, OR0021_12_1, OR0021_12_1_label, OR0021_12_2, OR0021_12_2_label, OR0021_12_3, OR0021_12_3_label
     
+    all_data = np.concatenate((Normal_0, IR007_0, B007_0, OR007_6_0, OR007_3_0, OR007_12_0))
     
+    Normal_0_label = Normal_0_label * Normal_0.shape[0]
+    IR007_0_label = IR007_0_label * IR007_0.shape[0]
+    B007_0_label = B007_0_label * B007_0.shape[0]
+    OR007_6_0_label = OR007_6_0_label * OR007_6_0.shape[0]
+    OR007_3_0_label = OR007_3_0_label * OR007_3_0.shape[0]
+    OR007_12_0_label = OR007_12_0_label * OR007_12_0.shape[0]
+    
+    all_labels = np.concatenate((Normal_0_label, IR007_0_label, B007_0_label, OR007_6_0_label, OR007_3_0_label, OR007_12_0_label))
+    
+    X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=0.33, random_state=42)
+    
+    rf_model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+    # Train the model
+    rf_model.fit(X_train, y_train)
+    
+    test_predictions = rf_model.predict(X_test)
+    print("Accuracy:", accuracy_score(y_test, test_predictions))
   
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
