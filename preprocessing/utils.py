@@ -82,7 +82,7 @@ def divide_sample(x, window_length, hop_length):
     window += 1
   return np.array(a)
 
-def concatenate_data(x=None, scale=None, test_size=0.2, window_length=400, hop_length=200):
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
   data=None
   for idx, i in enumerate(x):
     if idx == 3:
@@ -96,11 +96,8 @@ def concatenate_data(x=None, scale=None, test_size=0.2, window_length=400, hop_l
   data = data.reshape((-1, ))
   
   data = divide_sample(data, window_length, hop_length)
-  pos_test_size = int(test_size * data.shape[0])
 
-  test_data  = data[:pos_test_size, :]
-  train_data = data[pos_test_size:, :]
-  return train_data, test_data
+  return data
 
 def convert_one_hot(x):
   index = None
