@@ -41,7 +41,7 @@ def main(opt):
     OR007_12_0_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_0.shape[0]
     all_labels = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
     
-    X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=opt.test_rate, random_state=42)
     
     # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
     # model = LogisticRegression(random_state=1)
@@ -63,7 +63,7 @@ def parse_opt(known=False):
     parser.add_argument('--save',       type=str,   default='model.h5', help='Position to save weights')
     parser.add_argument('--epochs',     type=int,   default=100,        help='Number of iterations for training')
     parser.add_argument('--batch_size', type=int,   default=32,         help='Number of batch size for training')
-    parser.add_argument('--test_rate',  type=float, default=0.25,       help='rate of split data for testing')
+    parser.add_argument('--test_rate',  type=float, default=0.33,       help='rate of split data for testing')
     parser.add_argument('--use_type',   type=str,   default=None,       help='types of NN: use_CNN_A')
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
