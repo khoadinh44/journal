@@ -101,3 +101,10 @@ def concatenate_data(x=None, scale=None, test_size=0.2, window_length=400, hop_l
   test_data  = data[:pos_test_size, :]
   train_data = data[pos_test_size:, :]
   return train_data, test_data
+
+def convert_one_hot(x):
+  index = None
+  for idx, i in enumerate(x):
+    if i == 1:
+      index = idx
+  return index
