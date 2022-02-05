@@ -23,7 +23,10 @@ def main(opt):
                           OR007_12_0, OR007_12_0_label, OR007_12_1, OR007_12_1_label, OR007_12_2, OR007_12_2_label, OR007_12_3, OR007_12_3_label,\
                           OR007_3_0, OR007_3_0_label, OR007_3_1, OR007_3_1_label, OR007_3_2, OR007_3_2_label, OR007_3_3, OR007_3_3_label,\
                           OR007_6_0, OR007_6_0_label, OR007_6_1, OR007_6_1_label, OR007_6_2, OR007_6_2_label, OR007_6_3, OR007_6_3_label,\
-                          OR0014_6_0, OR0014_6_0_label, OR0014_6_1, OR0014_6_1_label
+                          OR0014_6_0, OR0014_6_0_label, OR0014_6_1, OR0014_6_1_label, OR0014_6_2, OR0014_6_2_label, OR0014_6_3, OR0014_6_3_label,\
+                          OR0021_6_0, OR0021_6_0_label, OR0021_6_1, OR0021_6_1_label, OR0021_6_2, OR0021_6_2_label, OR0021_6_3, OR0021_6_3_label,\
+                          OR0021_3_0, OR0021_3_0_label, OR0021_3_1, OR0021_3_1_label, OR0021_3_2, OR0021_3_2_label, OR0021_3_3, OR0021_3_3_label,\
+                          OR0021_12_0, OR0021_12_0_label, OR0021_12_1, OR0021_12_1_label, OR0021_12_2, OR0021_12_2_label, OR0021_12_3, OR0021_12_3_label
     
     
   
