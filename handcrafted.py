@@ -32,15 +32,63 @@ def main(opt):
                           OR0021_3_0, OR0021_3_0_label, OR0021_3_1, OR0021_3_1_label, OR0021_3_2, OR0021_3_2_label, OR0021_3_3, OR0021_3_3_label,\
                           OR0021_12_0, OR0021_12_0_label, OR0021_12_1, OR0021_12_1_label, OR0021_12_2, OR0021_12_2_label, OR0021_12_3, OR0021_12_3_label
     
-    all_data = np.concatenate((Normal_0, IR007_0, B007_0, OR007_6_0, OR007_3_0, OR007_12_0))
-    Normal_0_label_all = convert_one_hot(Normal_0_label) * Normal_0.shape[0]
-    IR007_0_label_all = convert_one_hot(IR007_0_label) * IR007_0.shape[0]
-    B007_0_label_all = convert_one_hot(B007_0_label) * B007_0.shape[0]
-    OR007_6_0_label_all = convert_one_hot(OR007_6_0_label) * OR007_6_0.shape[0]
-    OR007_3_0_label_all = convert_one_hot(OR007_3_0_label) * OR007_3_0.shape[0]
-    OR007_12_0_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_0.shape[0]
-    all_labels = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
+    if opt.case == 'case 0':
+      all_data = np.concatenate((Normal_0, IR007_0, B007_0, OR007_6_0, OR007_3_0, OR007_12_0))
+      Normal_0_label_all = convert_one_hot(Normal_0_label) * Normal_0.shape[0]
+      IR007_0_label_all = convert_one_hot(IR007_0_label) * IR007_0.shape[0]
+      B007_0_label_all = convert_one_hot(B007_0_label) * B007_0.shape[0]
+      OR007_6_0_label_all = convert_one_hot(OR007_6_0_label) * OR007_6_0.shape[0]
+      OR007_3_0_label_all = convert_one_hot(OR007_3_0_label) * OR007_3_0.shape[0]
+      OR007_12_0_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_0.shape[0]
+      all_labels = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
     
+    if opt.case == 'case 1':
+      all_data = np.concatenate((Normal_1, IR007_1, B007_1, OR007_6_1, OR007_3_1, OR007_12_1))
+      Normal_1_label_all = convert_one_hot(Normal_1_label) * Normal_1.shape[0]
+      IR007_1_label_all = convert_one_hot(IR007_1_label) * IR007_1.shape[0]
+      B007_1_label_all = convert_one_hot(B007_1_label) * B007_1.shape[0]
+      OR007_6_1_label_all = convert_one_hot(OR007_6_1_label) * OR007_6_1.shape[0]
+      OR007_3_1_label_all = convert_one_hot(OR007_3_1_label) * OR007_3_1.shape[0]
+      OR007_12_1_label_all = convert_one_hot(OR007_12_1_label) * OR007_12_1.shape[0]
+      all_labels = np.concatenate((Normal_1_label_all, IR007_1_label_all, B007_1_label_all, OR007_6_1_label_all, OR007_3_1_label_all, OR007_12_1_label_all))
+    
+    if opt.case == 'case 2':
+      all_data = np.concatenate((Normal_2, IR007_2, B007_2, OR007_6_2, OR007_3_2, OR007_12_2))
+      Normal_2_label_all = convert_one_hot(Normal_2_label) * Normal_2.shape[0]
+      IR007_2_label_all = convert_one_hot(IR007_2_label) * IR007_2.shape[0]
+      B007_2_label_all = convert_one_hot(B007_2_label) * B007_2.shape[0]
+      OR007_6_2_label_all = convert_one_hot(OR007_6_2_label) * OR007_6_2.shape[0]
+      OR007_3_2_label_all = convert_one_hot(OR007_3_2_label) * OR007_3_2.shape[0]
+      OR007_12_2_label_all = convert_one_hot(OR007_12_2_label) * OR007_12_2.shape[0]
+      all_labels = np.concatenate((Normal_2_label_all, IR007_2_label_all, B007_2_label_all, OR007_6_2_label_all, OR007_3_2_label_all, OR007_12_2_label_all))
+
+    if opt.case == 'case 3':
+      all_data = np.concatenate((Normal_3, IR007_3, B007_3, OR007_6_3, OR007_3_3, OR007_12_3))
+      Normal_3_label_all = convert_one_hot(Normal_3_label) * Normal_3.shape[0]
+      IR007_3_label_all = convert_one_hot(IR007_3_label) * IR007_3.shape[0]
+      B007_3_label_all = convert_one_hot(B007_3_label) * B007_3.shape[0]
+      OR007_6_3_label_all = convert_one_hot(OR007_6_3_label) * OR007_6_3.shape[0]
+      OR007_3_3_label_all = convert_one_hot(OR007_3_3_label) * OR007_3_3.shape[0]
+      OR007_12_3_label_all = convert_one_hot(OR007_12_3_label) * OR007_12_3.shape[0]
+      all_labels = np.concatenate((Normal_3_label_all, IR007_3_label_all, B007_3_label_all, OR007_6_3_label_all, OR007_3_3_label_all, OR007_12_3_label_all))
+    
+    if opt.case == 'case 4':
+      Normal_4 = np.concatenate((Normal_0, Normal_1, Normal_2, Normal_3))
+      IR007_4 = np.concatenate((IR007_0, IR007_1, IR007_2, IR007_3))
+      B007_4 = np.concatenate((B007_0, B007_1, B007_2, B007_3))
+      OR007_6_4 = np.concatenate((OR007_6_0, OR007_6_1, OR007_6_2, OR007_6_3))
+      OR007_3_4 = np.concatenate((OR007_3_0, OR007_3_1, OR007_3_2, OR007_3_3))
+      OR007_12_4 = np.concatenate((OR007_12_0, OR007_12_1, OR007_12_2, OR007_12_3))
+
+      all_data = np.concatenate((Normal_4, IR007_4, B007_4, OR007_6_4, OR007_3_4, OR007_12_4))
+      Normal_3_label_all = convert_one_hot(Normal_3_label) * Normal_4.shape[0]
+      IR007_3_label_all = convert_one_hot(IR007_3_label) * IR007_4.shape[0]
+      B007_3_label_all = convert_one_hot(B007_3_label) * B007_4.shape[0]
+      OR007_6_3_label_all = convert_one_hot(OR007_6_3_label) * OR007_6_4.shape[0]
+      OR007_3_3_label_all = convert_one_hot(OR007_3_3_label) * OR007_3_4.shape[0]
+      OR007_12_3_label_all = convert_one_hot(OR007_12_3_label) * OR007_12_4.shape[0]
+      all_labels = np.concatenate((Normal_3_label_all, IR007_3_label_all, B007_3_label_all, OR007_6_3_label_all, OR007_3_3_label_all, OR007_12_3_label_all))
+
     X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=opt.test_rate, random_state=42)
     
     # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
@@ -58,7 +106,8 @@ def parse_opt(known=False):
     # Models and denoising methods--------------------------
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k', default=True, type=bool)
-    parser.add_argument('--data_48k', default=False, type=bool)    
+    parser.add_argument('--data_48k', default=False, type=bool)
+    parser.add_argument('--case', default='case 4', type=str)     
     # Parameters---------------------------------------------
     parser.add_argument('--save',       type=str,   default='model.h5', help='Position to save weights')
     parser.add_argument('--epochs',     type=int,   default=100,        help='Number of iterations for training')
