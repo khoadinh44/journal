@@ -1,6 +1,12 @@
 from sklearn.model_selection import train_test_split
 from preprocessing.utils import convert_one_hot
+
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import VotingClassifier
+from sklearn.svm import SVC
+
 from sklearn.metrics import accuracy_score
 import argparse
 import numpy as np
@@ -37,11 +43,13 @@ def main(opt):
     
     X_train, X_test, y_train, y_test = train_test_split(all_data, all_labels, test_size=0.33, random_state=42)
     
-    rf_model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+    # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+    # model = LogisticRegression(random_state=1)
+    model = SVC(kernel='rbf', probability=True)
     # Train the model
-    rf_model.fit(X_train, y_train)
+    model.fit(X_train, y_train)
     
-    test_predictions = rf_model.predict(X_test)
+    test_predictions = model.predict(X_test)
     print("Accuracy:", accuracy_score(y_test, test_predictions))
   
 def parse_opt(known=False):
