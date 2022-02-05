@@ -89,7 +89,8 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
       if data == []:
         data = x[i]
       else:
-        data = np.concatenate((data, x[i]), axis=0)
+        row = int(data.shape[0])
+        data = np.concatenate((data, x[i][:row, :]), axis=1)
 
   data = data.reshape((-1, ))
   data = divide_sample(data, window_length, hop_length)
