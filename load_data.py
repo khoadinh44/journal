@@ -7,7 +7,7 @@ from preprocessing.utils import get_spectrogram
 import matplotlib.pyplot as plt
 
 def one_hot(pos, num_class):
-    num = np.zero((1, num_class))
+    num = np.zeros((1, num_class))
     num[0, num_class] = 1
     return num
 
