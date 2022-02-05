@@ -89,8 +89,12 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
       if data == []:
         data = x[i]
       else:
-        row = int(data.shape[0])
-        data = np.concatenate((data, x[i][:row, :]), axis=1)
+        if int(data.shape[0]) < int(x[i].shape[0]):
+          row = int(data.shape[0])
+          data = np.concatenate((data, x[i][:row, :]), axis=1)
+        else:
+          row = int(x[i].shape[0])
+          data = np.concatenate((data[:row, :], x[i]), axis=1)
 
   data = data.reshape(-1, 1)
   data = scale.fit_transform(data)
