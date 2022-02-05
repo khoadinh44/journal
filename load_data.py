@@ -16,9 +16,12 @@ def concatenate_data(x):
   for idx, i in enumerate(x):
     if idx == 3:
       data = x[i]
-    if idx > 3:
+    if idx == 4:
+      data = np.concatenate((data, x[i]), axis=1)
+      data = data.reshape((-1, 1))
+    if idx == 5:
       data = np.concatenate((data, x[i]), axis=0)
-  return data.reshape((1, -1))
+  return data
 
     '''
     For all files, the following item in the variable name indicates:
