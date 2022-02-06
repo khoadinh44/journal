@@ -103,11 +103,14 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
 
   return data
 
-def convert_one_hot(x):
-  index = None
-  x = np.squeeze(x)
+def convert_one_hot(x, state=True):
+  if state == True:
+    index = None
+    x = np.squeeze(x)
 
-  for idx, i in enumerate(x):
-    if i == 1:
-      index = idx
-  return [index]
+    for idx, i in enumerate(x):
+      if i == 1:
+        index = idx
+    return [index]
+  else:
+    return x
