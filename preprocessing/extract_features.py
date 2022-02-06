@@ -4,6 +4,7 @@ import librosa
 
 class AudioFeatureExtractor:
     """
+    Source: https://github.com/bbjornstad/audio-feature-extraction/blob/b6f0ea583ae6aa2e16cdb33b2d35807fe57baa51/afe/BatchExtractor.py#L5
     This class implements an extraction object for audio samples.
     Mostly this is a wrapper for the librosa module, which has low level
     implementations of feature extraction. In particular it standardizes
