@@ -78,7 +78,8 @@ def divide_sample(x, window_length, hop_length):
   all_hop_length = 0
   num_window = (x.shape[0]-(window_length-hop_length))//hop_length
   while window < num_window:
-    a.append(x[all_hop_length: all_hop_length+window_length])
+    if len(x[all_hop_length: all_hop_length+window_length])==window_length:
+      a.append(x[all_hop_length: all_hop_length+window_length])
     all_hop_length += hop_length
     window += 1
   return np.array(a)
