@@ -86,7 +86,7 @@ def divide_sample(x, window_length, hop_length):
 
 def handcrafted_features(x):
     data = []
-    afe = AudioFeatureExtractor(400, 200, 4) # 22050, 1024, 4
+    afe = AudioFeatureExtractor(400, 200, 1) # 22050, 1024, 4
     for i in x:
         extract_rms = afe.extract_rms(i)
         extract_spectral_centroid  = afe.extract_spectral_centroid(i)
@@ -99,7 +99,7 @@ def handcrafted_features(x):
         data.append(all_i)
     return np.array(data)
 
-def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=False):
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True):
   data = []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
@@ -118,7 +118,8 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
             data = np.concatenate((data, x[i]), axis=0)
 
   data = data.reshape(-1, 1)
-  data = scale.fit_transform(data)
+  if scale != None:
+    data = scale.fit_transform(data)
   data = data.reshape((-1, ))
   data = divide_sample(data, window_length, hop_length)
   data = handcrafted_features(data)
