@@ -13,7 +13,9 @@ from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import QuantileTransformer
 from sklearn.preprocessing import PowerTransformer
 
-scaler = MinMaxScaler()
+# scaler = MinMaxScaler()
+scaler = None
+
 data_normal = True
 data_12k    = True
 data_48k    = False
