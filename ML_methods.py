@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
+from preprocessing.utils import handcrafted_features
 
 from sklearn.metrics import accuracy_score
 import argparse
@@ -201,6 +202,13 @@ def main(opt):
                                     B028_0_label_all,    B028_1_label_all,    B028_2_label_all,    B028_3_label_all))
  
     X_train, X_test, y_train, y_test = train_test_split(all_data_14, all_labels_14, test_size=opt.test_rate, random_state=42)
+  
+  if opt.case_15:
+    all_data_15 = handcrafted_features(all_data_14)
+    all_labels_15 = all_labels_14
+    
+    X_train, X_test, y_train, y_test = train_test_split(all_data_15, all_labels_15, test_size=opt.test_rate, random_state=42)
+  
   # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
   # model = LogisticRegression(random_state=1)
   model = SVC(kernel='rbf', probability=True)
@@ -224,6 +232,7 @@ def parse_opt(known=False):
     parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=True,  type=bool)  # turn on case 12 and case_5_11
+    parser.add_argument('--case_15', default=True,  type=bool)  # turn on case 12 and case_5_11
 
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k', default=True, type=bool)
