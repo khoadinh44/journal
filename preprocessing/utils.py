@@ -99,7 +99,7 @@ def handcrafted_features(x):
         data.append(all_i)
     return np.array(data)
 
-def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True):
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=False):
   data = []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
@@ -122,17 +122,19 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
     data = scale.fit_transform(data)
   data = data.reshape((-1, ))
   data = divide_sample(data, window_length, hop_length)
-  data = handcrafted_features(data)
   return data
 
-def convert_one_hot(x):
-    index = None
-    x = np.squeeze(x)
+def convert_one_hot(x, state=True):
+    if state == False:
+      index = None
+      x = np.squeeze(x)
 
-    for idx, i in enumerate(x):
-      if i == 1:
-        index = idx
-    return [index]
+      for idx, i in enumerate(x):
+        if i == 1:
+          index = idx
+      return [index]
+    else:
+      return x.tolist()
 
 def invert_one_hot(x, num_class):
     all_labels = []
