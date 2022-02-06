@@ -96,14 +96,15 @@ def main(opt):
     OR007_3_5 = np.concatenate((OR007_3_0, OR007_3_1, OR007_3_2, OR007_3_3))
     OR007_12_5 = np.concatenate((OR007_12_0, OR007_12_1, OR007_12_2, OR007_12_3))
 
-    all_data = np.concatenate((Normal_5, IR007_5, B007_5, OR007_6_5, OR007_3_5, OR007_12_5))
+    all_data_5 = np.concatenate((Normal_5, IR007_5, B007_5, OR007_6_5, OR007_3_5, OR007_12_5))
+
     Normal_5_label_all = convert_one_hot(Normal_0_label) * Normal_5.shape[0]
     IR007_5_label_all = convert_one_hot(IR007_0_label) * IR007_5.shape[0]
     B007_5_label_all = convert_one_hot(B007_0_label) * B007_5.shape[0]
     OR007_6_5_label_all = convert_one_hot(OR007_6_0_label) * OR007_6_5.shape[0]
     OR007_3_5_label_all = convert_one_hot(OR007_3_0_label) * OR007_3_5.shape[0]
     OR007_12_5_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_5.shape[0]
-    all_labels_5 = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
+    all_labels_5 = np.concatenate((Normal_5_label_all, IR007_5_label_all, B007_5_label_all, OR007_6_5_label_all, OR007_3_5_label_all, OR007_12_5_label_all))
 
     X_train, X_test, y_train, y_test = train_test_split(all_data_5, all_labels_5, test_size=opt.test_rate, random_state=42)
   
@@ -144,19 +145,19 @@ def main(opt):
     X_train, X_test, y_train, y_test = train_test_split(all_data_12, all_labels_12, test_size=opt.test_rate, random_state=42)
   
   if opt.case_13:
-    IR021_13 = np.concatenate((IR021_5, IR021_0, IR021_1, IR021_2, IR021_3))
-    B021_13  = np.concatenate((B021_5, B021_0, B007_1, B021_2, B021_3))
-    OR021_6_13  = np.concatenate((OR021_6_5, OR021_6_0, OR021_6_1, OR021_6_2, OR021_6_3))
-    OR021_3_13  = np.concatenate((OR021_3_5, OR021_3_0, OR021_3_1, OR021_3_2, OR021_3_3))
-    OR021_12_13 = np.concatenate((OR021_12_5, OR021_12_0, OR021_12_1, OR021_12_2, OR021_12_3))
+    IR021_13    = np.concatenate((IR007_5, IR021_0, IR021_1, IR021_2, IR021_3))
+    B021_13     = np.concatenate((B007_5, B021_0, B007_1, B021_2, B021_3))
+    OR021_6_13  = np.concatenate((OR007_6_5, OR021_6_0, OR021_6_1, OR021_6_2, OR021_6_3))
+    OR021_3_13  = np.concatenate((OR007_3_5, OR021_3_0, OR021_3_1, OR021_3_2, OR021_3_3))
+    OR021_12_13 = np.concatenate((OR007_12_5, OR021_12_0, OR021_12_1, OR021_12_2, OR021_12_3))
 
     all_data_13 = np.concatenate((Normal_5, IR021_13, B021_13, OR021_6_13, OR021_3_13, OR021_12_13))
     
-    IR021_13_label_all = convert_one_hot(IR021_0_label) * IR021_13.shape[0]
-    B021_13_label_all = convert_one_hot(B021_5_label) * B021_13.shape[0]
-    OR021_6_13_label_all = convert_one_hot(OR021_6_5_label) * OR021_6_13.shape[0]
-    OR021_3_13_label_all = convert_one_hot(OR021_3_5_label) * OR021_3_13.shape[0]
-    OR021_12_13_label_all = convert_one_hot(OR021_12_5_label) * OR021_12_13.shape[0]
+    IR021_13_label_all = convert_one_hot(IR007_0_label) * IR021_13.shape[0]
+    B021_13_label_all = convert_one_hot(B007_0_label) * B021_13.shape[0]
+    OR021_6_13_label_all = convert_one_hot(OR007_6_0_label) * OR021_6_13.shape[0]
+    OR021_3_13_label_all = convert_one_hot(OR007_3_0_label) * OR021_3_13.shape[0]
+    OR021_12_13_label_all = convert_one_hot(OR007_12_0_label) * OR021_12_13.shape[0]
     all_labels_13 = np.concatenate((Normal_5_label_all, IR021_13_label_all, B021_13_label_all, OR021_6_13_label_all, OR021_3_13_label_all, OR021_12_13_label_all))
 
     X_train, X_test, y_train, y_test = train_test_split(all_data_13, all_labels_13, test_size=opt.test_rate, random_state=42)
@@ -174,15 +175,15 @@ def parse_opt(known=False):
     parser = argparse.ArgumentParser()
 
     # Run case------------------------------------------------
-    parser.add_argument('--case_0_6', default=True, type=bool)
-    parser.add_argument('--case_1_7', default=True, type=bool)
-    parser.add_argument('--case_2_8', default=True, type=bool)
-    parser.add_argument('--case_3_9', default=True, type=bool)
-    parser.add_argument('--case_4_10', default=True, type=bool)
-    parser.add_argument('--case_5_11', default=False, type=bool)
+    parser.add_argument('--case_0_6',  default=False,  type=bool)
+    parser.add_argument('--case_1_7',  default=False,  type=bool)
+    parser.add_argument('--case_2_8',  default=False,  type=bool)
+    parser.add_argument('--case_3_9',  default=False,  type=bool)
+    parser.add_argument('--case_4_10', default=False,  type=bool)
+    parser.add_argument('--case_5_11', default=True, type=bool)
     
-    parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
-    parser.add_argument('--case_13', default=False, type=bool)  # turn on case_5_11
+    parser.add_argument('--case_12', default=False, type=bool) # turn on case_4_10
+    parser.add_argument('--case_13', default=True,  type=bool)  # turn on case_5_11
 
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k', default=True, type=bool)
