@@ -89,29 +89,33 @@ def handcrafted_features(x):
     afe = AudioFeatureExtractor(400, 200, 4) # 22050, 1024, 4
     for i in x:
         extract_rms = afe.extract_rms(i)
-        extract_spectral_centroid = afe.extract_spectral_centroid(i)
+        extract_spectral_centroid  = afe.extract_spectral_centroid(i)
         extract_spectral_bandwidth = afe.extract_spectral_bandwidth(i)
-        extract_spectral_flatness = afe.extract_spectral_flatness(i)
-        extract_spectral_rolloff = afe.extract_spectral_rolloff(i)
+        extract_spectral_flatness  = afe.extract_spectral_flatness(i)
+        extract_spectral_rolloff   = afe.extract_spectral_rolloff(i)
         all_i = np.concatenate((extract_rms, extract_spectral_centroid, extract_spectral_bandwidth, extract_spectral_flatness, extract_spectral_rolloff), axis=1)
         all_i = np.ndarray.flatten(all_i)  # convert the vectors of 400 samples to the vectors of 45 samples
         # print(all_i.shape)
         data.append(all_i)
     return np.array(data)
 
-def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True):
   data = []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
       if data == []:
         data = x[i]
       else:
-        if int(data.shape[0]) < int(x[i].shape[0]):
-          row = int(data.shape[0])
-          data = np.concatenate((data, x[i][:row, :]), axis=1)
+        if hand_fea == False:
+          if int(data.shape[0]) < int(x[i].shape[0]):
+            row = int(data.shape[0])
+            data = np.concatenate((data, x[i][:row, :]), axis=1)
+          else:
+            row = int(x[i].shape[0])
+            data = np.concatenate((data[:row, :], x[i]), axis=1)
         else:
-          row = int(x[i].shape[0])
-          data = np.concatenate((data[:row, :], x[i]), axis=1)
+          if int(data.shape[0]) < int(x[i].shape[0]):
+            data = np.concatenate((data, x[i]), axis=0)
 
   data = data.reshape(-1, 1)
   data = scale.fit_transform(data)
