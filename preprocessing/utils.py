@@ -127,3 +127,11 @@ def convert_one_hot(x):
         index = idx
     return [index]
 
+def invert_one_hot(x, num_class):
+    all_labels = []
+    label_zeros = np.zeros((num_class, ))
+    for i in x:
+        label = np.copy(label_zeros)
+        label[i] = 1
+        all_labels.append(label)
+    return np.array(all_labels)
