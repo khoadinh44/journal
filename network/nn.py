@@ -57,7 +57,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = Activation('relu')(x)
     return x
 
-def CNN_A(num_classes=6):
+def CNN_A(num_classes):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
@@ -85,7 +85,7 @@ def CNN_A(num_classes=6):
     m = Model(inputs, x, name='resnet34')
     return m
 
-def CNN_B():
+def CNN_B(num_classes):
   DefaultConv2D = partial(keras.layers.Conv2D, kernel_size=3, activation='relu', padding="SAME")
   model = keras.models.Sequential([
             DefaultConv2D(filters=256, kernel_size=7, input_shape=[128, 128, 1]), #
@@ -98,7 +98,7 @@ def CNN_B():
             keras.layers.Flatten(),
             keras.layers.Dense(units=512, activation='relu'),
             keras.layers.Dropout(0.5),
-            keras.layers.Dense(units=6, activation='softmax'),])
+            keras.layers.Dense(units=num_classes, activation='softmax'),])
   return model
 
 def DNN_A():
@@ -120,7 +120,7 @@ def DNN_B():
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
 
-def CNN_C(num_classes=6):
+def CNN_C(num_classes):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
