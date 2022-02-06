@@ -195,6 +195,7 @@ def parse_opt(known=False):
     parser.add_argument('--batch_size', type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',  type=float, default=0.33,       help='rate of split data for testing')
     parser.add_argument('--use_type',   type=str,   default=None,       help='types of NN: use_CNN_A')
+    parser.add_argument('--state_oh',   default=False,                  type=bool)
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
