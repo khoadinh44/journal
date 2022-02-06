@@ -5,7 +5,8 @@ import argparse
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
 from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB
-from load_data import load_all
+from ML_methods import get_data
+
 
 def train(data, labels,
           val_data, val_labels,
@@ -15,7 +16,7 @@ def train(data, labels,
     data = np.expand_dims(data, axis=-1)
     val_data = np.expand_dims(val_data, axis=-1)
     
-  model = network()
+  model = network(opt.num_classes)
   model.compile(optimizer="Adam", loss="mse", metrics=['acc', f1_m, precision_m, recall_m])
   model.summary()
 
@@ -60,17 +61,9 @@ def main(opt):
   else:
     folder = 'none_denoise' 
   #---------------------------------------------------------------------------------------  
-   
-
-  # Loading data-----------------------------------------------------------------------
-  merge_data, label = load_all(opt)
-  X_train, X_test, y_train, y_test = train_test_split(merge_data, label, test_size=opt.test_rate, random_state=42, shuffle=True)
-
-  if opt.use_DNN_B:
-    X_train_A, X_train_B             = X_train[:, :200], X_train[:, 200:]
-    X_test_A, X_test_B               = X_test[:, :200],  X_test[:, 200:]
-  #---------------------------------------------------------------------------------------
   
+  X_train, X_test, y_train, y_test = get_data(opt)
+  print(X_train)
 
   if opt.use_DNN_A:
     train(X_train, y_train, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
@@ -88,19 +81,38 @@ def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
     # Models and denoising methods--------------------------
+    parser.add_argument('--use_ML',    default=False, type=bool)
     parser.add_argument('--use_DNN_A', default=False, type=bool)
     parser.add_argument('--use_DNN_B', default=False, type=bool)
     parser.add_argument('--use_CNN_A', default=False, type=bool)
     parser.add_argument('--use_CNN_B', default=False, type=bool)
-    parser.add_argument('--use_CNN_C', default=False, type=bool)
+    parser.add_argument('--use_CNN_C', default=True, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
+    # Run case------------------------------------------------
+    parser.add_argument('--case_0_6',  default=True,  type=bool)
+    parser.add_argument('--case_1_7',  default=True,  type=bool)
+    parser.add_argument('--case_2_8',  default=True,  type=bool)
+    parser.add_argument('--case_3_9',  default=True,  type=bool)
+    parser.add_argument('--case_4_10', default=True,  type=bool) # Turn on all cases before
+    parser.add_argument('--case_5_11', default=False, type=bool)
+    
+    parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
+    parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
+    parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
+    parser.add_argument('--case_15', default=False,  type=bool)  # turn on case 12 and case_4_11
+
+    parser.add_argument('--data_normal', default=True, type=bool)
+    parser.add_argument('--data_12k', default=True, type=bool)
+    parser.add_argument('--data_48k', default=False, type=bool)
+
     # Parameters---------------------------------------------
-    parser.add_argument('--save',       type=str,   default='model.h5', help='Position to save weights')
-    parser.add_argument('--epochs',     type=int,   default=100,        help='Number of iterations for training')
-    parser.add_argument('--batch_size', type=int,   default=32,         help='Number of batch size for training')
-    parser.add_argument('--test_rate',  type=float, default=0.25,       help='rate of split data for testing')
-    parser.add_argument('--use_type',   type=str,   default=None,       help='types of NN: use_CNN_A')
+    parser.add_argument('--save',            type=str,   default='model.h5', help='Position to save weights')
+    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
+    parser.add_argument('--num_classes',     type=int,   default=64,        help='Number of classes')
+    parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
+    parser.add_argument('--test_rate',       type=float, default=0.33,       help='rate of split data for testing')
+    parser.add_argument('--use_type',        type=str,   default=None,       help='types of NN: use_CNN_A')
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
