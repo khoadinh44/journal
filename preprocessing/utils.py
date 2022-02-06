@@ -94,7 +94,7 @@ def handcrafted_features(x):
         extract_spectral_rolloff = afe.extract_spectral_rolloff(i)
         all_i = np.concatenate((extract_rms, extract_spectral_centroid, extract_spectral_bandwidth, extract_spectral_flatness, extract_spectral_rolloff), axis=1)
         all_i = np.ndarray.flatten(all_i)
-        data.append(add_i)
+        data.append(all_i)
     return np.array(data)
 
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
