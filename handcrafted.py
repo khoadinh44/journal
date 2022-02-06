@@ -2,11 +2,6 @@ from sklearn.model_selection import train_test_split
 from preprocessing.utils import convert_one_hot
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegress
-from sklearn.model_selection import train_test_split
-from preprocessing.utils import convert_one_hot
-
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
@@ -32,10 +27,10 @@ def main(opt):
                           OR007_12_0, OR007_12_0_label, OR007_12_1, OR007_12_1_label, OR007_12_2, OR007_12_2_label, OR007_12_3, OR007_12_3_label,\
                           OR007_3_0, OR007_3_0_label, OR007_3_1, OR007_3_1_label, OR007_3_2, OR007_3_2_label, OR007_3_3, OR007_3_3_label,\
                           OR007_6_0, OR007_6_0_label, OR007_6_1, OR007_6_1_label, OR007_6_2, OR007_6_2_label, OR007_6_3, OR007_6_3_label,\
-                          OR0014_6_0, OR0014_6_0_label, OR0014_6_1, OR0014_6_1_label, OR0014_6_2, OR0014_6_2_label, OR0014_6_3, OR0014_6_3_label,\
-                          OR0021_6_0, OR0021_6_0_label, OR0021_6_1, OR0021_6_1_label, OR0021_6_2, OR0021_6_2_label, OR0021_6_3, OR0021_6_3_label,\
-                          OR0021_3_0, OR0021_3_0_label, OR0021_3_1, OR0021_3_1_label, OR0021_3_2, OR0021_3_2_label, OR0021_3_3, OR0021_3_3_label,\
-                          OR0021_12_0, OR0021_12_0_label, OR0021_12_1, OR0021_12_1_label, OR0021_12_2, OR0021_12_2_label, OR0021_12_3, OR0021_12_3_label
+                          OR014_6_0, OR014_6_0_label, OR014_6_1, OR014_6_1_label, OR014_6_2, OR014_6_2_label, OR014_6_3, OR014_6_3_label,\
+                          OR021_6_0, OR021_6_0_label, OR021_6_1, OR021_6_1_label, OR021_6_2, OR021_6_2_label, OR021_6_3, OR021_6_3_label,\
+                          OR021_3_0, OR021_3_0_label, OR021_3_1, OR021_3_1_label, OR021_3_2, OR021_3_2_label, OR021_3_3, OR021_3_3_label,\
+                          OR021_12_0, OR021_12_0_label, OR021_12_1, OR021_12_1_label, OR021_12_2, OR021_12_2_label, OR021_12_3, OR021_12_3_label
   
   if opt.data_48k:
     from load_data import B007_0, B007_0_label, B007_1, B007_1_label, B007_2, B007_2_label, B007_3, B007_3_label,\
@@ -179,11 +174,11 @@ def parse_opt(known=False):
     parser = argparse.ArgumentParser()
 
     # Run case------------------------------------------------
-    parser.add_argument('--case_0_6', default=False, type=bool)
+    parser.add_argument('--case_0_6', default=True, type=bool)
     parser.add_argument('--case_1_7', default=True, type=bool)
-    parser.add_argument('--case_2_8', default=False, type=bool)
-    parser.add_argument('--case_3_9', default=False, type=bool)
-    parser.add_argument('--case_4_10', default=False, type=bool)
+    parser.add_argument('--case_2_8', default=True, type=bool)
+    parser.add_argument('--case_3_9', default=True, type=bool)
+    parser.add_argument('--case_4_10', default=True, type=bool)
     parser.add_argument('--case_5_11', default=False, type=bool)
     
     parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
