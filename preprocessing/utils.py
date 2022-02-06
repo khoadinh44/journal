@@ -86,7 +86,7 @@ def divide_sample(x, window_length, hop_length):
 
 def handcrafted_features(x):
     data = []
-    afe = AudioFeatureExtractor(22050, 1024, 4)
+    afe = AudioFeatureExtractor(400, 200, 4) # 22050, 1024, 4
     for i in x:
         extract_rms = afe.extract_rms(i)
         extract_spectral_centroid = afe.extract_spectral_centroid(i)
@@ -94,7 +94,8 @@ def handcrafted_features(x):
         extract_spectral_flatness = afe.extract_spectral_flatness(i)
         extract_spectral_rolloff = afe.extract_spectral_rolloff(i)
         all_i = np.concatenate((extract_rms, extract_spectral_centroid, extract_spectral_bandwidth, extract_spectral_flatness, extract_spectral_rolloff), axis=1)
-        all_i = np.ndarray.flatten(all_i)  # convert the vectors of 400 samples to the vectors of 10 samples
+        all_i = np.ndarray.flatten(all_i)  # convert the vectors of 400 samples to the vectors of 45 samples
+        # print(all_i.shape)
         data.append(all_i)
     return np.array(data)
 
