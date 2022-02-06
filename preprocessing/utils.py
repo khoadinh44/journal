@@ -1,6 +1,7 @@
 from keras import backend as K
 import numpy as np
 import tensorflow as tf
+from preprocessing.extract_features import AudioFeatureExtractor
 
 def recall_m(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
@@ -82,6 +83,20 @@ def divide_sample(x, window_length, hop_length):
     window += 1
   return np.array(a)
 
+def handcrafted_features(x):
+    data = []
+    afe = AudioFeatureExtractor(22050, 1024, 4)
+    for i in x:
+        extract_rms = afe.extract_rms(i)
+        extract_spectral_centroid = afe.extract_spectral_centroid(i)
+        extract_spectral_bandwidth = afe.extract_spectral_bandwidth(i)
+        extract_spectral_flatness = afe.extract_spectral_flatness(i)
+        extract_spectral_rolloff = afe.extract_spectral_rolloff(i)
+        all_i = np.concatenate((extract_rms, extract_spectral_centroid, extract_spectral_bandwidth, extract_spectral_flatness, extract_spectral_rolloff), axis=1)
+        all_i = np.ndarray.flatten(all_i)
+        data.append(add_i)
+    return np.array(data)
+
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
   data = []
   for idx, i in enumerate(x):
@@ -100,7 +115,7 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
   data = scale.fit_transform(data)
   data = data.reshape((-1, ))
   data = divide_sample(data, window_length, hop_length)
-
+  data = handcrafted_features(data)
   return data
 
 def convert_one_hot(x, state=True):
