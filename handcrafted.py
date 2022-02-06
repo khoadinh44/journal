@@ -2,7 +2,8 @@ from sklearn.model_selection import train_test_split
 from preprocessing.utils import convert_one_hot
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegressfrom sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegress
+from sklearn.model_selection import train_test_split
 from preprocessing.utils import convert_one_hot
 
 from sklearn.ensemble import RandomForestClassifier
@@ -300,16 +301,70 @@ def main(opt):
     OR007_12_5 = np.concatenate((OR007_12_0, OR007_12_1, OR007_12_2, OR007_12_3))
 
     all_data = np.concatenate((Normal_5, IR007_5, B007_5, OR007_6_5, OR007_3_5, OR007_12_5))
-    Normal_5_label_all = convert_one_hot(Normal_5_label) * Normal_5.shape[0]
-    IR007_5_label_all = convert_one_hot(IR007_5_label) * IR007_5.shape[0]
-    B007_5_label_all = convert_one_hot(B007_5_label) * B007_5.shape[0]
-    OR007_6_5_label_all = convert_one_hot(OR007_6_5_label) * OR007_6_5.shape[0]
-    OR007_3_5_label_all = convert_one_hot(OR007_3_5_label) * OR007_3_5.shape[0]
-    OR007_12_5_label_all = convert_one_hot(OR007_12_5_label) * OR007_12_5.shape[0]
-    all_labels_5 = np.concatenate((Normal_5_label_all, IR007_5_label_all, B007_5_label_all, OR007_6_5_label_all, OR007_3_5_label_all, OR007_12_5_label_all))
+    Normal_5_label_all = convert_one_hot(Normal_0_label) * Normal_5.shape[0]
+    IR007_5_label_all = convert_one_hot(IR007_0_label) * IR007_5.shape[0]
+    B007_5_label_all = convert_one_hot(B007_0_label) * B007_5.shape[0]
+    OR007_6_5_label_all = convert_one_hot(OR007_6_0_label) * OR007_6_5.shape[0]
+    OR007_3_5_label_all = convert_one_hot(OR007_3_0_label) * OR007_3_5.shape[0]
+    OR007_12_5_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_5.shape[0]
+    all_labels_5 = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
 
     X_train, X_test, y_train, y_test = train_test_split(all_data_5, all_labels_5, test_size=opt.test_rate, random_state=42)
   
+  if opt.case_12:
+    all_data_12 = np.concatenate((all_data_4, IR021_0, B021_0, OR021_6_0, OR021_3_0, OR021_12_0,
+                                  IR021_1, B021_1, OR021_6_1, OR021_3_1, OR021_12_1,
+                                  IR021_2, B021_2, OR021_6_2, OR021_3_2, OR021_12_2,
+                                  IR021_3, B021_3, OR021_6_3, OR021_3_3, OR021_12_3))
+    
+    IR021_0_label_all = convert_one_hot(IR021_0_label) * IR021_0.shape[0]
+    B021_0_label_all = convert_one_hot(B021_0_label) * B021_0.shape[0]
+    OR021_6_0_label_all = convert_one_hot(OR021_6_0_label) * OR021_6_0.shape[0]
+    OR021_3_0_label_all = convert_one_hot(OR021_3_0_label) * OR021_3_0.shape[0]
+    OR021_12_0_label_all = convert_one_hot(OR021_12_0_label) * OR021_12_0.shape[0]
+    
+    IR021_1_label_all = convert_one_hot(IR021_1_label) * IR021_1.shape[0]
+    B021_1_label_all = convert_one_hot(B021_1_label) * B021_1.shape[0]
+    OR021_6_1_label_all = convert_one_hot(OR021_6_1_label) * OR021_6_1.shape[0]
+    OR021_3_1_label_all = convert_one_hot(OR021_3_1_label) * OR021_3_1.shape[0]
+    OR021_12_1_label_all = convert_one_hot(OR021_12_1_label) * OR021_12_1.shape[0]
+    
+    IR021_2_label_all = convert_one_hot(IR021_2_label) * IR021_2.shape[0]
+    B021_2_label_all = convert_one_hot(B021_2_label) * B021_2.shape[0]
+    OR021_6_2_label_all = convert_one_hot(OR021_6_2_label) * OR021_6_2.shape[0]
+    OR021_3_2_label_all = convert_one_hot(OR021_3_2_label) * OR021_3_2.shape[0]
+    OR021_12_2_label_all = convert_one_hot(OR021_12_2_label) * OR021_12_2.shape[0]
+    
+    IR021_3_label_all = convert_one_hot(IR021_3_label) * IR021_3.shape[0]
+    B021_3_label_all = convert_one_hot(B021_3_label) * B021_3.shape[0]
+    OR021_6_3_label_all = convert_one_hot(OR021_6_3_label) * OR021_6_3.shape[0]
+    OR021_3_3_label_all = convert_one_hot(OR021_3_3_label) * OR021_3_3.shape[0]
+    OR021_12_3_label_all = convert_one_hot(OR021_12_3_label) * OR021_12_3.shape[0]
+    
+    all_labels_12 = np.concatenate((all_labels_4, IR021_0_label_all, B021_0_label_all, OR021_6_0_label_all, OR021_3_0_label_all, OR021_12_0_label_all,
+                                    IR021_1_label_all, B021_1_label_all, OR021_6_1_label_all, OR021_3_1_label_all, OR021_12_1_label_all,
+                                    IR021_2_label_all, B021_2_label_all, OR021_6_2_label_all, OR021_3_2_label_all, OR021_12_2_label_all,
+                                    IR021_3_label_all, B021_3_label_all, OR021_6_3_label_all, OR021_3_3_label_all, OR021_12_3_label_all))
+    X_train, X_test, y_train, y_test = train_test_split(all_data_12, all_labels_12, test_size=opt.test_rate, random_state=42)
+  
+  if opt.case_13:
+    IR021_13 = np.concatenate((IR021_5, IR021_0, IR021_1, IR021_2, IR021_3))
+    B021_13  = np.concatenate((B021_5, B021_0, B007_1, B021_2, B021_3))
+    OR021_6_13  = np.concatenate((OR021_6_5, OR021_6_0, OR021_6_1, OR021_6_2, OR021_6_3))
+    OR021_3_13  = np.concatenate((OR021_3_5, OR021_3_0, OR021_3_1, OR021_3_2, OR021_3_3))
+    OR021_12_13 = np.concatenate((OR021_12_5, OR021_12_0, OR021_12_1, OR021_12_2, OR021_12_3))
+
+    all_data_13 = np.concatenate((Normal_5, IR021_13, B021_13, OR021_6_13, OR021_3_13, OR021_12_13))
+    
+    IR021_13_label_all = convert_one_hot(IR021_0_label) * IR021_13.shape[0]
+    B021_13_label_all = convert_one_hot(B021_5_label) * B021_13.shape[0]
+    OR021_6_13_label_all = convert_one_hot(OR021_6_5_label) * OR021_6_13.shape[0]
+    OR021_3_13_label_all = convert_one_hot(OR021_3_5_label) * OR021_3_13.shape[0]
+    OR021_12_13_label_all = convert_one_hot(OR021_12_5_label) * OR021_12_13.shape[0]
+    all_labels_13 = np.concatenate((Normal_5_label_all, IR021_13_label_all, B021_13_label_all, OR021_6_13_label_all, OR021_3_13_label_all, OR021_12_13_label_all))
+
+    X_train, X_test, y_train, y_test = train_test_split(all_data_13, all_labels_13, test_size=opt.test_rate, random_state=42)
+    
   # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
   # model = LogisticRegression(random_state=1)
   model = SVC(kernel='rbf', probability=True)
@@ -329,10 +384,13 @@ def parse_opt(known=False):
     parser.add_argument('--case_3_9', default=False, type=bool)
     parser.add_argument('--case_4_10', default=False, type=bool)
     parser.add_argument('--case_5_11', default=False, type=bool)
+    
+    parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
+    parser.add_argument('--case_13', default=False, type=bool)  # turn on case_5_11
 
     parser.add_argument('--data_normal', default=True, type=bool)
-    parser.add_argument('--data_12k', default=False, type=bool)
-    parser.add_argument('--data_48k', default=True, type=bool)
+    parser.add_argument('--data_12k', default=True, type=bool)
+    parser.add_argument('--data_48k', default=False, type=bool)
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',       type=str,   default='model.h5', help='Position to save weights')
