@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score
 import argparse
 import numpy as np
 
-def main(opt):
+def get_data(opt):
   if opt.data_normal:
     from load_data import Normal_0, Normal_1, Normal_2, Normal_3,\
                           Normal_0_label, Normal_1_label, Normal_2_label, Normal_3_label
@@ -209,17 +209,22 @@ def main(opt):
     
     X_train, X_test, y_train, y_test = train_test_split(all_data_15, all_labels_15, test_size=opt.test_rate, random_state=42)
   
-  # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-  # model = LogisticRegression(random_state=1)
-  model = SVC(kernel='rbf', probability=True)
-  # Train the model
-  model.fit(X_train, y_train)
+  if opt.use_ML:
+    model = SVC(kernel='rbf', probability=True)
+    # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+    # model = LogisticRegression(random_state=1)
+    # Train the model
+    model.fit(X_train, y_train)
   
-  test_predictions = model.predict(X_test)
-  print("Accuracy:", accuracy_score(y_test, test_predictions))
+    test_predictions = model.predict(X_test)
+    print("Accuracy:", accuracy_score(y_test, test_predictions))
+    
+  return X_train, X_test, y_train, y_test
   
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
+
+    parser.add_argument('--use_ML',    default=False, type=bool)
 
     # Run case------------------------------------------------
     parser.add_argument('--case_0_6',  default=True,  type=bool)
@@ -231,8 +236,8 @@ def parse_opt(known=False):
     
     parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
-    parser.add_argument('--case_14', default=True,  type=bool)  # turn on case 12 and case_5_11
-    parser.add_argument('--case_15', default=True,  type=bool)  # turn on case 12 and case_5_11
+    parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
+    parser.add_argument('--case_15', default=False,  type=bool)  # turn on case 12 and case_4_11
 
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k', default=True, type=bool)
@@ -252,4 +257,4 @@ def parse_opt(known=False):
     
 if __name__ == "__main__":
     opt = parse_opt()
-    main(opt)
+    get_data(opt)
