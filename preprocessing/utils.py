@@ -118,8 +118,7 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200):
   data = handcrafted_features(data)
   return data
 
-def convert_one_hot(x, state=True):
-  if state == True:
+def convert_one_hot(x):
     index = None
     x = np.squeeze(x)
 
@@ -127,5 +126,4 @@ def convert_one_hot(x, state=True):
       if i == 1:
         index = idx
     return [index]
-  else:
-    return x
+
