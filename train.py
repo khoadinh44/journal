@@ -17,14 +17,16 @@ def train(data, labels,
     data = np.expand_dims(data, axis=-1)
     val_data = np.expand_dims(val_data, axis=-1)
     
-  model = network(opt.num_classes)
-  model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
-  model.summary()
+  with tf.device('/CPU:0'):
+    model = network(opt.num_classes)
+    model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
+    model.summary()
 
-  history = model.fit(data, labels,
-                      epochs     = num_epochs,
-                      batch_size = batch_size,
-                      validation_data=(val_data, val_labels))
+  with tf.device('/GPU:0'):
+    history = model.fit(data, labels,
+                        epochs     = num_epochs,
+                        batch_size = batch_size,
+                        validation_data=(val_data, val_labels))
   model.save(name_saver)
 
   _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
@@ -63,9 +65,9 @@ def main(opt):
   else:
     folder = 'none_denoise' 
   #---------------------------------------------------------------------------------------  
-  
-  X_train_all, X_test, y_train_all, y_test = get_data(opt)
-  X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
+  with tf.device('/CPU:0'):
+    X_train_all, X_test, y_train_all, y_test = get_data(opt)
+    X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
 
   if opt.use_DNN_A:
     train(X_train, y_train, X_val, y_val, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
@@ -92,8 +94,8 @@ def parse_opt(known=False):
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
     # Run case------------------------------------------------
-    parser.add_argument('--case_0_6',  default=True,  type=bool)
-    parser.add_argument('--case_1_7',  default=False,  type=bool)
+    parser.add_argument('--case_0_6',  default=False,  type=bool)
+    parser.add_argument('--case_1_7',  default=True,  type=bool)
     parser.add_argument('--case_2_8',  default=False,  type=bool)
     parser.add_argument('--case_3_9',  default=False,  type=bool)
     parser.add_argument('--case_4_10', default=False,  type=bool) # Turn on all cases before
