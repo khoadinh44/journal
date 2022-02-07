@@ -27,9 +27,8 @@ def train(data, labels,
                       validation_data=(val_data, val_labels))
   model.save(name_saver)
 
-#   _, model_A_train_acc, model_A_train_f1_m, model_A_train_precision_m, model_A_train_recall_m = model.evaluate(data,     labels,     verbose=0)
-  _, model_A_test_acc,  model_A_test_f1_m,  model_A_test_precision_m,  model_A_test_recall_m  = model.evaluate(val_data, val_labels, verbose=0)
-  print(f'Score in test set: \n Accuracy: {model_A_test_acc}, F1; {model_A_test_f1_m}, Precision: {model_A_test_precision_m}, recall: {model_A_test_recall_m}' )
+  _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
+  print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   if opt.use_DNN_A:
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
