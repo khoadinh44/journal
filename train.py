@@ -1,3 +1,5 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
 import pickle
 import numpy as np
@@ -7,6 +9,8 @@ from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB
 from ML_methods import get_data
 
+gpus = tf.config.list_logical_devices('GPU')
+strategy = tf.distribute.MirroredStrategy(gpus)
 
 def train(data, labels,
           val_data, val_labels,
@@ -17,12 +21,11 @@ def train(data, labels,
     data = np.expand_dims(data, axis=-1)
     val_data = np.expand_dims(val_data, axis=-1)
 
-  with tf.device('/CPU:0'):
+  with strategy.scope():
     model = network(opt.num_classes)
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
     model.summary()
 
-  with tf.device('/GPU:0'):
     history = model.fit(data, labels,
                         epochs     = num_epochs,
                         batch_size = batch_size,
