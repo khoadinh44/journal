@@ -137,7 +137,9 @@ def CNN_C(num_classes):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(3):
+    x = identity_block(x, kernel_size=3, filters=48, stage=1, block=0)
+
+    for i in range(2):
         # x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
         x = TransformerLayer(x)
 
