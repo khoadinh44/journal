@@ -16,7 +16,7 @@ def train(data, labels,
   if opt.use_CNN_A:
     data = np.expand_dims(data, axis=-1)
     val_data = np.expand_dims(val_data, axis=-1)
-    
+
   with tf.device('/CPU:0'):
     model = network(opt.num_classes)
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
@@ -95,8 +95,8 @@ def parse_opt(known=False):
     
     # Run case------------------------------------------------
     parser.add_argument('--case_0_6',  default=False,  type=bool)
-    parser.add_argument('--case_1_7',  default=True,  type=bool)
-    parser.add_argument('--case_2_8',  default=False,  type=bool)
+    parser.add_argument('--case_1_7',  default=False,  type=bool)
+    parser.add_argument('--case_2_8',  default=True,  type=bool)
     parser.add_argument('--case_3_9',  default=False,  type=bool)
     parser.add_argument('--case_4_10', default=False,  type=bool) # Turn on all cases before
     parser.add_argument('--case_5_11', default=False, type=bool)
