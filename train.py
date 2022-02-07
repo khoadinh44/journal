@@ -10,6 +10,7 @@ from ML_methods import get_data
 
 def train(data, labels,
           val_data, val_labels,
+          test_data, test_labels,
           network, num_epochs, batch_size, name_saver, folder, opt):
   
   if opt.use_CNN_A:
@@ -27,7 +28,8 @@ def train(data, labels,
   model.save(name_saver)
 
 #   _, model_A_train_acc, model_A_train_f1_m, model_A_train_precision_m, model_A_train_recall_m = model.evaluate(data,     labels,     verbose=0)
-#   _, model_A_test_acc,  model_A_test_f1_m,  model_A_test_precision_m,  model_A_test_recall_m  = model.evaluate(val_data, val_labels, verbose=0)
+  _, model_A_test_acc,  model_A_test_f1_m,  model_A_test_precision_m,  model_A_test_recall_m  = model.evaluate(val_data, val_labels, verbose=0)
+  print(f'Score in test set: \n Accuracy: {model_A_test_acc}, F1; {model_A_test_f1_m}, Precision: {model_A_test_precision_m}, recall: {model_A_test_recall_m}' )
 
   if opt.use_DNN_A:
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
@@ -63,22 +65,19 @@ def main(opt):
     folder = 'none_denoise' 
   #---------------------------------------------------------------------------------------  
   
-  X_train, X_test, y_train, y_test = get_data(opt)
-  print(X_train.shape)
-  print(X_test.shape)
-  print(y_train.shape)
-  print(y_test.shape)
+  X_train_all, X_test, y_train_all, y_test = get_data(opt)
+  X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
 
   if opt.use_DNN_A:
-    train(X_train, y_train, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_DNN_B:
     train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_A:
-    train(X_train, y_train, X_test, y_test, CNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_B:
-    train(X_train, y_train, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_C:
-    train(X_train, y_train, X_test, y_test, CNN_C, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, opt.epochs, opt.batch_size, opt.save, folder, opt)
     
   
 def parse_opt(known=False):
