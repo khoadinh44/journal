@@ -15,7 +15,6 @@ def TransformerLayer(x=None, c=48, num_heads=4):
     k   = Dense(c, use_bias=False)(x)
     v   = Dense(c, use_bias=False)(x)
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-    # ma1  = layers.add([ma, x])
     fc1 = Dense(c, use_bias=False)(ma)
     fc2 = Dense(c, use_bias=False)(fc1) + x
     return fc2
@@ -134,14 +133,12 @@ def CNN_C(num_classes):
                kernel_regularizer=regularizers.l2(l=0.0001))(inputs)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    x = identity_block(x, kernel_size=3, filters=48, stage=1, block=0)
-
     for i in range(2):
-        # x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
-        x = TransformerLayer(x)
+        x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+
+    x = TransformerLayer(x)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
