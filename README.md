@@ -27,6 +27,9 @@
     pip install -r requirements.txt
     
 ### 4. Training WaveNet:
-    !python train.py --case_0_6 True --case_1_7 True --case_2_8 True --case_3_9 True --case_4_10 True --case_12 True --case_14 True --data_12k True --data_48k False
+    !python train.py --case_0_6 True --case_1_7 True --case_2_8 True --case_3_9 True --case_4_10 True --case_12 True --case_14 True --data_12k True --use_wavenet True 
+
+### 5. Training WaveNet + Multihead Self Attention:
+    !python train.py --case_0_6 True --case_1_7 True --case_2_8 True --case_3_9 True --case_4_10 True --case_12 True --case_14 True --data_12k True --use_wavenet True --multi_head True
 
 
