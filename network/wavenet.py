@@ -11,7 +11,7 @@ def mulaw_quantize(x, mu=255):
     return x.astype(np.int)
 
 # Reference: https://github.com/kokeshing/WaveNet-tf2
-class WaveNet(tf.keras.Model):
+class WaveNet2(tf.keras.Model):
     def __init__(self, num_mels, upsample_scales):
         super().__init__()
 
@@ -108,3 +108,24 @@ class WaveNet(tf.keras.Model):
         outputs = np.array(outputs)
 
         return np.transpose(outputs, [1, 0])
+
+def WaveNet(num_classes):
+    inputs = Input(shape=[400, 1])
+    x = Conv1D(128, kernel_size=1, padding='causal')(inputs)
+
+    skips = None
+    for _ in range(2):
+        for i in range(10):
+            x, h = ResidualConv1DGLU(128, 256, kernel_size=3, skip_out_channels=128, dilation_rate=2 ** i)(x)
+            if skips is None:
+                skips = h
+            else:
+                skips = skips + h
+    x = skips
+    x = tf.keras.layers.ReLU()(x)
+
+    x = Conv1D(128, kernel_size=1, padding='causal')(x)
+    x = tf.keras.layers.ReLU()(x)
+    x = Conv1D(256, kernel_size=1, padding='causal')(x)
+    m = Model(inputs, x, name='wavenet')
+    return m
