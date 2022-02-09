@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 from keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda
 from keras.models import Model
+from network.nn import TransformerLayer
 
 from .module import Conv1D, ReLU, ResidualConv1DGLU
 from .upsample import UpsampleNetwork
@@ -32,4 +33,31 @@ def WaveNet(num_classes):
     x = Dense(num_classes, activation='softmax')(x)
 
     m = Model(inputs, x, name='wavenet')
+    return m
+
+def WaveNet_Head(num_classes):
+    inputs = Input(shape=[400, 1])
+    x = Conv1D(128, kernel_size=1, padding='causal')(inputs)
+
+    skips = None
+    for _ in range(2):
+        for i in range(10):
+            x, h = ResidualConv1DGLU(128, 256, kernel_size=3, skip_out_channels=128, dilation_rate=2 ** i)(x)
+            if skips is None:
+                skips = h
+            else:
+                skips = skips + h
+    x = skips
+    x = tf.keras.layers.ReLU()(x)
+
+    x = Conv1D(128, kernel_size=1, padding='causal')(x)
+    x = tf.keras.layers.ReLU()(x)
+    x = Conv1D(256, kernel_size=1, padding='causal')(x)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+    x = GlobalAveragePooling1D()(x)
+    x = TransformerLayer(x)
+    x = Dense(num_classes, activation='softmax')(x)
+
+    m = Model(inputs, x, name='wavenet multi head')
     return m
