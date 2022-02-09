@@ -6,7 +6,8 @@ import numpy as np
 import argparse
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
 from sklearn.model_selection import train_test_split
-from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB
+from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
+from preprocessing.denoise_signal import Fourier
 from ML_methods import get_data
 
 gpus = tf.config.list_logical_devices('GPU')
@@ -70,8 +71,12 @@ def main(opt):
   #---------------------------------------------------------------------------------------  
   with tf.device('/CPU:0'):
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
+    if opt.denoise_DFK:
+      X_train_all = use_denoise(X_train_all, Fourier)
+      X_test = use_denoise(y_test, Fourier)
     X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
 
+  
   if opt.use_DNN_A:
     train(X_train, y_train, X_val, y_val, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_DNN_B:
@@ -116,10 +121,11 @@ def parse_opt(known=False):
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='model.h5', help='Position to save weights')
     parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
-    parser.add_argument('--num_classes',     type=int,   default=64,        help='Number of classes')
+    parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
-    parser.add_argument('--test_rate',       type=float, default=0.2,       help='rate of split data for testing')
+    parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--use_type',        type=str,   default=None,       help='types of NN: use_CNN_A')
+    parser.add_argument('--denoise_DFK', default=True, type=bool)
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
