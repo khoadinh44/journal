@@ -129,7 +129,17 @@ def parse_opt(known=False):
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
-    parser.add_argument('--use_type',        type=str,   default=None,       help='types of NN: use_CNN_A')
+    parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
+    parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
+    parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
+    parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
+    parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
+    parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
+    parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
+    parser.add_argument('--result_dir',               type=str,     default="./result/", help='exponential_decay_rate')
+
+          
+          
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
