@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
 from preprocessing.denoise_signal import Fourier
 from ML_methods import get_data
+from load_wavenet import train_wavenet
 
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
@@ -17,7 +18,7 @@ strategy = tf.distribute.MirroredStrategy(gpus)
 def train(data, labels,
           val_data, val_labels,
           test_data, test_labels,
-          network, num_epochs, batch_size, name_saver, folder, opt):
+          network, folder, opt):
   
   if opt.use_CNN_A:
     data = np.expand_dims(data, axis=-1)
@@ -29,10 +30,10 @@ def train(data, labels,
     model.summary()
 
     history = model.fit(data, labels,
-                        epochs     = num_epochs,
-                        batch_size = batch_size,
+                        epochs     = opt.epochs,
+                        batch_size = opt.batch_size,
                         validation_data=(val_data, val_labels))
-  model.save(name_saver)
+  model.save(opt.save)
 
   _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
   print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
@@ -80,17 +81,17 @@ def main(opt):
 
   
   if opt.use_DNN_A:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, DNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, DNN_A, folder, opt)
   elif opt.use_DNN_B:
-    train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN_B, folder, opt)
   elif opt.use_CNN_A:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_A, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_A, folder, opt)
   elif opt.use_CNN_B:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_B, folder, opt)
   elif opt.use_CNN_C:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, wavenet, opt.epochs, opt.batch_size, opt.save, folder, opt)
+    train_wavenet(opt)
     
   
 def parse_opt(known=False):
@@ -130,13 +131,14 @@ def parse_opt(known=False):
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
+
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
     parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
     parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
     parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
-    parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
     parser.add_argument('--result_dir',               type=str,     default="./result/", help='exponential_decay_rate')
+    parser.add_argument('--load_path',                type=str,      default=None,        help='path weight')
 
           
           
