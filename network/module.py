@@ -46,7 +46,6 @@ class Conv1D(tf.keras.layers.Conv1D):
 
         # [batch_size, 1(time_len), channels]
         return tf.reshape(outputs, [-1, 1, self.filters])
-
     def init_queue(self):
         self.queue = tf.zeros([1, self.queue_len, self.queue_dim], dtype=tf.float32)
 
@@ -83,38 +82,15 @@ class ResidualConv1DGLU(tf.keras.Model):
                                padding='causal')
 
     @tf.function
-    def call(self, inputs, c):
+    def call(self, inputs):
         x = self.dilated_conv(inputs)
         x_tanh, x_sigmoid = tf.split(x, num_or_size_splits=2, axis=2)
 
-        c = self.conv_c(c)
-        c_tanh, c_sigmoid = tf.split(c, num_or_size_splits=2, axis=2)
-
-        x_tanh, x_sigmoid = x_tanh + c_tanh, x_sigmoid + c_sigmoid
+        x_tanh, x_sigmoid = x_tanh, x_sigmoid
         x = tf.nn.tanh(x_tanh) * tf.nn.sigmoid(x_sigmoid)
 
         s = self.conv_skip(x)
         x = self.conv_out(x)
-
-        x = x + inputs
-
-        return x, s
-
-    def init_queue(self):
-        self.dilated_conv.init_queue()
-
-    def synthesis_feed(self, inputs, c):
-        x = self.dilated_conv(inputs, is_synthesis=True)
-        x_tanh, x_sigmoid = tf.split(x, num_or_size_splits=2, axis=2)
-
-        c = self.conv_c(c, is_synthesis=True)
-        c_tanh, c_sigmoid = tf.split(c, num_or_size_splits=2, axis=2)
-
-        x_tanh, x_sigmoid = x_tanh + c_tanh, x_sigmoid + c_sigmoid
-        x = tf.nn.tanh(x_tanh) * tf.nn.sigmoid(x_sigmoid)
-
-        s = self.conv_skip(x, is_synthesis=True)
-        x = self.conv_out(x, is_synthesis=True)
 
         x = x + inputs
 
