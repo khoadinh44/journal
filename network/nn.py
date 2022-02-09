@@ -84,7 +84,7 @@ def CNN_A(num_classes):
     m = Model(inputs, x, name='resnet34')
     return m
 
-def CNN_B(num_classes):
+def CNN_B(num_classes, opt):
   DefaultConv2D = partial(keras.layers.Conv2D, kernel_size=3, activation='relu', padding="SAME")
   model = keras.models.Sequential([
             DefaultConv2D(filters=256, kernel_size=7, input_shape=[128, 128, 1]), #
@@ -119,7 +119,7 @@ def DNN_B():
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
 
-def CNN_C(num_classes):
+def CNN_C(num_classes, opt):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
