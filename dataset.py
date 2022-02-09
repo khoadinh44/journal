@@ -36,14 +36,11 @@ def adjust_time_resolution(wav, mel_sp):
 
     return x, mel_sp, y
 
+def get_train_data(X_train, y_train, opt):
+    dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))
+    dataset = dataset.repeat(opt.epochs)
+    dataset = dataset.batch(opt.batch_size)
+    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    return dataset
 
-def get_train_data():
-    train_data = tf.data.TFRecordDataset(filenames=hparams.result_dir + "train_data.tfrecord")\
-        .shuffle(300)\
-        .map(parse_function, num_parallel_calls=tf.data.experimental.AUTOTUNE)\
-        .map(adjust_time_resolution, num_parallel_calls=tf.data.experimental.AUTOTUNE)\
-        .batch(hparams.batch_size)\
-        .prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
-
-    return train_data
 
