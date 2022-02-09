@@ -144,3 +144,9 @@ def invert_one_hot(x, num_class):
         label[i] = 1
         all_labels.append(label)
     return np.array(all_labels)
+
+def use_denoise(x, denoise_method):
+  data = []
+  for i in x:
+    data.append(denoise_method(i))  
+  return np.array(data)
