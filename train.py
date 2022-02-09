@@ -5,6 +5,7 @@ import pickle
 import numpy as np
 import argparse
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
+from network import wavenet
 from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
 from preprocessing.denoise_signal import Fourier
@@ -72,7 +73,7 @@ def main(opt):
   with tf.device('/CPU:0'):
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
     with strategy.scope():
-      if opt.denoise_DFK:
+      if opt.denoise == 'DFK':
         X_train_all = use_denoise(X_train_all, Fourier)
         X_test = use_denoise(X_test, Fourier)
     X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
@@ -88,18 +89,21 @@ def main(opt):
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_B, opt.epochs, opt.batch_size, opt.save, folder, opt)
   elif opt.use_CNN_C:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, opt.epochs, opt.batch_size, opt.save, folder, opt)
+  elif opt.use_wavenet:
+    train(X_train, y_train, X_val, y_val, X_test, y_test, wavenet, opt.epochs, opt.batch_size, opt.save, folder, opt)
     
   
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
     # Models and denoising methods--------------------------
-    parser.add_argument('--use_ML',    default=False, type=bool)
-    parser.add_argument('--use_DNN_A', default=False, type=bool)
-    parser.add_argument('--use_DNN_B', default=False, type=bool)
-    parser.add_argument('--use_CNN_A', default=False, type=bool)
-    parser.add_argument('--use_CNN_B', default=False, type=bool)
-    parser.add_argument('--use_CNN_C', default=True, type=bool)
+    parser.add_argument('--use_ML',      default=False, type=bool)
+    parser.add_argument('--use_DNN_A',   default=False, type=bool)
+    parser.add_argument('--use_DNN_B',   default=False, type=bool)
+    parser.add_argument('--use_CNN_A',   default=False, type=bool)
+    parser.add_argument('--use_CNN_B',   default=False, type=bool)
+    parser.add_argument('--use_CNN_C',   default=False, type=bool)
+    parser.add_argument('--use_wavenet', default=True, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
     # Run case------------------------------------------------
@@ -126,7 +130,6 @@ def parse_opt(known=False):
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--use_type',        type=str,   default=None,       help='types of NN: use_CNN_A')
-    parser.add_argument('--denoise_DFK',                 default=False, type=bool)
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
