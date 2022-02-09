@@ -6,7 +6,7 @@
 **DFK** is our proposal, **None** means that nothing denoising method is used to denoise
 
 ## For example
-### if the DNN A is choosen:
+### if the CNN A is choosen:
     --use_DNN_B True
     
 #### if DFK is choosen:
@@ -15,3 +15,18 @@
 ## Training with 7 ls diameter faults data:
     %cd /signal_machine
     !python train.py --use_CNN_C True --denoise DFK
+
+# Run WaveNet
+### 1. Clone github:
+    !git clone https://github.com/khoadinh44/signal_machine.git
+
+### 2. Go into signal_machine folder:
+    %cd /signal_machine
+    
+### 3. Install library:
+    pip install -r requirements.txt
+    
+### 4. Training WaveNet:
+    !python train.py --case_0_6 True --case_1_7 True --case_2_8 True --case_3_9 True --case_4_10 True --case_12 True --case_14 True --data_12k True --data_48k False
+
+
