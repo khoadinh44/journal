@@ -1,8 +1,5 @@
 import tensorflow as tf
 
-import hparams
-
-
 def parse_function(example_proto):
     features = {
         'wav': tf.io.FixedLenSequenceFeature([], tf.int64, allow_missing=True),
@@ -42,5 +39,3 @@ def get_train_data(X_train, y_train, opt):
     dataset = dataset.batch(opt.batch_size)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
-
-
