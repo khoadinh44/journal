@@ -3,10 +3,8 @@ import tensorflow as tf
 import numpy as np
 import os
 
-from model.wavenet import WaveNet
-from model.module import CrossEntropyLoss
-from dataset import get_train_data
-import hparams
+from network.wavenet import WaveNet
+from network.module import CrossEntropyLoss
 
 
 @tf.function
@@ -21,20 +19,20 @@ def train_step(model, x, mel_sp, y, loss_fn, optimizer):
     return loss
 
 
-def train():
+def train_wavelet(opt):
     os.makedirs(hparams.result_dir + "weights/", exist_ok=True)
 
-    summary_writer = tf.summary.create_file_writer(hparams.result_dir)
+    summary_writer = tf.summary.create_file_writer(opt.result_dir)
 
-    wavenet = WaveNet(hparams.num_mels, hparams.upsample_scales)
+    wavenet = WaveNet(opt.num_mels, opt.upsample_scales)
 
-    loss_fn = CrossEntropyLoss(num_classes=256)
+    loss_fn = CrossEntropyLoss(num_classes=opt.num_classes)
 
-    lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(hparams.learning_rate,
-                                                                 decay_steps=hparams.exponential_decay_steps,
-                                                                 decay_rate=hparams.exponential_decay_rate)
+    lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(opt.learning_rate,
+                                                                 decay_steps=opt.exponential_decay_steps,
+                                                                 decay_rate=opt.exponential_decay_rate)
     optimizer = tf.keras.optimizers.Adam(learning_rate=lr_schedule,
-                                         beta_1=hparams.beta_1)
+                                         beta_1=opt.beta_1)
 
     if hparams.load_path is not None:
         wavenet.load_weights(hparams.load_path)
@@ -55,11 +53,11 @@ def train():
 
         if epoch % hparams.save_interval == 0:
             print(f'Step {step}, Loss: {loss}')
-            np.save(hparams.result_dir + f"weights/step.npy", np.array(step))
-            wavenet.save_weights(hparams.result_dir + f"weights/wavenet_{epoch:04}")
+            np.save(opt.result_dir + f"weights/step.npy", np.array(step))
+            wavenet.save_weights(opt.result_dir + f"weights/wavenet_{epoch:04}")
 
-    np.save(hparams.result_dir + f"weights/step.npy", np.array(step))
-    wavenet.save_weights(hparams.result_dir + f"weights/wavenet_{epoch:04}")
+    np.save(opt.result_dir + f"weights/step.npy", np.array(step))
+    wavenet.save_weights(opt.result_dir + f"weights/wavenet_{epoch:04}")
 
 if __name__ == '__main__':
     train()
