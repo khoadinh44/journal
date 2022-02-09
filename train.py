@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 import argparse
 
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
-from network.wavenet import WaveNet, WaveNet_Head
+from network.wavenet import  WaveNet
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
 from preprocessing.denoise_signal import Fourier
 from ML_methods import get_data
@@ -25,7 +25,7 @@ def train(data, labels,
     val_data = np.expand_dims(val_data, axis=-1)
 
   with strategy.scope():
-    model = network(opt.num_classes)
+    model = network(opt.num_classes, opt)
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
     model.summary()
 
@@ -107,7 +107,6 @@ def parse_opt(known=False):
     parser.add_argument('--use_CNN_B',   default=False, type=bool)
     parser.add_argument('--use_CNN_C',   default=False, type=bool)
     parser.add_argument('--use_wavenet',      default=False, type=bool)
-    parser.add_argument('--use_wavenet_head', default=False, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
     # Run case------------------------------------------------
@@ -126,6 +125,7 @@ def parse_opt(known=False):
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k', default=False, type=bool)
     parser.add_argument('--data_48k', default=False, type=bool)
+    parser.add_argument('--multi_head', default=False, type=bool)
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='model.h5', help='Position to save weights')
