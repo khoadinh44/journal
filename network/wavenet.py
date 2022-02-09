@@ -7,7 +7,7 @@ from utils import mulaw_quantize
 
 # Reference: https://github.com/kokeshing/WaveNet-tf2
 class WaveNet(tf.keras.Model):
-    def __init__(self, upsample_scales):
+    def __init__(self, upsample_scales=[4, 8, 8]):
         super().__init__()
 
         self.upsample_network = UpsampleNetwork(upsample_scales)
