@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 import argparse
 
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
-from network.wavenet import WaveNet
+from network.wavenet import WaveNet, WaveNet_Head
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
 from preprocessing.denoise_signal import Fourier
 from ML_methods import get_data
@@ -39,24 +39,19 @@ def train(data, labels,
   print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   if opt.use_DNN_A:
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
-    with open('DNN_A_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_DNN_B:
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
-    with open('DNN_B_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_A:
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
-    with open('CNN_A_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_B:
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
-    with open('CNN_B_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_C:
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
-    with open('CNN_C_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   
 
@@ -97,6 +92,8 @@ def main(opt):
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
     train(X_train, y_train, X_val, y_val, X_test, y_test, WaveNet, folder, opt)
+  elif opt.use_wavenet_head:
+    train(X_train, y_train, X_val, y_val, X_test, y_test, WaveNet_Head, folder, opt)
     
   
 def parse_opt(known=False):
@@ -109,7 +106,8 @@ def parse_opt(known=False):
     parser.add_argument('--use_CNN_A',   default=False, type=bool)
     parser.add_argument('--use_CNN_B',   default=False, type=bool)
     parser.add_argument('--use_CNN_C',   default=False, type=bool)
-    parser.add_argument('--use_wavenet', default=True, type=bool)
+    parser.add_argument('--use_wavenet',      default=False, type=bool)
+    parser.add_argument('--use_wavenet_head', default=False, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
     # Run case------------------------------------------------
