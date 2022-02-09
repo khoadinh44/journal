@@ -9,9 +9,9 @@ from dataset import get_train_data
 
 
 @tf.function
-def train_step(model, x, y, loss_fn, optimizer, opt):
+def train_step(model, x, y, loss_fn, optimizer, num_mels):
     with tf.GradientTape() as tape:
-        y_hat = model(x, opt.num_mels)
+        y_hat = model(x, num_mels)
         loss = loss_fn(y, y_hat)
 
     gradients = tape.gradient(loss, model.trainable_variables)
@@ -20,7 +20,7 @@ def train_step(model, x, y, loss_fn, optimizer, opt):
     return loss
 
 
-def train_wavenet(opt, X_train, y_train, X_val, y_val, X_test, y_test)::
+def train_wavenet(X_train, y_train, X_val, y_val, X_test, y_test, opt): 
     os.makedirs(opt.result_dir + "weights/", exist_ok=True)
 
     summary_writer = tf.summary.create_file_writer(opt.result_dir)
@@ -53,7 +53,7 @@ def train_wavenet(opt, X_train, y_train, X_val, y_val, X_test, y_test)::
             print(f'Epoch {step // steps + 1}/{opt.epochs}')
             pb = tf.keras.utils.Progbar(steps, stateful_metrics=['loss'])
             
-        loss = train_step(wavenet, x, y, loss_fn, optimizer, opt)
+        loss = train_step(wavenet, x, y, loss_fn, optimizer, opt.num_mels)
         pb.add(1, [('loss', loss)])
         
         with summary_writer.as_default():
