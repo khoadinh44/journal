@@ -19,8 +19,8 @@ def train_step(model, x, mel_sp, y, loss_fn, optimizer):
     return loss
 
 
-def train_wavelet(opt):
-    os.makedirs(hparams.result_dir + "weights/", exist_ok=True)
+def train_wavenet(opt):
+    os.makedirs(opt.result_dir + "weights/", exist_ok=True)
 
     summary_writer = tf.summary.create_file_writer(opt.result_dir)
 
@@ -34,7 +34,7 @@ def train_wavelet(opt):
     optimizer = tf.keras.optimizers.Adam(learning_rate=lr_schedule,
                                          beta_1=opt.beta_1)
 
-    if hparams.load_path is not None:
+    if opt.load_path is not None:
         wavenet.load_weights(hparams.load_path)
         step = np.load(hparams.result_dir + "weights/step.npy")
         step = step
@@ -42,7 +42,7 @@ def train_wavelet(opt):
     else:
         step = 0
 
-    for epoch in range(hparams.epoch):
+    for epoch in range(opt.epochs):
         train_data = get_train_data()
         for x, mel_sp, y in train_data:
             loss = train_step(wavenet, x, mel_sp, y, loss_fn, optimizer)
