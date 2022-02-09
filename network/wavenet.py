@@ -3,7 +3,12 @@ import numpy as np
 
 from .module import Conv1D, ReLU, ResidualConv1DGLU
 from .upsample import UpsampleNetwork
-from utils import mulaw_quantize
+
+def mulaw_quantize(x, mu=255):
+    x = mulaw(x)
+    x = (x + 1) / 2 * mu
+
+    return x.astype(np.int)
 
 # Reference: https://github.com/kokeshing/WaveNet-tf2
 class WaveNet(tf.keras.Model):
