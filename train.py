@@ -5,7 +5,7 @@ import pickle
 import numpy as np
 import argparse
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
-from network import wavenet
+from network.wavenet import WaveNet
 from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
 from preprocessing.denoise_signal import Fourier
@@ -91,7 +91,7 @@ def main(opt):
   elif opt.use_CNN_C:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
-    train_wavenet(X_train, y_train, X_val, y_val, X_test, y_test, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, WaveNet, folder, opt)
     
   
 def parse_opt(known=False):
