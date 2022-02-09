@@ -39,19 +39,24 @@ def train(data, labels,
   print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   if opt.use_DNN_A:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+    with open('DNN_A_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_DNN_B:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
+    with open('DNN_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_A:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+    with open('CNN_A_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_B:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
+    with open('CNN_B_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_C:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+    with open('CNN_C_history', 'wb') as file_pi:
       pickle.dump(history.history, file_pi)
   
 
