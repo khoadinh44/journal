@@ -1,5 +1,7 @@
 import tensorflow as tf
 import numpy as np
+from keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda
+from keras.models import Model
 
 from .module import Conv1D, ReLU, ResidualConv1DGLU
 from .upsample import UpsampleNetwork
@@ -127,5 +129,11 @@ def WaveNet(num_classes):
     x = Conv1D(128, kernel_size=1, padding='causal')(x)
     x = tf.keras.layers.ReLU()(x)
     x = Conv1D(256, kernel_size=1, padding='causal')(x)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+    x = GlobalAveragePooling1D()(x)
+    
+    x = Dense(num_classes, activation='softmax')(x)
+
     m = Model(inputs, x, name='wavenet')
     return m
