@@ -97,15 +97,15 @@ def parse_opt(known=False):
     parser.add_argument('--use_ML',    default=False, type=bool)
     parser.add_argument('--use_DNN_A', default=False, type=bool)
     parser.add_argument('--use_DNN_B', default=False, type=bool)
-    parser.add_argument('--use_CNN_A', default=True, type=bool)
+    parser.add_argument('--use_CNN_A', default=False, type=bool)
     parser.add_argument('--use_CNN_B', default=False, type=bool)
-    parser.add_argument('--use_CNN_C', default=False, type=bool)
+    parser.add_argument('--use_CNN_C', default=True, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
     # Run case------------------------------------------------
     parser.add_argument('--case_0_6',  default=False,  type=bool)
     parser.add_argument('--case_1_7',  default=False,  type=bool)
-    parser.add_argument('--case_2_8',  default=True,  type=bool)
+    parser.add_argument('--case_2_8',  default=False,  type=bool)
     parser.add_argument('--case_3_9',  default=False,  type=bool)
     parser.add_argument('--case_4_10', default=False,  type=bool) # Turn on all cases before
     parser.add_argument('--case_5_11', default=False, type=bool)
@@ -116,7 +116,7 @@ def parse_opt(known=False):
     parser.add_argument('--case_15', default=False,  type=bool)  # turn on case 12 and case_4_11
 
     parser.add_argument('--data_normal', default=True, type=bool)
-    parser.add_argument('--data_12k', default=True, type=bool)
+    parser.add_argument('--data_12k', default=False, type=bool)
     parser.add_argument('--data_48k', default=False, type=bool)
 
     # Parameters---------------------------------------------
@@ -126,7 +126,7 @@ def parse_opt(known=False):
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--use_type',        type=str,   default=None,       help='types of NN: use_CNN_A')
-    parser.add_argument('--denoise_DFK', default=True, type=bool)
+    parser.add_argument('--denoise_DFK',                 default=False, type=bool)
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
