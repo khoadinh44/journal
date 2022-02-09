@@ -71,9 +71,10 @@ def main(opt):
   #---------------------------------------------------------------------------------------  
   with tf.device('/CPU:0'):
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
-    if opt.denoise_DFK:
-      X_train_all = use_denoise(X_train_all, Fourier)
-      X_test = use_denoise(y_test, Fourier)
+    with strategy.scope():
+      if opt.denoise_DFK:
+        X_train_all = use_denoise(X_train_all, Fourier)
+        X_test = use_denoise(X_test, Fourier)
     X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
 
   
