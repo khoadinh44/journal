@@ -91,7 +91,7 @@ def main(opt):
   elif opt.use_CNN_C:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
-    train_wavenet(opt)
+    train_wavenet(X_train, y_train, X_val, y_val, X_test, y_test, opt)
     
   
 def parse_opt(known=False):
