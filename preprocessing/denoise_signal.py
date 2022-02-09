@@ -84,10 +84,10 @@ def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_
     y = np.concatenate((firstvals, y, lastvals))
     return np.convolve( m[::-1], y, mode='valid')
 
-def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
+def Fourier(f, plot_all=False, get_result=True, get_PSD=False):
+  num = f.shape[0]
   t = np.linspace(0, 1, num=num).astype(np.float32)
   f = f.reshape(num, )
-  f = f_to_mels(f)
 
   ## Compute the Fast Fourier Transform (FFT)
   fhat = np.fft.fft(f, num)                     # Compute the FFT
@@ -140,7 +140,7 @@ def Fourier(f, num, plot_all=False, get_result=False, get_PSD=False, thres=10):
     plt.savefig('plot_all.png')
   
   if get_result:
-    return mels_to_f(ffilt.real)
+    return ffilt.real
 
 def SVD_denoise(Xnoisy=None):
     m, n = Xnoisy.shape
