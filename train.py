@@ -3,14 +3,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 import pickle
 import numpy as np
+from sklearn.model_selection import train_test_split
 import argparse
+
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
 from network.wavenet import WaveNet
-from sklearn.model_selection import train_test_split
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
 from preprocessing.denoise_signal import Fourier
 from ML_methods import get_data
-from load_wavenet import train_wavenet
 
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
