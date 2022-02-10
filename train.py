@@ -33,25 +33,30 @@ def train(data, labels,
                         epochs     = opt.epochs,
                         batch_size = opt.batch_size,
                         validation_data=(val_data, val_labels))
-  model.save(opt.save)
+    model.save(opt.save)
 
   _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
   print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   if opt.use_DNN_A:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+    # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+    with open('DNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_DNN_B:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
+    # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
+    with open('DNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_A:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+    # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+    with open('CNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_B:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
+    # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
+    with open('CNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_C:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+    # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+    with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   
 
@@ -128,7 +133,7 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head', default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--save',            type=str,   default='model.h5', help='Position to save weights')
+    parser.add_argument('--save',            type=str,   default='model', help='Position to save weights')
     parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
