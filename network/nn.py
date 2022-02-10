@@ -102,10 +102,14 @@ def CNN_B(num_classes, opt):
 
 def DNN_A():
   input_ = keras.layers.Input(shape=[400, ])
-  hidden3 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_)
-  hidden4 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden3)
-  concat = keras.layers.concatenate([input_, hidden4])
-  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax())(concat)
+#   hidden3 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_)
+#   hidden4 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden3)
+#   concat = keras.layers.concatenate([input_, hidden4])
+  hidden1 = keras.layers.Dense(1024, activation=tf.keras.layers.ReLU())(input_)
+  hidden2 = keras.layers.Dense(2048, activation=tf.keras.layers.ReLU())(hidden1)
+  hidden3 = keras.layers.Dense(2048, activation=tf.keras.layers.ReLU())(hidden2)
+  hidden4 = keras.layers.Dense(512, activation=tf.keras.layers.ReLU())(hidden3)
+  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax())(hidden4)
   model = keras.models.Model(inputs=[input_], outputs=[output])
   return model
 
