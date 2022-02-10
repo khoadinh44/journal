@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+from keras import regularizers
 
 class UpsampleCond(tf.keras.Model):
     def __init__(self, rate, **kwargs):
