@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+from keras import regularizers
 
 class ReLU(tf.keras.layers.ReLU):
     def __init__(self, *args, **kwargs):
@@ -68,18 +68,23 @@ class ResidualConv1DGLU(tf.keras.Model):
                                    kernel_size=kernel_size,
                                    padding='causal',
                                    dilation_rate=dilation_rate,
-                                   residual_channels=residual_channels)
+                                   residual_channels=residual_channels,
+                                   kernel_regularizer=regularizers.l2(l=0.0001))
 
         self.conv_c = Conv1D(gate_channels,
                              kernel_size=1,
-                             padding='causal')
+                             padding='causal',
+                             kernel_regularizer=regularizers.l2(l=0.0001))
 
         self.conv_skip = Conv1D(skip_out_channels,
                                 kernel_size=1,
-                                padding='causal')
+                                padding='causal',
+                                kernel_regularizer=regularizers.l2(l=0.0001))
+
         self.conv_out = Conv1D(residual_channels,
                                kernel_size=1,
-                               padding='causal')
+                               padding='causal',
+                               kernel_regularizer=regularizers.l2(l=0.0001))
 
     @tf.function
     def call(self, inputs):
