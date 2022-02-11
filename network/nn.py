@@ -100,7 +100,7 @@ def CNN_B(num_classes, opt):
             keras.layers.Dense(units=num_classes, activation='softmax'),])
   return model
 
-def DNN_A():
+def DNN_A(num_classes, opt):
   input_ = keras.layers.Input(shape=[400, ])
 #   hidden3 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_)
 #   hidden4 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden3)
@@ -109,17 +109,17 @@ def DNN_A():
   hidden2 = keras.layers.Dense(2048, activation=tf.keras.layers.ReLU())(hidden1)
   hidden3 = keras.layers.Dense(2048, activation=tf.keras.layers.ReLU())(hidden2)
   hidden4 = keras.layers.Dense(512, activation=tf.keras.layers.ReLU())(hidden3)
-  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax())(hidden4)
+  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax())(hidden4)
   model = keras.models.Model(inputs=[input_], outputs=[output])
   return model
 
-def DNN_B():
+def DNN_B(num_classes, opt):
   input_A = keras.layers.Input(shape=[200], name="wide_input")
   input_B = keras.layers.Input(shape=[200], name="deep_input") 
   hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_B)
   hidden2 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden1)
   concat = keras.layers.concatenate([input_A, hidden2])
-  output = keras.layers.Dense(6, activation=tf.keras.layers.Softmax(), name="output")(concat)
+  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax(), name="output")(concat)
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
 
