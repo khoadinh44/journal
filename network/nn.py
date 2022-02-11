@@ -56,7 +56,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = Activation('relu')(x)
     return x
 
-def CNN_A(num_classes):
+def CNN_A(num_classes, opt):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
