@@ -111,10 +111,7 @@ def DNN_A(num_classes, opt):
                                      bias_regularizer=regularizers.l2(1e-4),
                                      activity_regularizer=regularizers.l2(1e-5))(hidden1)
   concat = keras.layers.concatenate([input_, hidden2])
-  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax(),
-                                           kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                                           bias_regularizer=regularizers.l2(1e-4),
-                                           activity_regularizer=regularizers.l2(1e-5))(concat)
+  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax())(concat)
   model = keras.models.Model(inputs=[input_], outputs=[output])
   return model
 
