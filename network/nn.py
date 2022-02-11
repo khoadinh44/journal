@@ -102,14 +102,19 @@ def CNN_B(num_classes, opt):
 
 def DNN_A(num_classes, opt):
   input_ = keras.layers.Input(shape=[400, ])
-#   hidden3 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_)
-#   hidden4 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden3)
-#   concat = keras.layers.concatenate([input_, hidden4])
-  hidden1 = keras.layers.Dense(1024, activation=tf.keras.layers.ReLU())(input_)
-  hidden2 = keras.layers.Dense(2048, activation=tf.keras.layers.ReLU())(hidden1)
-  hidden3 = keras.layers.Dense(2048, activation=tf.keras.layers.ReLU())(hidden2)
-  hidden4 = keras.layers.Dense(512, activation=tf.keras.layers.ReLU())(hidden3)
-  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax())(hidden4)
+  hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU(), 
+                                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                     bias_regularizer=regularizers.l2(1e-4),
+                                     activity_regularizer=regularizers.l2(1e-5))(input_)
+  hidden2 = keras.layers.Dense(100,activation=tf.keras.layers.ReLU(), 
+                                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                     bias_regularizer=regularizers.l2(1e-4),
+                                     activity_regularizer=regularizers.l2(1e-5))(hidden1)
+  concat = keras.layers.concatenate([input_, hidden2])
+  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax(),
+                                           kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                           bias_regularizer=regularizers.l2(1e-4),
+                                           activity_regularizer=regularizers.l2(1e-5))(concat)
   model = keras.models.Model(inputs=[input_], outputs=[output])
   return model
 
