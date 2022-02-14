@@ -2,6 +2,7 @@ from keras import backend as K
 import numpy as np
 import tensorflow as tf
 from preprocessing.extract_features import AudioFeatureExtractor
+from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
 def add_noise(signal, SNRdb):
   np.random.seed()
@@ -135,7 +136,8 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
   if scale != None:
     data = scale.fit_transform(data)
   data = data.reshape((-1, ))
-  data = add_noise(data, SNRdb)
+#   data = add_noise(data, SNRdb)
+  data = Fourier(data)
   data = divide_sample(data, window_length, hop_length)
   return data
 
