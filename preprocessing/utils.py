@@ -8,10 +8,11 @@ def add_noise(signal, SNRdb):
 
   mean_S = np.mean(signal)
   signal_diff = signal - mean_S
-  var_S = np.sum(np.mean(signal_diff**2)) 
+  mean_S_2 = np.mean(np.power(signal, 2))
+  # var_S = np.sum(np.mean(signal_diff**2)) 
 
   mean_N = 0
-  std = np.sqrt(var_S/np.power(10, (SNRdb/10)))
+  std = np.sqrt(mean_S_2/np.power(10, (SNRdb/10)))
   noise = np.random.normal(mean_N, std, size=len(signal))
   noise_signal = signal + noise
   return noise_signal
