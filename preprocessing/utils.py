@@ -3,6 +3,19 @@ import numpy as np
 import tensorflow as tf
 from preprocessing.extract_features import AudioFeatureExtractor
 
+def add_noise(signal, SNRdb):
+  np.random.seed()
+
+  mean_S = np.mean(signal)
+  signal_diff = signal - mean_S
+  var_S = np.sum(np.mean(signal_diff**2)) 
+
+  mean_N = mean_S
+  std = np.sqrt(var_S/np.power(10, (SNRdb/10)))
+  noise = numpy.random.normal(mean, std, size=len(signalOnly))
+  noise_signal = signal + noise
+  return noise_signal
+
 def recall_m(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
