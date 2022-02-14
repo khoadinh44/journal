@@ -12,7 +12,7 @@ def add_noise(signal, SNRdb):
 
   mean_N = mean_S
   std = np.sqrt(var_S/np.power(10, (SNRdb/10)))
-  noise = numpy.random.normal(mean, std, size=len(signalOnly))
+  noise = np.random.normal(mean_N, std, size=len(signal))
   noise_signal = signal + noise
   return noise_signal
 
