@@ -4,17 +4,21 @@ import tensorflow as tf
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
-def add_noise(signal, SNRdb):
+def add_noise(signal, SNRdb, case_1=False, case_2=True):
   np.random.seed()
 
   mean_S = np.mean(signal)
-  signal_diff = signal - mean_S
   mean_S_2 = np.mean(np.power(signal, 2))
+  signal_diff = signal - mean_S
   # var_S = np.sum(np.mean(signal_diff**2)) 
 
-  mean_N = 0
-  std = np.sqrt(mean_S_2/np.power(10, (SNRdb/10)))
-  noise = np.random.normal(mean_N, std, size=len(signal))
+  if case_1:
+    mean_N = 0
+    std = np.sqrt(mean_S_2/np.power(10, (SNRdb/10)))
+  if case_2:
+    mean_N = mean_S
+    std = np.sqrt(mean_S_2/np.power(10, (SNRdb/10))- np.power(mean_S, 2))
+  noise = numpy.random.normal(mean, std, size=len(signalOnly))
   noise_signal = signal + noise
   return noise_signal
 
