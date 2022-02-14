@@ -12,7 +12,7 @@ def f_to_mels(f):
 def mels_to_f(mels):
     return 700*(np.power(10, mels/2595)-1)
 
-def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_y=None):
+def savitzky_golay(y=None, window_size=15, order=4, deriv=0, rate=1):
     """Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
     The Savitzky-Golay filter removes high frequency noise from data.
     It has the advantage of preserving the original shape and
@@ -62,7 +62,6 @@ def savitzky_golay(y=None, window_size=None, order=None, deriv=0, rate=1, range_
        W.H. Press, S.A. Teukolsky, W.T. Vetterling, B.P. Flannery
        Cambridge University Press ISBN-13: 9780521880688
     """
-    y = y.reshape(range_y, )
     try:
         window_size = np.abs(np.int(window_size))
         order = np.abs(np.int(order))
