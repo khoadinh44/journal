@@ -38,6 +38,18 @@ def f1_m(y_true, y_pred):
     precision = precision_m(y_true, y_pred)
     recall = recall_m(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
+  
+def accuracy_m(y_true, y_pred):
+  correct = 0
+  total = 0
+  for i in range(len(y_true)):
+      act_label = numpy.argmax(y_true[i]) # act_label = 1 (index)
+      pred_label = numpy.argmax(y_pred[i]) # pred_label = 1 (index)
+      if(act_label == pred_label):
+          correct += 1
+      total += 1
+  accuracy = (correct/total)
+  return accuracy
 
 def signal_to_IFMs(x):
     '''
