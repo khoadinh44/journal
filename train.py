@@ -26,7 +26,7 @@ def train(data, labels,
     val_data = np.expand_dims(val_data, axis=-1)
 
   with strategy.scope():
-    model = network(opt.num_classes, opt)
+    model = network(opt)
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
     model.summary()
 
@@ -39,7 +39,7 @@ def train(data, labels,
   print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   if opt.use_DNN_A:
-    model.save(opt.save + opt.model_names[0] + '.h5')
+    model.save(opt.save + opt.model_names[0] )
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
 #     with open('DNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -48,7 +48,7 @@ def train(data, labels,
 #     with open('DNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_A:
-    model.save(opt.save + opt.model_names[1] + '.h5')
+    model.save(opt.save + opt.model_names[1])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
 #     with open('CNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -57,7 +57,7 @@ def train(data, labels,
 #     with open('CNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_C:
-    model.save(opt.save + opt.model_names[2] + '.h5')
+    model.save(opt.save + opt.model_names[2])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
 #     with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -148,7 +148,7 @@ def parse_opt(known=False):
 
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
-    parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_C', 'WaveNet', 'WaveNet_Multi_head'],   help='name of all NN models')
+    parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_C'],   help='name of all NN models')
     parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
     parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
     parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
