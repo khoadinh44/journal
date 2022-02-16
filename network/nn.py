@@ -28,7 +28,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
                kernel_size=kernel_size,
                strides=1,
                padding='same',
-               kernel_initializer='glorot_uniform',
+              #  kernel_initializer='glorot_uniform',
               #  kernel_regularizer=regularizers.l2(l=0.0001),
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
@@ -41,7 +41,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
                kernel_size=kernel_size,
                strides=1,
                padding='same',
-               kernel_initializer='glorot_uniform',
+              #  kernel_initializer='glorot_uniform',
               #  kernel_regularizer=regularizers.l2(l=0.0001),
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
@@ -72,7 +72,7 @@ def CNN_A(num_classes, opt):
                kernel_size=80,
                strides=4,
                padding='same',
-               kernel_initializer='glorot_uniform',
+              #  kernel_initializer='glorot_uniform',
                kernel_regularizer=regularizers.l2(l=0.0001))(inputs)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
@@ -141,7 +141,7 @@ def CNN_C(num_classes, opt):
                kernel_size=80,
                strides=4,
                padding='same',
-               kernel_initializer='glorot_uniform',
+              #  kernel_initializer='glorot_uniform',
               #  kernel_regularizer=regularizers.l2(l=0.0001),
                kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                bias_regularizer=regularizers.l2(1e-4),
