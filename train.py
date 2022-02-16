@@ -38,7 +38,7 @@ def train(data, labels,
   print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   if opt.use_DNN_A:
-    model.save(opt.save+'DNN_A.hdf5')
+    model.save(opt.save + opt.model_names[0] + '.hdf5')
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
 #     with open('DNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -47,7 +47,7 @@ def train(data, labels,
 #     with open('DNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_A:
-    model.save(opt.save+'CNN_A.hdf5')
+    model.save(opt.save + opt.model_names[1] + '.hdf5')
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
 #     with open('CNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -56,7 +56,7 @@ def train(data, labels,
 #     with open('CNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_C:
-    model.save(opt.save+'CNN_C.hdf5')
+    model.save(opt.save + opt.model_names[2] + '.hdf5')
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
 #     with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
