@@ -118,7 +118,7 @@ def handcrafted_features(x):
         data.append(all_i)
     return np.array(data)
 
-def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=False, SNRdb=30):
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=30):
   data = []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
