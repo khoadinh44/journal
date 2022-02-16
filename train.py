@@ -6,7 +6,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import argparse
 
-from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
+from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
+from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
 from preprocessing.denoise_signal import Fourier
@@ -38,7 +39,7 @@ def train(data, labels,
   print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   if opt.use_DNN_A:
-    model.save(opt.save + opt.model_names[0] + '.hdf5')
+    model.save(opt.save + opt.model_names[0] + '.h5')
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
 #     with open('DNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -47,7 +48,7 @@ def train(data, labels,
 #     with open('DNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_A:
-    model.save(opt.save + opt.model_names[1] + '.hdf5')
+    model.save(opt.save + opt.model_names[1] + '.h5')
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
 #     with open('CNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -56,7 +57,7 @@ def train(data, labels,
 #     with open('CNN_B_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_C:
-    model.save(opt.save + opt.model_names[2] + '.hdf5')
+    model.save(opt.save + opt.model_names[2] + '.h5')
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
 #     with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -101,7 +102,8 @@ def main(opt):
     train(X_train, y_train, X_val, y_val, X_test, y_test, WaveNet, folder, opt)
   elif opt.use_wavenet_head:
     train(X_train, y_train, X_val, y_val, X_test, y_test, WaveNet_Head, folder, opt)
-    
+  elif opt.ensemble:
+    semble_transfer(opt, X_test, y_test)
   
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
@@ -114,6 +116,8 @@ def parse_opt(known=False):
     parser.add_argument('--use_CNN_B',   default=False, type=bool)
     parser.add_argument('--use_CNN_C',   default=False, type=bool)
     parser.add_argument('--use_wavenet',      default=False, type=bool)
+    parser.add_argument('--use_wavenet_head',      default=False, type=bool)
+    parser.add_argument('--ensemble',      default=False, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     
     # Run case------------------------------------------------
