@@ -147,6 +147,7 @@ def parse_opt(known=False):
     parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
     parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
     parser.add_argument('--result_dir',               type=str,     default="./result/", help='exponential_decay_rate')
+    parser.add_argument('--model_dir',               type=str,     default="/content/drive/Shareddrives/newpro112233/signal_machine/", help='direction to save model')
     parser.add_argument('--load_path',                type=str,      default=None,        help='path weight')
 
           
