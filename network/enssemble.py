@@ -1,14 +1,18 @@
 from tensorflow import keras
+# import keras
 import numpy as np
 from preprocessing.utils import accuracy_m
+from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 
 def semble_transfer(opt, X_test, y_test):
   y_pred = np.zeros(shape=y_test.shape)
   l = 0
   
   for name in opt.model_names:
-    all_path = opt.model_dir + name + '.h5'
-    model = keras.models.load_model(all_path)
+    all_path = opt.model_dir + name 
+    if name == 'DNN':
+      model = DNN_A(opt)
+      model.load_weights(all_path)
     curr_y_pred = model.predict(X_test)
     keras.backend.clear_session()
     np.save(opt.model_dir + name + '.npy', curr_y_pred)
@@ -18,5 +22,5 @@ def semble_transfer(opt, X_test, y_test):
     keras.backend.clear_session()
     
   y_pred = y_pred / l
-  return accuracy_m(y_test, y_pred)
+  print('Test accuracy: ', accuracy_m(y_test, y_pred))
     
