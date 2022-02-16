@@ -133,7 +133,7 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head', default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--save',            type=str,   default='model', help='Position to save weights')
+    parser.add_argument('--save',            type=str,   default='model.hdf5', help='Position to save weights')
     parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
