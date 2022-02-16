@@ -62,7 +62,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = Activation('relu')(x)
     return x
 
-def CNN_A(num_classes, opt):
+def CNN_A(opt):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
@@ -85,7 +85,7 @@ def CNN_A(num_classes, opt):
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     x = GlobalAveragePooling1D()(x)
-    x = Dense(num_classes, activation='softmax')(x)
+    x = Dense(opt.num_classes, activation='softmax')(x)
 
     m = Model(inputs, x, name='resnet34')
     return m
@@ -106,7 +106,7 @@ def CNN_B(num_classes, opt):
             keras.layers.Dense(units=num_classes, activation='softmax'),])
   return model
 
-def DNN_A(num_classes, opt):
+def DNN_A(opt):
   input_ = keras.layers.Input(shape=[400, ])
   hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU(), 
                                      kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
@@ -117,21 +117,21 @@ def DNN_A(num_classes, opt):
                                      bias_regularizer=regularizers.l2(1e-4),
                                      activity_regularizer=regularizers.l2(1e-5))(hidden1)
   concat = keras.layers.concatenate([input_, hidden2])
-  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax())(concat)
+  output = keras.layers.Dense(opt.num_classes, activation=tf.keras.layers.Softmax())(concat)
   model = keras.models.Model(inputs=[input_], outputs=[output])
   return model
 
-def DNN_B(num_classes, opt):
+def DNN_B(opt):
   input_A = keras.layers.Input(shape=[200], name="wide_input")
   input_B = keras.layers.Input(shape=[200], name="deep_input") 
   hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU())(input_B)
   hidden2 = keras.layers.Dense(100, activation=tf.keras.layers.ReLU())(hidden1)
   concat = keras.layers.concatenate([input_A, hidden2])
-  output = keras.layers.Dense(num_classes, activation=tf.keras.layers.Softmax(), name="output")(concat)
+  output = keras.layers.Dense(opt.num_classes, activation=tf.keras.layers.Softmax(), name="output")(concat)
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
 
-def CNN_C(num_classes, opt):
+def CNN_C(opt):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
@@ -157,7 +157,7 @@ def CNN_C(num_classes, opt):
     x = GlobalAveragePooling1D()(x)
     
     x = TransformerLayer(x)
-    x = Dense(num_classes, activation='softmax')(x)
+    x = Dense(opt.num_classes, activation='softmax')(x)
 
     m = Model(inputs, x, name='resnet34')
     return m
