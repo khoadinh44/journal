@@ -12,6 +12,7 @@ from network.wavenet import  WaveNet
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise, add_noise
 from preprocessing.denoise_signal import Fourier
 from ML_methods import get_data
+from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
@@ -30,10 +31,10 @@ def train(data, labels,
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
 
     model.summary()
-    history = model.fit(data, labels,
-                        epochs     = opt.epochs,
-                        batch_size = opt.batch_size,
-                        validation_data=(val_data, val_labels))
+    # history = model.fit(data, labels,
+    #                     epochs     = opt.epochs,
+    #                     batch_size = opt.batch_size,
+    #                     validation_data=(val_data, val_labels))
 
     if opt.use_DNN_A:
       model.save(opt.save + opt.model_names[0] )
@@ -54,14 +55,15 @@ def train(data, labels,
   #     with open('CNN_B_history', 'wb') as file_pi: 
         pickle.dump(history.history, file_pi)
     elif opt.use_CNN_C:
-      model.save(opt.save + opt.model_names[2])
-      # model.load_weights(opt.save + opt.model_names[2])
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+      # model.save(opt.save + opt.model_names[2])
+      model.load_weights(opt.save + opt.model_names[2])
+      # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
   #     with open('CNN_C_history', 'wb') as file_pi: 
-        pickle.dump(history.history, file_pi)
+        # pickle.dump(history.history, file_pi)
 
   for i in range(len(opt.SNRdb)):
     X_test = add_noise(test_data, opt.SNRdb[i])
+    X_test = use_denoise(X_test, Fourier)
     _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, test_labels, verbose=0)
     print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
@@ -87,7 +89,7 @@ def main(opt):
     with strategy.scope():
       if opt.denoise == 'DFK':
         X_train_all = use_denoise(X_train_all, Fourier)
-        X_test = use_denoise(X_test, Fourier)
+        # X_test = use_denoise(X_test, Fourier)
     X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
 
   
