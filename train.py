@@ -61,11 +61,11 @@ def train(data, labels,
   #     with open('CNN_C_history', 'wb') as file_pi: 
         # pickle.dump(history.history, file_pi)
 
-  for i in range(len(opt.SNRdb)):
-    X_test = add_noise(test_data, opt.SNRdb[i])
-    X_test = use_denoise(X_test, Fourier)
-    _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, test_labels, verbose=0)
-    print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
+    for i in range(len(opt.SNRdb)):
+      test = add_noise(test_data, opt.SNRdb[i])
+      test = use_denoise(test, Fourier)
+      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0)
+      print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   
     
