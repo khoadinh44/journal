@@ -5,8 +5,14 @@ from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
 def add_noise(signal, SNRdb, case_1=True, case_2=False):
-  np.random.seed()
+  if len(signal.shape)>1:
+    data = [add_each_noise(i, SNRdb, case_1, case_2) for i in signal]
+  else:
+    data = add_each_noise(signal, SNRdb, case_1, case_2)
+  return data
 
+def add_each_noise(signal, SNRdb, case_1, case_2):
+  np.random.seed()
   mean_S = np.mean(signal)
   mean_S_2 = np.mean(np.power(signal, 2))
   signal_diff = signal - mean_S
@@ -17,8 +23,8 @@ def add_noise(signal, SNRdb, case_1=True, case_2=False):
     std = np.sqrt(mean_S_2/np.power(10, (SNRdb/10)))
   if case_2:
     mean_N = mean_S
-    std = np.sqrt(mean_S_2/np.power(10, (SNRdb/10))- np.power(mean_S, 2))
-  noise = numpy.random.normal(mean, std, size=len(signalOnly))
+    std = np.sqrt((mean_S_2/np.power(10, (SNRdb/10)))- np.power(mean_S, 2))
+  noise = np.random.normal(mean_N, std, size=len(signal))
   noise_signal = signal + noise
   return noise_signal
 
@@ -130,7 +136,7 @@ def handcrafted_features(x):
         data.append(all_i)
     return np.array(data)
 
-def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=30):
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10):
   data = []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
@@ -152,8 +158,8 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
   if scale != None:
     data = scale.fit_transform(data)
   data = data.reshape((-1, ))
-#   data = add_noise(data, SNRdb)
-  data = Fourier(data)
+  # data = add_noise(data, SNRdb)
+  # data = Fourier(data)
   data = divide_sample(data, window_length, hop_length)
   return data
 
