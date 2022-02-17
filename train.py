@@ -28,41 +28,44 @@ def train(data, labels,
   with strategy.scope():
     model = network(opt)
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
-    model.summary()
 
+    model.summary()
     history = model.fit(data, labels,
                         epochs     = opt.epochs,
                         batch_size = opt.batch_size,
                         validation_data=(val_data, val_labels))
 
-  _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
-  print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
+    if opt.use_DNN_A:
+      model.save(opt.save + opt.model_names[0] )
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+  #     with open('DNN_A_history', 'wb') as file_pi: 
+        pickle.dump(history.history, file_pi)
+    elif opt.use_DNN_B:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
+  #     with open('DNN_B_history', 'wb') as file_pi: 
+        pickle.dump(history.history, file_pi)
+    elif opt.use_CNN_A:
+      model.save(opt.save + opt.model_names[1])
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+  #     with open('CNN_A_history', 'wb') as file_pi: 
+        pickle.dump(history.history, file_pi)
+    elif opt.use_CNN_B:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
+  #     with open('CNN_B_history', 'wb') as file_pi: 
+        pickle.dump(history.history, file_pi)
+    elif opt.use_CNN_C:
+      model.save(opt.save + opt.model_names[2])
+      # model.load_weights(opt.save + opt.model_names[2])
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+  #     with open('CNN_C_history', 'wb') as file_pi: 
+        pickle.dump(history.history, file_pi)
 
-  if opt.use_DNN_A:
-    model.save(opt.save + opt.model_names[0] )
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
-#     with open('DNN_A_history', 'wb') as file_pi: 
-      pickle.dump(history.history, file_pi)
-  elif opt.use_DNN_B:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
-#     with open('DNN_B_history', 'wb') as file_pi: 
-      pickle.dump(history.history, file_pi)
-  elif opt.use_CNN_A:
-    model.save(opt.save + opt.model_names[1])
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
-#     with open('CNN_A_history', 'wb') as file_pi: 
-      pickle.dump(history.history, file_pi)
-  elif opt.use_CNN_B:
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
-#     with open('CNN_B_history', 'wb') as file_pi: 
-      pickle.dump(history.history, file_pi)
-  elif opt.use_CNN_C:
-    model.save(opt.save + opt.model_names[2])
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
-#     with open('CNN_C_history', 'wb') as file_pi: 
-      pickle.dump(history.history, file_pi)
+  for i in range(len(opt.SNRdb)):
+    X_test = add_noise(test_data, opt.SNRdb[i])
+    _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, test_labels, verbose=0)
+    print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
+
   
-
     
 def main(opt):
   callback = [tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
@@ -81,7 +84,6 @@ def main(opt):
   #---------------------------------------------------------------------------------------  
   with tf.device('/CPU:0'):
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
-    X_test = add_noise(X_test, opt.SNRdb)
     with strategy.scope():
       if opt.denoise == 'DFK':
         X_train_all = use_denoise(X_train_all, Fourier)
@@ -147,7 +149,7 @@ def parse_opt(known=False):
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
 
-    parser.add_argument('--SNRdb',                    type=int,     default=None,         help='intensity of noise')
+    parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
     parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_C'],   help='name of all NN models')
@@ -155,7 +157,7 @@ def parse_opt(known=False):
     parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
     parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
     parser.add_argument('--result_dir',               type=str,     default="./result/", help='exponential_decay_rate')
-    parser.add_argument('--model_dir',               type=str,     default="/content/drive/Shareddrives/newpro112233/signal_machine/", help='direction to save model')
+    parser.add_argument('--model_dir',                type=str,     default="/content/drive/Shareddrives/newpro112233/signal_machine/", help='direction to save model')
     parser.add_argument('--load_path',                type=str,      default=None,        help='path weight')
 
           
