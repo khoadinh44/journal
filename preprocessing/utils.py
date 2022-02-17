@@ -4,7 +4,7 @@ import tensorflow as tf
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
-def add_noise(signal, SNRdb, case_1=False, case_2=True):
+def add_noise(signal, SNRdb, case_1=True, case_2=False):
   np.random.seed()
 
   mean_S = np.mean(signal)
