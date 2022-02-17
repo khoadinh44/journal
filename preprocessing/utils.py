@@ -6,7 +6,7 @@ from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, W
 
 def add_noise(signal, SNRdb, case_1=True, case_2=False):
   if len(signal.shape)>1:
-    data = [add_each_noise(i, SNRdb, case_1, case_2) for i in signal]
+    data = np.array([add_each_noise(i, SNRdb, case_1, case_2) for i in signal])
   else:
     data = add_each_noise(signal, SNRdb, case_1, case_2)
   return data
