@@ -9,7 +9,7 @@ import argparse
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
-from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise
+from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise, add_noise
 from preprocessing.denoise_signal import Fourier
 from ML_methods import get_data
 
@@ -81,6 +81,7 @@ def main(opt):
   #---------------------------------------------------------------------------------------  
   with tf.device('/CPU:0'):
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
+    X_test = add_noise(X_test, opt.SNRdb)
     with strategy.scope():
       if opt.denoise == 'DFK':
         X_train_all = use_denoise(X_train_all, Fourier)
@@ -146,6 +147,7 @@ def parse_opt(known=False):
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
 
+    parser.add_argument('--SNRdb',                    type=int,     default=None,         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
     parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_C'],   help='name of all NN models')
