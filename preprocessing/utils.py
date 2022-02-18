@@ -135,6 +135,19 @@ def handcrafted_features(x):
         # print(all_i.shape)
         data.append(all_i)
     return np.array(data)
+  
+def scaler(signal, scale_method):
+  if len(signal.shape) > 1:
+    data = []
+    for i in signal:
+      each_data = i.reshape(-1, 1)
+      each_data = scale.fit_transform(each_data)
+      data.append(each_data.reshape((-1, )))
+    return np.array(data)
+  else:
+    each_data = signal.reshape(-1, 1)
+    each_data = scale.fit_transform(each_data)
+    return each_data.reshape((-1, ))
 
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10):
   data = []
@@ -154,12 +167,6 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
           if int(data.shape[0]) < int(x[i].shape[0]):
             data = np.concatenate((data, x[i]), axis=0)
 
-  data = data.reshape(-1, 1)
-  if scale != None:
-    data = scale.fit_transform(data)
-  data = data.reshape((-1, ))
-  # data = add_noise(data, SNRdb)
-  # data = Fourier(data)
   data = divide_sample(data, window_length, hop_length)
   return data
 
