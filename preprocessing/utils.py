@@ -66,19 +66,7 @@ def signal_to_IFMs(x):
     min = np.min(x)
     max = np.max(x)
     return (x-min)/(max-min)
-
-def signaltonoise_dB(x, y):
-    '''
-    x: pure signal
-    y: noised signal
-    '''
-#     a = np.asanyarray(a[0, :])
-#     m = a.mean(axis)
-#     sd = a.std(axis=axis, ddof=ddof)
-#     return 20*np.log10(abs(np.where(sd == 0, 0, m/sd)))
-    return np.sqrt(np.abs(np.sum(y))/ np.sum(np.square(x)))
     
-
 def get_spectrogram(waveform):
   # Zero-padding for an audio waveform with less than 16,000 samples.
   input_len = 300
@@ -132,22 +120,12 @@ def handcrafted_features(x):
         extract_spectral_rolloff   = afe.extract_spectral_rolloff(i)
         all_i = np.concatenate((extract_rms, extract_spectral_centroid, extract_spectral_bandwidth, extract_spectral_flatness, extract_spectral_rolloff), axis=1)
         all_i = np.ndarray.flatten(all_i)  # convert the vectors of 400 samples to the vectors of 45 samples
-        # print(all_i.shape)
         data.append(all_i)
     return np.array(data)
   
 def scaler(signal, scale_method):
-  if len(signal.shape) > 1:
-    data = []
-    for i in signal:
-      each_data = i.reshape(-1, 1)
-      each_data = scale_method().fit_transform(each_data)
-      data.append(each_data.reshape((-1, )))
-    return np.array(data)
-  else:
-    each_data = signal.reshape(-1, 1)
-    each_data = scale_method().fit_transform(each_data)
-    return each_data.reshape((-1, ))
+  scale = scale_method().fit(signal)
+  return scale.transform(signal), scale
 
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10):
   data = []
@@ -188,15 +166,6 @@ def invert_one_hot(x):
     each = i.tolist()
     labels.append(each.index(1))
   return np.array(labels)
-
-# def invert_one_hot(x, num_class):
-#     all_labels = []
-#     label_zeros = np.zeros((num_class, ))
-#     for i in x:
-#         label = np.copy(label_zeros)
-#         label[i] = 1
-#         all_labels.append(label)
-#     return np.array(all_labels)
 
 def use_denoise(x, denoise_method):
   data = []
