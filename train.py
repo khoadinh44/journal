@@ -11,7 +11,14 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import QuantileTransformer
 from sklearn.preprocessing import PowerTransformer
+from sklearn.metrics import accuracy_score
 import argparse
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import VotingClassifier
+from sklearn.svm import SVC
 
 from preprocessing.utils import scaler
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
@@ -130,9 +137,14 @@ def main(opt):
       model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
     elif opt.ML_method == 'LogisticRegression':     
       model = LogisticRegression(random_state=1)
-    elif opt.ML_method == GaussianNB()
+    elif opt.ML_method == 'GaussianNB':
+      model = GaussianNB()
     # Train the model
+    X_train_all = np.squeeze(X_train_all)
+    X_test = np.squeeze(X_test)
+
     model.fit(X_train_all, y_train_all)
+    
     test_predictions = model.predict(X_test)
     print("Test accuracy:", accuracy_score(y_test, test_predictions))
   
