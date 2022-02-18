@@ -4,8 +4,16 @@ import tensorflow as tf
 import pickle
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MaxAbsScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import QuantileTransformer
+from sklearn.preprocessing import PowerTransformer
 import argparse
 
+from preprocessing.utils import scaler
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
@@ -72,25 +80,46 @@ def train(data, labels,
 def main(opt):
   callback = [tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
   tf.get_logger().setLevel('ERROR')
-  # The direction for saving---------------------------------------------------------------
-  if opt.denoise == 'Fourier':
-    folder = 'Fourier'
-  elif opt.denoise == 'Wavelet_denoise':
-    folder = 'Wavelet_denoise'
-  elif opt.denoise == 'SVD':
-    folder = 'SVD'
-  elif opt.denoise == 'savitzky_golay':
-    folder = 'savitzky_golay' 
-  else:
-    folder = 'none_denoise' 
-  #---------------------------------------------------------------------------------------  
+          
   with tf.device('/CPU:0'):
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
-    with strategy.scope():
-      if opt.denoise == 'DFK':
-        X_train_all = use_denoise(X_train_all, Fourier)
-        # X_test = use_denoise(X_test, Fourier)
-    X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.1, random_state=42, shuffle=True)
+
+  # The direction for saving---------------------------------------------------------------
+  if opt.denoise == 'DFK':
+    folder = 'Fourier'
+    X_train_all = use_denoise(X_train_all, Fourier)
+    X_test = use_denoise(X_test, Fourier)
+  elif opt.denoise == 'Wavelet_denoise':
+    folder = 'Wavelet_denoise'
+    X_train_all = use_denoise(X_train_all, Wavelet_denoise)
+    X_test = use_denoise(X_test, Wavelet_denoise)
+  elif opt.denoise == 'SVD':
+    folder = 'SVD'
+    X_train_all = use_denoise(X_train_all, SVD_denoise)
+    X_test = use_denoise(X_test, SVD_denoise)
+  elif opt.denoise == 'savitzky_golay':
+    folder = 'savitzky_golay' 
+    X_train_all = use_denoise(X_train_all, savitzky_golay)
+    X_test = use_denoise(X_test, savitzky_golay)
+  else:
+    folder = 'none_denoise' 
+  
+  if opt.scaler == 'MinMaxScaler':
+    X_train_all = scaler(X_train_all, MinMaxScaler)
+  elif opt.scaler == 'MaxAbsScaler':
+    X_train_all = scaler(X_train_all, MaxAbsScaler)
+  elif opt.scaler == 'StandardScaler':
+    X_train_all = scaler(X_train_all, StandardScaler)
+  elif opt.scaler == 'RobustScaler':
+    X_train_all = scaler(X_train_all, RobustScaler)
+  elif opt.scaler == 'Normalizer':
+    X_train_all = scaler(X_train_all, Normalizer)
+  elif opt.scaler == 'QuantileTransformer':
+    X_train_all = scaler(X_train_all, QuantileTransformer)
+  elif opt.scaler == 'PowerTransformer':
+    X_train_all = scaler(X_train_all, PowerTransformer)
+  
+  X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.2, random_state=42, shuffle=True)
 
   
   if opt.use_DNN_A:
@@ -124,6 +153,7 @@ def parse_opt(known=False):
     parser.add_argument('--use_wavenet_head',      default=False, type=bool)
     parser.add_argument('--ensemble',      default=False, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
+    parser.add_argument('--scaler',  type=str, default=None, help='MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
     
     # Run case------------------------------------------------
     parser.add_argument('--case_0_6',  default=False,  type=bool)
