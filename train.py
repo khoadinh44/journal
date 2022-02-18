@@ -142,7 +142,7 @@ def main(opt):
     X_train_all = scaler(X_train_all, QuantileTransformer)
     X_test = scaler(X_test, QuantileTransformer)
   elif opt.scaler == 'PowerTransformer':
-    print('Using MinMaxScaler \n')
+    print('Using PowerTransformer \n')
     X_train_all = scaler(X_train_all, PowerTransformer)
     X_test = scaler(X_test, PowerTransformer)
   
