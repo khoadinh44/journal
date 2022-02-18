@@ -182,14 +182,21 @@ def convert_one_hot(x, state=True):
     else:
       return x.tolist()
 
-def invert_one_hot(x, num_class):
-    all_labels = []
-    label_zeros = np.zeros((num_class, ))
-    for i in x:
-        label = np.copy(label_zeros)
-        label[i] = 1
-        all_labels.append(label)
-    return np.array(all_labels)
+def invert_one_hot(x):
+  labels = []
+  for i in x:
+    each = i.tolist()
+    labels.append(each.index(1))
+  return np.array(labels)
+
+# def invert_one_hot(x, num_class):
+#     all_labels = []
+#     label_zeros = np.zeros((num_class, ))
+#     for i in x:
+#         label = np.copy(label_zeros)
+#         label[i] = 1
+#         all_labels.append(label)
+#     return np.array(all_labels)
 
 def use_denoise(x, denoise_method):
   data = []
