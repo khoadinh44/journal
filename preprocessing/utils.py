@@ -1,6 +1,13 @@
 from keras import backend as K
 import numpy as np
 import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MaxAbsScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import QuantileTransformer
+from sklearn.preprocessing import PowerTransformer
 from sklearn.model_selection import train_test_split
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
@@ -128,7 +135,7 @@ def scaler(signal, scale_method):
   scale = scale_method().fit(signal)
   return scale.transform(signal), scale
 
-def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10):
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10, opt=None):
   data = []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
@@ -147,8 +154,52 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
             data = np.concatenate((data, x[i]), axis=0)
   
   data = divide_sample(data, window_length, hop_length)
-  train, test = train_test_split(data, test_size=0.2, random_state=42, shuffle=True)
-  return train, test
+  X_train_all, X_test = train_test_split(data, test_size=0.2, random_state=42, shuffle=True)
+
+  # Denoising methods ###################################################################################
+  if opt.denoise == 'DFK':
+    X_train_all = use_denoise(X_train_all, Fourier)
+    X_test = use_denoise(X_test, Fourier)
+  elif opt.denoise == 'Wavelet_denoise':
+    X_train_all = use_denoise(X_train_all, Wavelet_denoise)
+    X_test = use_denoise(X_test, Wavelet_denoise)
+  elif opt.denoise == 'SVD':
+    X_train_all = use_denoise(X_train_all, SVD_denoise)
+    X_test = use_denoise(X_test, SVD_denoise)
+  elif opt.denoise == 'savitzky_golay':
+    X_train_all = use_denoise(X_train_all, savitzky_golay)
+    X_test = use_denoise(X_test, savitzky_golay)
+  
+  # Normalizing methods ################################################################################
+  if opt.scaler != None:
+    X_train_all = np.squeeze(X_train_all)
+    X_test      = np.squeeze(X_test)
+
+    if opt.scaler == 'MinMaxScaler':
+      X_train_all, scale = scaler(X_train_all, MinMaxScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'MaxAbsScaler':
+      X_train_all, scale = scaler(X_train_all, MaxAbsScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'StandardScaler':
+      X_train_all, scale = scaler(X_train_all, StandardScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'RobustScaler':
+      X_train_all, scale = scaler(X_train_all, RobustScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'Normalizer':
+      X_train_all, scale = scaler(X_train_all, Normalizer)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'QuantileTransformer':
+      X_train_all, scale = scaler(X_train_all, QuantileTransformer)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'PowerTransformer':
+      X_train_all, scale = scaler(X_train_all, PowerTransformer)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'handcrafted_features':
+      X_train_all = handcrafted_features(X_train_all)
+      X_test = handcrafted_features(X_test)
+  return X_train_all, X_test
 
 def convert_one_hot(x, state=True):
     if state == False:
