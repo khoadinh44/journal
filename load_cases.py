@@ -316,7 +316,7 @@ def get_data(opt):
                                           B028_0_label_all_train,    B028_1_label_all_train,    B028_2_label_all_train,    B028_3_label_all_train))
  
   
-    all_data_14 = np.concatenate((all_data_12_test, IR014_0_test, IR014_1_test, IR014_2_test, IR014_3_test,
+    all_data_14_test = np.concatenate((all_data_12_test, IR014_0_test, IR014_1_test, IR014_2_test, IR014_3_test,
                                   B014_0_test, B014_1_test, B014_2_test, B014_3_test,
                                   OR014_6_0_test, OR014_6_1_test, OR014_6_2_test, OR014_6_3_test,
                                   IR028_0_test, 	IR028_1_test, 	IR028_2_test, 	IR028_3_test,
