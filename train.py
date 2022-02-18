@@ -20,11 +20,10 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
 
-from preprocessing.utils import scaler
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
-from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise, add_noise
+from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise, add_noise, scaler, invert_one_hot
 from preprocessing.denoise_signal import Fourier
 from load_cases import get_data
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
@@ -160,7 +159,10 @@ def main(opt):
       model = GaussianNB()
     # Train the model
     X_train_all = np.squeeze(X_train_all)
+    y_train_all = invert_one_hot(y_train_all)
+
     X_test = np.squeeze(X_test)
+    y_test = invert_one_hot(y_test)
 
     model.fit(X_train_all, y_train_all)
     
