@@ -19,12 +19,12 @@ from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
 from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise, add_noise
 from preprocessing.denoise_signal import Fourier
-from ML_methods import get_data
+from load_cases import get_data
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
-
+          
 def train(data, labels,
           val_data, val_labels,
           test_data, test_labels,
@@ -84,7 +84,7 @@ def main(opt):
   with tf.device('/CPU:0'):
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
 
-  # The direction for saving---------------------------------------------------------------
+  # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
     folder = 'Fourier'
     X_train_all = use_denoise(X_train_all, Fourier)
@@ -104,6 +104,7 @@ def main(opt):
   else:
     folder = 'none_denoise' 
   
+  # Normalizing methods ################################################################################
   if opt.scaler == 'MinMaxScaler':
     X_train_all = scaler(X_train_all, MinMaxScaler)
   elif opt.scaler == 'MaxAbsScaler':
@@ -121,15 +122,25 @@ def main(opt):
   
   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.2, random_state=42, shuffle=True)
 
+  # Machine learning models #####################################################################################################
+  if opt.ML_method != None:
+    if opt.ML_method == 'SVM':
+      model = SVC(kernel='rbf', probability=True)
+    elif opt.ML_method == 'RandomForestClassifier':
+      model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+    elif opt.ML_method == 'LogisticRegression':     
+      model = LogisticRegression(random_state=1)
+    elif opt.ML_method == GaussianNB()
+    # Train the model
+    model.fit(X_train_all, y_train_all)
+    test_predictions = model.predict(X_test)
+    print("Test accuracy:", accuracy_score(y_test, test_predictions))
   
-  if opt.use_DNN_A:
+  # Deep learning models ########################################################################################################
+  elif opt.use_DNN_A:
     train(X_train, y_train, X_val, y_val, X_test, y_test, DNN_A, folder, opt)
-  elif opt.use_DNN_B:
-    train((X_train_A, X_train_B), y_train, (X_test_A, X_test_B), y_test, DNN_B, folder, opt)
   elif opt.use_CNN_A:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_A, folder, opt)
-  elif opt.use_CNN_B:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_B, folder, opt)
   elif opt.use_CNN_C:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
@@ -143,7 +154,7 @@ def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
     # Models and denoising methods--------------------------
-    parser.add_argument('--use_ML',      default=False, type=bool)
+    parser.add_argument('--ML_method',      default=None, type=str)
     parser.add_argument('--use_DNN_A',   default=False, type=bool)
     parser.add_argument('--use_DNN_B',   default=False, type=bool)
     parser.add_argument('--use_CNN_A',   default=False, type=bool)
