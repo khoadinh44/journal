@@ -6,7 +6,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
-from preprocessing.utils import handcrafted_features
 
 from sklearn.metrics import accuracy_score
 import argparse
@@ -203,11 +202,4 @@ def get_data(opt):
  
     X_train, X_test, y_train, y_test = train_test_split(all_data_14, all_labels_14, test_size=opt.test_rate, random_state=42, shuffle=True)
   
-  if opt.case_15:
-    all_data_0 = np.squeeze(all_data_0)
-    all_data_15 = handcrafted_features(all_data_0)
-    all_labels_15 = all_labels_0
-    
-    X_train, X_test, y_train, y_test = train_test_split(all_data_15, all_labels_15, test_size=opt.test_rate, random_state=42, shuffle=True)
-
   return X_train, X_test, y_train, y_test
