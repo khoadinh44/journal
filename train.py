@@ -12,6 +12,7 @@ from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import QuantileTransformer
 from sklearn.preprocessing import PowerTransformer
 from sklearn.metrics import accuracy_score
+from preprocessing.utils import handcrafted_features
 import argparse
 
 from sklearn.ensemble import RandomForestClassifier
@@ -144,6 +145,9 @@ def main(opt):
     print('Using PowerTransformer \n')
     X_train_all = scaler(X_train_all, PowerTransformer)
     X_test = scaler(X_test, PowerTransformer)
+  elif opt.scaler == 'handcrafted_features':
+    X_train_all = handcrafted_features(np.squeeze(X_train_all))
+    X_test = handcrafted_features(np.squeeze(X_test))
   
   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.2, random_state=42, shuffle=True)
 
@@ -197,7 +201,7 @@ def parse_opt(known=False):
     parser.add_argument('--use_wavenet_head',      default=False, type=bool)
     parser.add_argument('--ensemble',      default=False, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
-    parser.add_argument('--scaler',  type=str, default=None, help='MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
+    parser.add_argument('--scaler',  type=str, default=None, help='handcrafted_features, MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
     
     # Run case------------------------------------------------
     parser.add_argument('--case_0_6',  default=False,  type=bool)
@@ -210,7 +214,6 @@ def parse_opt(known=False):
     parser.add_argument('--case_12', default=False, type=bool) # turn on case_4_10
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
-    parser.add_argument('--case_15', default=False,  type=bool)  # turn on case 12 and case_4_11
 
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k', default=False, type=bool)
