@@ -144,9 +144,11 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
         else:
           if int(data.shape[0]) < int(x[i].shape[0]):
             data = np.concatenate((data, x[i]), axis=0)
-
-  data = divide_sample(data, window_length, hop_length)
-  return data
+            
+  train, test = train_test_split(data, test_size=0.2, random_state=42, shuffle=True)
+  train = divide_sample(train, window_length, hop_length)
+  test = divide_sample(test, window_length, hop_length)
+  return train, test
 
 def convert_one_hot(x, state=True):
     if state == False:
