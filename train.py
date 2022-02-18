@@ -123,7 +123,7 @@ def main(opt):
   # Normalizing methods ################################################################################
   if opt.scaler != None:
     X_train_all = np.squeeze(X_train_all)
-    X_test = np.squeeze(X_test)
+    X_test      = np.squeeze(X_test)
 
     if opt.scaler == 'MinMaxScaler':
       print('Using MinMaxScaler')
@@ -225,9 +225,9 @@ def parse_opt(known=False):
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
 
     parser.add_argument('--data_normal', default=True, type=bool)
-    parser.add_argument('--data_12k', default=False, type=bool)
-    parser.add_argument('--data_48k', default=False, type=bool)
-    parser.add_argument('--multi_head', default=False, type=bool)
+    parser.add_argument('--data_12k',    default=False, type=bool)
+    parser.add_argument('--data_48k',    default=False, type=bool)
+    parser.add_argument('--multi_head',  default=False, type=bool)
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
@@ -237,7 +237,7 @@ def parse_opt(known=False):
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
 
-    parser.add_argument('--use_SNRdb', default=False, type=bool)
+    parser.add_argument('--use_SNRdb',                type=bool,    default=False)
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
