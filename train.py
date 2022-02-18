@@ -4,13 +4,6 @@ import tensorflow as tf
 import pickle
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import MaxAbsScaler
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import RobustScaler
-from sklearn.preprocessing import Normalizer
-from sklearn.preprocessing import QuantileTransformer
-from sklearn.preprocessing import PowerTransformer
 from sklearn.metrics import accuracy_score
 from preprocessing.utils import handcrafted_features
 import argparse
@@ -98,26 +91,18 @@ def main(opt):
   # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
     folder = 'Fourier'
-    print('Using DFK \n')
-    X_train_all = use_denoise(X_train_all, Fourier)
-    X_test = use_denoise(X_test, Fourier)
+    print('- Using DFK')
   elif opt.denoise == 'Wavelet_denoise':
     folder = 'Wavelet_denoise'
-    print('Using Wavelet_denoise \n')
-    X_train_all = use_denoise(X_train_all, Wavelet_denoise)
-    X_test = use_denoise(X_test, Wavelet_denoise)
+    print('- Using Wavelet_denoise')
   elif opt.denoise == 'SVD':
     folder = 'SVD'
-    print('Using SVD \n')
-    X_train_all = use_denoise(X_train_all, SVD_denoise)
-    X_test = use_denoise(X_test, SVD_denoise)
+    print('- Using SVD')
   elif opt.denoise == 'savitzky_golay':
     folder = 'savitzky_golay' 
-    print('Using savitzky_golay \n')
-    X_train_all = use_denoise(X_train_all, savitzky_golay)
-    X_test = use_denoise(X_test, savitzky_golay)
+    print('- Using savitzky_golay')
   else:
-    print('none_denoise \n')
+    print('- none_denoise')
     folder = 'none_denoise' 
   
   # Normalizing methods ################################################################################
@@ -126,37 +111,21 @@ def main(opt):
     X_test      = np.squeeze(X_test)
 
     if opt.scaler == 'MinMaxScaler':
-      print('Using MinMaxScaler')
-      X_train_all, scale = scaler(X_train_all, MinMaxScaler)
-      X_test = scale.transform(X_test)
+      print('- Using MinMaxScaler')
     elif opt.scaler == 'MaxAbsScaler':
-      print('Using MaxAbsScaler')
-      X_train_all, scale = scaler(X_train_all, MaxAbsScaler)
-      X_test = scale.transform(X_test)
+      print('- Using MaxAbsScaler')
     elif opt.scaler == 'StandardScaler':
-      print('Using StandardScaler')
-      X_train_all, scale = scaler(X_train_all, StandardScaler)
-      X_test = scale.transform(X_test)
+      print('- Using StandardScaler')
     elif opt.scaler == 'RobustScaler':
-      print('Using RobustScaler')
-      X_train_all, scale = scaler(X_train_all, RobustScaler)
-      X_test = scale.transform(X_test)
+      print('- Using RobustScaler')
     elif opt.scaler == 'Normalizer':
-      print('Using Normalizer')
-      X_train_all, scale = scaler(X_train_all, Normalizer)
-      X_test = scale.transform(X_test)
+      print('- Using Normalizer')
     elif opt.scaler == 'QuantileTransformer':
-      print('Using QuantileTransformer')
-      X_train_all, scale = scaler(X_train_all, QuantileTransformer)
-      X_test = scale.transform(X_test)
+      print('- Using QuantileTransformer')
     elif opt.scaler == 'PowerTransformer':
-      print('Using PowerTransformer')
-      X_train_all, scale = scaler(X_train_all, PowerTransformer)
-      X_test = scale.transform(X_test)
+      print('- Using PowerTransformer')
     elif opt.scaler == 'handcrafted_features':
-      print('Using handcrafted_features')
-      X_train_all = handcrafted_features(X_train_all)
-      X_test = handcrafted_features(X_test)
+      print('- Using handcrafted_features')
   
   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.2, random_state=42, shuffle=True)
 
