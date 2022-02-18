@@ -112,20 +112,27 @@ def main(opt):
     folder = 'none_denoise' 
   
   # Normalizing methods ################################################################################
-  if opt.scaler == 'MinMaxScaler':
+  if opt.scaler != 'MinMaxScaler':
     X_train_all = scaler(X_train_all, MinMaxScaler)
+    X_test = scaler(X_test, MinMaxScaler)
   elif opt.scaler == 'MaxAbsScaler':
     X_train_all = scaler(X_train_all, MaxAbsScaler)
+    X_test = scaler(X_test, MaxAbsScaler)
   elif opt.scaler == 'StandardScaler':
     X_train_all = scaler(X_train_all, StandardScaler)
+    X_test = scaler(X_test, StandardScaler)
   elif opt.scaler == 'RobustScaler':
     X_train_all = scaler(X_train_all, RobustScaler)
+    X_test = scaler(X_test, RobustScaler)
   elif opt.scaler == 'Normalizer':
     X_train_all = scaler(X_train_all, Normalizer)
+    X_test = scaler(X_test, Normalizer)
   elif opt.scaler == 'QuantileTransformer':
     X_train_all = scaler(X_train_all, QuantileTransformer)
+    X_test = scaler(X_test, QuantileTransformer)
   elif opt.scaler == 'PowerTransformer':
     X_train_all = scaler(X_train_all, PowerTransformer)
+    X_test = scaler(X_test, PowerTransformer)
   
   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.2, random_state=42, shuffle=True)
 
