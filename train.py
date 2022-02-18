@@ -24,7 +24,7 @@ from sklearn.svm import SVC
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
-from preprocessing.utils import recall_m, precision_m, f1_m, signaltonoise_dB, use_denoise, add_noise, scaler, invert_one_hot
+from preprocessing.utils import recall_m, precision_m, f1_m, use_denoise, add_noise, scaler, invert_one_hot
 from preprocessing.denoise_signal import Fourier
 from load_cases import get_data
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
@@ -46,10 +46,10 @@ def train(data, labels,
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
 
     model.summary()
-    # history = model.fit(data, labels,
-    #                     epochs     = opt.epochs,
-    #                     batch_size = opt.batch_size,
-    #                     validation_data=(val_data, val_labels))
+    history = model.fit(data, labels,
+                        epochs     = opt.epochs,
+                        batch_size = opt.batch_size,
+                        validation_data=(val_data, val_labels))
 
     if opt.use_DNN_A:
       model.save(opt.save + opt.model_names[0] )
@@ -70,17 +70,21 @@ def train(data, labels,
   #     with open('CNN_B_history', 'wb') as file_pi: 
         pickle.dump(history.history, file_pi)
     elif opt.use_CNN_C:
-      # model.save(opt.save + opt.model_names[2])
-      model.load_weights(opt.save + opt.model_names[2])
-      # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
-  #     with open('CNN_C_history', 'wb') as file_pi: 
-        # pickle.dump(history.history, file_pi)
+      model.save(opt.save + opt.model_names[2])
+      # model.load_weights(opt.save + opt.model_names[2])
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+      # with open('CNN_C_history', 'wb') as file_pi: 
+        pickle.dump(history.history, file_pi)
 
-    for i in range(len(opt.SNRdb)):
-      test = add_noise(test_data, opt.SNRdb[i])
-      test = use_denoise(test, Fourier)
-      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0)
-      print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
+    if opt.use_SNRdb: 
+      for i in range(len(opt.SNRdb)):
+        test = add_noise(test_data, opt.SNRdb[i])
+        test = use_denoise(test, Fourier)
+        _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0)
+        print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
+    else:
+      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
+      print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   
     
@@ -117,38 +121,42 @@ def main(opt):
     folder = 'none_denoise' 
   
   # Normalizing methods ################################################################################
-  if opt.scaler == 'MinMaxScaler':
-    print('Using MinMaxScaler')
-    X_train_all = scaler(X_train_all, MinMaxScaler)
-    X_test = scaler(X_test, MinMaxScaler)
-  elif opt.scaler == 'MaxAbsScaler':
-    print('Using MaxAbsScaler')
-    X_train_all = scaler(X_train_all, MaxAbsScaler)
-    X_test = scaler(X_test, MaxAbsScaler)
-  elif opt.scaler == 'StandardScaler':
-    print('Using StandardScaler')
-    X_train_all = scaler(X_train_all, StandardScaler)
-    X_test = scaler(X_test, StandardScaler)
-  elif opt.scaler == 'RobustScaler':
-    print('Using RobustScaler')
-    X_train_all = scaler(X_train_all, RobustScaler)
-    X_test = scaler(X_test, RobustScaler)
-  elif opt.scaler == 'Normalizer':
-    print('Using Normalizer')
-    X_train_all = scaler(X_train_all, Normalizer)
-    X_test = scaler(X_test, Normalizer)
-  elif opt.scaler == 'QuantileTransformer':
-    print('Using QuantileTransformer')
-    X_train_all = scaler(X_train_all, QuantileTransformer)
-    X_test = scaler(X_test, QuantileTransformer)
-  elif opt.scaler == 'PowerTransformer':
-    print('Using PowerTransformer')
-    X_train_all = scaler(X_train_all, PowerTransformer)
-    X_test = scaler(X_test, PowerTransformer)
-  elif opt.scaler == 'handcrafted_features':
-    print('Using handcrafted_features')
-    X_train_all = handcrafted_features(np.squeeze(X_train_all))
-    X_test = handcrafted_features(np.squeeze(X_test))
+  if opt.scaler != None:
+    X_train_all = np.squeeze(X_train_all)
+    X_test = np.squeeze(X_test)
+
+    if opt.scaler == 'MinMaxScaler':
+      print('Using MinMaxScaler')
+      X_train_all, scale = scaler(X_train_all, MinMaxScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'MaxAbsScaler':
+      print('Using MaxAbsScaler')
+      X_train_all, scale = scaler(X_train_all, MaxAbsScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'StandardScaler':
+      print('Using StandardScaler')
+      X_train_all, scale = scaler(X_train_all, StandardScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'RobustScaler':
+      print('Using RobustScaler')
+      X_train_all, scale = scaler(X_train_all, RobustScaler)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'Normalizer':
+      print('Using Normalizer')
+      X_train_all, scale = scaler(X_train_all, Normalizer)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'QuantileTransformer':
+      print('Using QuantileTransformer')
+      X_train_all, scale = scaler(X_train_all, QuantileTransformer)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'PowerTransformer':
+      print('Using PowerTransformer')
+      X_train_all, scale = scaler(X_train_all, PowerTransformer)
+      X_test = scale.transform(X_test)
+    elif opt.scaler == 'handcrafted_features':
+      print('Using handcrafted_features')
+      X_train_all = handcrafted_features(X_train_all)
+      X_test = handcrafted_features(X_test)
   
   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.2, random_state=42, shuffle=True)
 
@@ -223,12 +231,13 @@ def parse_opt(known=False):
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
+    parser.add_argument('--epochs',          type=int,   default=1,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
 
+    parser.add_argument('--use_SNRdb', default=False, type=bool)
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
