@@ -94,43 +94,55 @@ def main(opt):
   # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
     folder = 'Fourier'
+    print('Using DFK \n')
     X_train_all = use_denoise(X_train_all, Fourier)
     X_test = use_denoise(X_test, Fourier)
   elif opt.denoise == 'Wavelet_denoise':
     folder = 'Wavelet_denoise'
+    print('Using Wavelet_denoise \n')
     X_train_all = use_denoise(X_train_all, Wavelet_denoise)
     X_test = use_denoise(X_test, Wavelet_denoise)
   elif opt.denoise == 'SVD':
     folder = 'SVD'
+    print('Using SVD \n')
     X_train_all = use_denoise(X_train_all, SVD_denoise)
     X_test = use_denoise(X_test, SVD_denoise)
   elif opt.denoise == 'savitzky_golay':
     folder = 'savitzky_golay' 
+    print('Using savitzky_golay \n')
     X_train_all = use_denoise(X_train_all, savitzky_golay)
     X_test = use_denoise(X_test, savitzky_golay)
   else:
+    print('none_denoise \n')
     folder = 'none_denoise' 
   
   # Normalizing methods ################################################################################
-  if opt.scaler != 'MinMaxScaler':
+  if opt.scaler == 'MinMaxScaler':
+    print('Using MinMaxScaler \n')
     X_train_all = scaler(X_train_all, MinMaxScaler)
     X_test = scaler(X_test, MinMaxScaler)
   elif opt.scaler == 'MaxAbsScaler':
+    print('Using MaxAbsScaler \n')
     X_train_all = scaler(X_train_all, MaxAbsScaler)
     X_test = scaler(X_test, MaxAbsScaler)
   elif opt.scaler == 'StandardScaler':
+    print('Using StandardScaler \n')
     X_train_all = scaler(X_train_all, StandardScaler)
     X_test = scaler(X_test, StandardScaler)
   elif opt.scaler == 'RobustScaler':
+    print('Using RobustScaler \n')
     X_train_all = scaler(X_train_all, RobustScaler)
     X_test = scaler(X_test, RobustScaler)
   elif opt.scaler == 'Normalizer':
+    print('Using Normalizer \n')
     X_train_all = scaler(X_train_all, Normalizer)
     X_test = scaler(X_test, Normalizer)
   elif opt.scaler == 'QuantileTransformer':
+    print('Using QuantileTransformer \n')
     X_train_all = scaler(X_train_all, QuantileTransformer)
     X_test = scaler(X_test, QuantileTransformer)
   elif opt.scaler == 'PowerTransformer':
+    print('Using MinMaxScaler \n')
     X_train_all = scaler(X_train_all, PowerTransformer)
     X_test = scaler(X_test, PowerTransformer)
   
