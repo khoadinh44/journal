@@ -118,34 +118,35 @@ def main(opt):
   
   # Normalizing methods ################################################################################
   if opt.scaler == 'MinMaxScaler':
-    print('Using MinMaxScaler \n')
+    print('Using MinMaxScaler')
     X_train_all = scaler(X_train_all, MinMaxScaler)
     X_test = scaler(X_test, MinMaxScaler)
   elif opt.scaler == 'MaxAbsScaler':
-    print('Using MaxAbsScaler \n')
+    print('Using MaxAbsScaler')
     X_train_all = scaler(X_train_all, MaxAbsScaler)
     X_test = scaler(X_test, MaxAbsScaler)
   elif opt.scaler == 'StandardScaler':
-    print('Using StandardScaler \n')
+    print('Using StandardScaler')
     X_train_all = scaler(X_train_all, StandardScaler)
     X_test = scaler(X_test, StandardScaler)
   elif opt.scaler == 'RobustScaler':
-    print('Using RobustScaler \n')
+    print('Using RobustScaler')
     X_train_all = scaler(X_train_all, RobustScaler)
     X_test = scaler(X_test, RobustScaler)
   elif opt.scaler == 'Normalizer':
-    print('Using Normalizer \n')
+    print('Using Normalizer')
     X_train_all = scaler(X_train_all, Normalizer)
     X_test = scaler(X_test, Normalizer)
   elif opt.scaler == 'QuantileTransformer':
-    print('Using QuantileTransformer \n')
+    print('Using QuantileTransformer')
     X_train_all = scaler(X_train_all, QuantileTransformer)
     X_test = scaler(X_test, QuantileTransformer)
   elif opt.scaler == 'PowerTransformer':
-    print('Using PowerTransformer \n')
+    print('Using PowerTransformer')
     X_train_all = scaler(X_train_all, PowerTransformer)
     X_test = scaler(X_test, PowerTransformer)
   elif opt.scaler == 'handcrafted_features':
+    print('Using handcrafted_features')
     X_train_all = handcrafted_features(np.squeeze(X_train_all))
     X_test = handcrafted_features(np.squeeze(X_test))
   
