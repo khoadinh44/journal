@@ -208,53 +208,5 @@ def get_data(opt):
     all_labels_15 = all_labels_14
     
     X_train, X_test, y_train, y_test = train_test_split(all_data_15, all_labels_15, test_size=opt.test_rate, random_state=42, shuffle=True)
-  
-  if opt.use_ML:
-    model = SVC(kernel='rbf', probability=True)
-    # model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-    # model = LogisticRegression(random_state=1)
-    # Train the model
-    model.fit(X_train, y_train)
-  
-    test_predictions = model.predict(X_test)
-    print("Accuracy:", accuracy_score(y_test, test_predictions))
 
   return X_train, X_test, y_train, y_test
-  
-def parse_opt(known=False):
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--use_ML',    default=False, type=bool)
-
-    # Run case------------------------------------------------
-    parser.add_argument('--case_0_6',  default=True,  type=bool)
-    parser.add_argument('--case_1_7',  default=True,  type=bool)
-    parser.add_argument('--case_2_8',  default=True,  type=bool)
-    parser.add_argument('--case_3_9',  default=True,  type=bool)
-    parser.add_argument('--case_4_10', default=True,  type=bool) # Turn on all cases before
-    parser.add_argument('--case_5_11', default=False, type=bool)
-    
-    parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
-    parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
-    parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
-    parser.add_argument('--case_15', default=False,  type=bool)  # turn on case 12 and case_4_11
-
-    parser.add_argument('--data_normal', default=True, type=bool)
-    parser.add_argument('--data_12k', default=True, type=bool)
-    parser.add_argument('--data_48k', default=False, type=bool)
-
-    # Parameters---------------------------------------------
-    parser.add_argument('--save',       type=str,   default='model.h5', help='Position to save weights')
-    parser.add_argument('--epochs',     type=int,   default=100,        help='Number of iterations for training')
-    parser.add_argument('--batch_size', type=int,   default=32,         help='Number of batch size for training')
-    parser.add_argument('--test_rate',  type=float, default=0.33,       help='rate of split data for testing')
-    parser.add_argument('--use_type',   type=str,   default=None,       help='types of NN: use_CNN_A')
-    parser.add_argument('--state_oh',   default=False,                  type=bool)
-    
-    opt = parser.parse_known_args()[0] if known else parser.parse_args()
-    return opt
-
-    
-if __name__ == "__main__":
-    opt = parse_opt()
-    get_data(opt)
