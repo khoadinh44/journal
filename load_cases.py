@@ -92,14 +92,14 @@ def get_data(opt):
     OR007_12_2_label_all_train = convert_one_hot(OR007_12_2_label) * OR007_12_2_train.shape[0]
     all_labels_2_train = np.concatenate((Normal_2_label_all_train, IR007_2_label_all_train, B007_2_label_all_train, OR007_6_2_label_all_train, OR007_3_2_label_all_train, OR007_12_2_label_all_train))
     
-    all_data_2 = np.concatenate((Normal_2, IR007_2, B007_2, OR007_6_2, OR007_3_2, OR007_12_2))
-    Normal_2_label_all = convert_one_hot(Normal_2_label) * Normal_2.shape[0]
-    IR007_2_label_all = convert_one_hot(IR007_2_label) * IR007_2.shape[0]
-    B007_2_label_all = convert_one_hot(B007_2_label) * B007_2.shape[0]
-    OR007_6_2_label_all = convert_one_hot(OR007_6_2_label) * OR007_6_2.shape[0]
-    OR007_3_2_label_all = convert_one_hot(OR007_3_2_label) * OR007_3_2.shape[0]
-    OR007_12_2_label_all = convert_one_hot(OR007_12_2_label) * OR007_12_2.shape[0]
-    all_labels_2 = np.concatenate((Normal_2_label_all, IR007_2_label_all, B007_2_label_all, OR007_6_2_label_all, OR007_3_2_label_all, OR007_12_2_label_all))
+    all_data_2_test = np.concatenate((Normal_2_test, IR007_2_test, B007_2_test, OR007_6_2_test, OR007_3_2_test, OR007_12_2_test))
+    Normal_2_label_all_test = convert_one_hot(Normal_2_label) * Normal_2_test.shape[0]
+    IR007_2_label_all_test = convert_one_hot(IR007_2_label) * IR007_2_test.shape[0]
+    B007_2_label_all_test = convert_one_hot(B007_2_label) * B007_2_test.shape[0]
+    OR007_6_2_label_all_test = convert_one_hot(OR007_6_2_label) * OR007_6_2_test.shape[0]
+    OR007_3_2_label_all_test = convert_one_hot(OR007_3_2_label) * OR007_3_2_test.shape[0]
+    OR007_12_2_label_all_test = convert_one_hot(OR007_12_2_label) * OR007_12_2_test.shape[0]
+    all_labels_2_test = np.concatenate((Normal_2_label_all_test, IR007_2_label_all_test, B007_2_label_all_test, OR007_6_2_label_all_test, OR007_3_2_label_all_test, OR007_12_2_label_all_test))
     
     X_train, X_test, y_train, y_test = all_data_2_train, all_data_2_test, all_labels_2_train, all_labels_2_test
 
@@ -111,7 +111,7 @@ def get_data(opt):
     OR007_6_3_label_all_train = convert_one_hot(OR007_6_3_label) * OR007_6_3_train.shape[0]
     OR007_3_3_label_all_train = convert_one_hot(OR007_3_3_label) * OR007_3_3_train.shape[0]
     OR007_12_3_label_all_train = convert_one_hot(OR007_12_3_label) * OR007_12_3_train.shape[0]
-    all_labels_3 = np.concatenate((Normal_3_label_all, IR007_3_label_all, B007_3_label_all, OR007_6_3_label_all, OR007_3_3_label_all, OR007_12_3_label_all))
+    all_labels_3_train = np.concatenate((Normal_3_label_all_train, IR007_3_label_all_train, B007_3_label_all_train, OR007_6_3_label_all_train, OR007_3_3_label_all_train, OR007_12_3_label_all_train))
     
     all_data_3_test = np.concatenate((Normal_3_test, IR007_3_test, B007_3_test, OR007_6_3_test, OR007_3_3_test, OR007_12_3_test))
     Normal_3_label_all_test = convert_one_hot(Normal_3_label) * Normal_3_test.shape[0]
@@ -149,7 +149,7 @@ def get_data(opt):
     OR007_6_5_label_all_train = convert_one_hot(OR007_6_0_label) * OR007_6_5_train.shape[0]
     OR007_3_5_label_all_train = convert_one_hot(OR007_3_0_label) * OR007_3_5_train.shape[0]
     OR007_12_5_label_all_train = convert_one_hot(OR007_12_0_label) * OR007_12_5_train.shape[0]
-    all_labels_5_train_train = np.concatenate((Normal_5_label_all_train, IR007_5_label_all_train, B007_5_label_all_train, OR007_6_5_label_all_train, OR007_3_5_label_all_train, OR007_12_5_label_all_train))
+    all_labels_5_train = np.concatenate((Normal_5_label_all_train, IR007_5_label_all_train, B007_5_label_all_train, OR007_6_5_label_all_train, OR007_3_5_label_all_train, OR007_12_5_label_all_train))
 
     
     Normal_5_test = np.concatenate((Normal_0_test, Normal_1_test, Normal_2_test, Normal_3_test))
