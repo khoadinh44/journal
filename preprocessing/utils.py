@@ -141,12 +141,12 @@ def scaler(signal, scale_method):
     data = []
     for i in signal:
       each_data = i.reshape(-1, 1)
-      each_data = scale.fit_transform(each_data)
+      each_data = scale_method().fit_transform(each_data)
       data.append(each_data.reshape((-1, )))
     return np.array(data)
   else:
     each_data = signal.reshape(-1, 1)
-    each_data = scale.fit_transform(each_data)
+    each_data = scale_method().fit_transform(each_data)
     return each_data.reshape((-1, ))
 
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10):
