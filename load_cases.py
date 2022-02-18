@@ -13,42 +13,53 @@ import numpy as np
 
 def get_data(opt):
   if opt.data_normal:
-    from load_data import Normal_0, Normal_1, Normal_2, Normal_3,\
+    from load_data import Normal_0_train, Normal_0_test, Normal_1_train, Normal_1_test, Normal_2_train, Normal_2_test, Normal_3_train, Normal_3_test,\
                           Normal_0_label, Normal_1_label, Normal_2_label, Normal_3_label
   if opt.data_12k:
-    from load_data import B007_0, B007_0_label, B007_1, B007_1_label, B007_2, B007_2_label, B007_3, B007_3_label,\
-                          B014_0, B014_0_label, B014_1, B014_1_label, B014_2, B014_2_label, B014_3, B014_3_label,\
-                          B021_0, B021_0_label, B021_1, B021_1_label, B021_2, B021_2_label, B021_3, B021_3_label,\
-                          B028_0, B028_0_label, B028_1, B028_1_label, B028_2, B028_2_label, B028_3, B028_3_label,\
-                          IR007_0, IR007_0_label, IR007_1, IR007_1_label, IR007_2, IR007_2_label, IR007_3, IR007_3_label,\
-                          IR014_0, IR014_0_label, IR014_1, IR014_1_label, IR014_2, IR014_2_label, IR014_3, IR014_3_label,\
-                          IR021_0, IR021_0_label, IR021_1, IR021_1_label, IR021_2, IR021_2_label, IR021_3, IR021_3_label,\
-                          IR028_0, IR028_0_label, IR028_1, IR028_1_label, IR028_2, IR028_2_label, IR028_3, IR028_3_label,\
-                          OR007_12_0, OR007_12_0_label, OR007_12_1, OR007_12_1_label, OR007_12_2, OR007_12_2_label, OR007_12_3, OR007_12_3_label,\
-                          OR007_3_0, OR007_3_0_label, OR007_3_1, OR007_3_1_label, OR007_3_2, OR007_3_2_label, OR007_3_3, OR007_3_3_label,\
-                          OR007_6_0, OR007_6_0_label, OR007_6_1, OR007_6_1_label, OR007_6_2, OR007_6_2_label, OR007_6_3, OR007_6_3_label,\
-                          OR014_6_0, OR014_6_0_label, OR014_6_1, OR014_6_1_label, OR014_6_2, OR014_6_2_label, OR014_6_3, OR014_6_3_label,\
-                          OR021_6_0, OR021_6_0_label, OR021_6_1, OR021_6_1_label, OR021_6_2, OR021_6_2_label, OR021_6_3, OR021_6_3_label,\
-                          OR021_3_0, OR021_3_0_label, OR021_3_1, OR021_3_1_label, OR021_3_2, OR021_3_2_label, OR021_3_3, OR021_3_3_label,\
-                          OR021_12_0, OR021_12_0_label, OR021_12_1, OR021_12_1_label, OR021_12_2, OR021_12_2_label, OR021_12_3, OR021_12_3_label
+    from load_data import B007_0_train, B007_0_test, B007_0_label, B007_1_train, B007_1_test, B007_1_label, B007_2_train, B007_2_test, B007_2_label, B007_3_train, B007_3_test, B007_3_label,\
+                          B014_0_train, B014_0_test, B014_0_label, B014_1_train, B014_1_test, B014_1_label, B014_2_train, B014_2_test, B014_2_label, B014_3_train, B014_3_test, B014_3_label,\
+                          B021_0_train, B021_0_test, B021_0_label, B021_1_train, B021_1_test, B021_1_label, B021_2_train, B021_2_test, B021_2_label, B021_3_train, B021_3_test, B021_3_label,\
+                          B028_0_train, B028_0_test, B028_0_label, B028_1_train, B028_1_test, B028_1_label, B028_2_train, B028_2_test, B028_2_label, B028_3_train, B028_3_test, B028_3_label,\
+                          IR007_0_train, IR007_0_test, IR007_0_label, IR007_1_train, IR007_1_test, IR007_1_label, IR007_2_train, IR007_2_test, IR007_2_label, IR007_3_train, IR007_3_test, IR007_3_label,\
+                          IR014_0_train, IR014_0_test, IR014_0_label, IR014_1_train, IR014_1_test, IR014_1_label, IR014_2_train, IR014_2_test, IR014_2_label, IR014_3_train, IR014_3_test, IR014_3_label,\
+                          IR021_0_train, IR021_0_test, IR021_0_label, IR021_1_train, IR021_1_test, IR021_1_label, IR021_2_train, IR021_2_test, IR021_2_label, IR021_3_train, IR021_3_test, IR021_3_label,\
+                          IR028_0_train, IR028_0_test, IR028_0_label, IR028_1_train, IR028_1_test, IR028_1_label, IR028_2_train, IR028_2_test, IR028_2_label, IR028_3_train, IR028_3_test, IR028_3_label,\
+                          OR007_12_0_train, OR007_12_0_test, OR007_12_0_label, OR007_12_1_train, OR007_12_1_test, OR007_12_1_label, OR007_12_2_train, OR007_12_2_test, OR007_12_2_label, OR007_12_3_train, OR007_12_3_test, OR007_12_3_label,\
+                          OR007_3_0_train, OR007_3_0_test, OR007_3_0_label, OR007_3_1_train, OR007_3_1_test, OR007_3_1_label, OR007_3_2_train, OR007_3_2_test, OR007_3_2_label, OR007_3_3_train, OR007_3_3_test, OR007_3_3_label,\
+                          OR007_6_0_train, OR007_6_0_test, OR007_6_0_label, OR007_6_1_train, OR007_6_1_test, OR007_6_1_label, OR007_6_2_train, OR007_6_2_test, OR007_6_2_label, OR007_6_3_train, OR007_6_3_test, OR007_6_3_label,\
+                          OR014_6_0_train, OR014_6_0_test, OR014_6_0_label, OR014_6_1_train, OR014_6_1_test, OR014_6_1_label, OR014_6_2_train, OR014_6_2_test, OR014_6_2_label, OR014_6_3_train, OR014_6_3_test, OR014_6_3_label,\
+                          OR021_6_0_train, OR021_6_0_test, OR021_6_0_label, OR021_6_1_train, OR021_6_1_test, OR021_6_1_label, OR021_6_2_train, OR021_6_2_test, OR021_6_2_label, OR021_6_3_train, OR021_6_3_test, OR021_6_3_label,\
+                          OR021_3_0_train, OR021_3_0_test, OR021_3_0_label, OR021_3_1_train, OR021_3_1_test, OR021_3_1_label, OR021_3_2_train, OR021_3_2_test, OR021_3_2_label, OR021_3_3_train, OR021_3_3_test, OR021_3_3_label,\
+                          OR021_12_0_train, OR021_12_0_test, OR021_12_0_label, OR021_12_1_train, OR021_12_1_test, OR021_12_1_label, OR021_12_2_train, OR021_12_2_test, OR021_12_2_label, OR021_12_3_train, OR021_12_3_test, OR021_12_3_label
   
   if opt.data_48k:
-    from load_data import B007_0, B007_0_label, B007_1, B007_1_label, B007_2, B007_2_label, B007_3, B007_3_label,\
-                          IR007_0, IR007_0_label, IR007_1, IR007_1_label, IR007_2, IR007_2_label, IR007_3, IR007_3_label,\
-                          OR007_12_0, OR007_12_0_label, OR007_12_1, OR007_12_1_label, OR007_12_2, OR007_12_2_label, OR007_12_3, OR007_12_3_label,\
-                          OR007_3_0, OR007_3_0_label, OR007_3_1, OR007_3_1_label, OR007_3_2, OR007_3_2_label, OR007_3_3, OR007_3_3_label,\
-                          OR007_6_0, OR007_6_0_label, OR007_6_1, OR007_6_1_label, OR007_6_2, OR007_6_2_label, OR007_6_3, OR007_6_3_label
+    from load_data import B007_0_train, B007_0_test, B007_0_label, B007_1_train, B007_1_test, B007_1_label, B007_2_train, B007_2_test, B007_2_label, B007_3_train, B007_3_test, B007_3_label,\
+                          IR007_0_train, IR007_0_test, IR007_0_label, IR007_1_train, IR007_1_test, IR007_1_label, IR007_2_train, IR007_2_test, IR007_2_label, IR007_3_train, IR007_3_test, IR007_3_label,\
+                          OR007_12_0_train, OR007_12_0_test, OR007_12_0_label, OR007_12_1_train, OR007_12_1_test, OR007_12_1_label, OR007_12_2_train, OR007_12_2_test, OR007_12_2_label, OR007_12_3_train, OR007_12_3_test, OR007_12_3_label,\
+                          OR007_3_0_train, OR007_3_0_test, OR007_3_0_label, OR007_3_1_train, OR007_3_1_test, OR007_3_1_label, OR007_3_2_train, OR007_3_2_test, OR007_3_2_label, OR007_3_3_train, OR007_3_3_test, OR007_3_3_label,\
+                          OR007_6_0_train, OR007_6_0_test, OR007_6_0_label, OR007_6_1_train, OR007_6_1_test, OR007_6_1_label, OR007_6_2_train, OR007_6_2_test, OR007_6_2_label, OR007_6_3_train, OR007_6_3_test, OR007_6_3_label
 
   if opt.case_0_6:
-    all_data_0 = np.concatenate((Normal_0, IR007_0, B007_0, OR007_6_0, OR007_3_0, OR007_12_0))
-    Normal_0_label_all = convert_one_hot(Normal_0_label) * Normal_0.shape[0]
-    IR007_0_label_all = convert_one_hot(IR007_0_label) * IR007_0.shape[0]
-    B007_0_label_all = convert_one_hot(B007_0_label) * B007_0.shape[0]
-    OR007_6_0_label_all = convert_one_hot(OR007_6_0_label) * OR007_6_0.shape[0]
-    OR007_3_0_label_all = convert_one_hot(OR007_3_0_label) * OR007_3_0.shape[0]
-    OR007_12_0_label_all = convert_one_hot(OR007_12_0_label) * OR007_12_0.shape[0]
-    all_labels_0 = np.concatenate((Normal_0_label_all, IR007_0_label_all, B007_0_label_all, OR007_6_0_label_all, OR007_3_0_label_all, OR007_12_0_label_all))
-    X_train, X_test, y_train, y_test = train_test_split(all_data_0, all_labels_0, test_size=opt.test_rate, random_state=42, shuffle=True)
+    all_data_0_train = np.concatenate((Normal_0_train, IR007_0_train, B007_0_train, OR007_6_0_train, OR007_3_0_train, OR007_12_0_train))
+    all_data_0_test = np.concatenate((Normal_0_test, IR007_0_test, B007_0_test, OR007_6_0_test, OR007_3_0_test, OR007_12_0_test))
+    
+    Normal_0_label_all_train = convert_one_hot(Normal_0_label) * Normal_0_train.shape[0]
+    IR007_0_label_all_train = convert_one_hot(IR007_0_label) * IR007_0_train.shape[0]
+    B007_0_label_all_train = convert_one_hot(B007_0_label) * B007_0_train.shape[0]
+    OR007_6_0_label_all_train = convert_one_hot(OR007_6_0_label) * OR007_6_0_train.shape[0]
+    OR007_3_0_label_all_train = convert_one_hot(OR007_3_0_label) * OR007_3_0_train.shape[0]
+    OR007_12_0_label_all_train = convert_one_hot(OR007_12_0_label) * OR007_12_0_train.shape[0]
+    all_labels_0_train = np.concatenate((Normal_0_label_all_train, IR007_0_label_all_train, B007_0_label_all_train, OR007_6_0_label_all_train, OR007_3_0_label_all_train, OR007_12_0_label_all_train))
+    
+    Normal_0_label_all_test = convert_one_hot(Normal_0_label) * Normal_0_test.shape[0] 
+    IR007_0_label_all_test = convert_one_hot(IR007_0_label) * IR007_0_test.shape[0]
+    B007_0_label_all_test = convert_one_hot(B007_0_label) * B007_0_test.shape[0]
+    OR007_6_0_label_all_test = convert_one_hot(OR007_6_0_label) * OR007_6_0_test.shape[0]
+    OR007_3_0_label_all_test = convert_one_hot(OR007_3_0_label) * OR007_3_0_test.shape[0]
+    OR007_12_0_label_all_test = convert_one_hot(OR007_12_0_label) * OR007_12_0_test.shape[0]
+    all_labels_0_test = np.concatenate((Normal_0_label_all_test, IR007_0_label_all_test, B007_0_label_all_test, OR007_6_0_label_all_test, OR007_3_0_label_all_test, OR007_12_0_label_all_test))
+
+    X_train, X_test, y_train, y_test = all_data_0_train, all_data_0_test, all_labels_0_train, all_labels_0_test
 
   if opt.case_1_7:
     all_data_1 = np.concatenate((Normal_1, IR007_1, B007_1, OR007_6_1, OR007_3_1, OR007_12_1))
