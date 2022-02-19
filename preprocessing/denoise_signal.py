@@ -144,7 +144,9 @@ def Fourier(f, plot_all=False, get_result=True, get_PSD=False):
 
 def SVD_denoise(Xnoisy=None):
     # X = np.expand_dims(Xnoisy, axis=1)
-    n, m = X.shape
+    n, m = Xnoisy.shape
+    if  m > n:
+      m, n = Xnoisy.shape
     m, n = np.float(m), np.float(n)
         
     belta = m/n
@@ -153,7 +155,7 @@ def SVD_denoise(Xnoisy=None):
     lambda_ = np.sqrt(2*(belta+1) + (8*belta)/((belta + 1) + np.sqrt(belta**2 + 14*belta + 1)))
     cutoff = lambda_ * np.sqrt(n) * sigma
 
-    U, S, VT = np.linalg.svd(X, full_matrices=0)
+    U, S, VT = np.linalg.svd(Xnoisy, full_matrices=0)
     r = np.max(np.where(S > cutoff)) # Keep modes w/ sig > cutoff 
 
     Xclean = U[:,:(r+1)] @ np.diag(S[:(r+1)]) @ VT[:(r+1),:]
