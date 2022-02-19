@@ -137,24 +137,18 @@ def scaler(signal, scale_method):
 
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10, opt=None):
   data = []
+  X_train_all, X_test = [], []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
-      if data == []:
-        data = x[i]
+      if X_train_all == []:
+        X_train_all, X_test = train_test_split(x[i], test_size=opt.test_rate, random_state=42, shuffle=False)
       else:
-        if hand_fea == False:
-          if int(data.shape[0]) < int(x[i].shape[0]):
-            row = int(data.shape[0])
-            data = np.concatenate((data, x[i][:row, :]), axis=1)
-          else:
-            row = int(x[i].shape[0])
-            data = np.concatenate((data[:row, :], x[i]), axis=1)
-        else:
-          if int(data.shape[0]) < int(x[i].shape[0]):
-            data = np.concatenate((data, x[i]), axis=0)
+        each_X_train_all, each_X_test = train_test_split(x[i], test_size=opt.test_rate, random_state=42, shuffle=False)
+        X_train_all = np.concatenate((X_train_all, each_X_train_all), axis=0)
+        X_test = np.concatenate((X_test, each_X_test), axis=0)
   
-  data = divide_sample(data, window_length, hop_length)
-  X_train_all, X_test = train_test_split(data, test_size=0.2, random_state=42, shuffle=False)
+  X_train_all = divide_sample(X_train_all, window_length, hop_length)
+  X_test = divide_sample(X_test, window_length, hop_length)
 
   # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
