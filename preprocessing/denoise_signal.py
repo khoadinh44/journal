@@ -62,6 +62,7 @@ def savitzky_golay(y=None, window_size=15, order=4, deriv=0, rate=1):
        W.H. Press, S.A. Teukolsky, W.T. Vetterling, B.P. Flannery
        Cambridge University Press ISBN-13: 9780521880688
     """
+    y = y.reshape((-1, ))
     try:
         window_size = np.abs(np.int(window_size))
         order = np.abs(np.int(order))
@@ -142,7 +143,7 @@ def Fourier(f, plot_all=False, get_result=True, get_PSD=False):
     return ffilt.real
 
 def SVD_denoise(Xnoisy=None):
-    X = np.expand_dims(Xnoisy, axis=1)
+    # X = np.expand_dims(Xnoisy, axis=1)
     n, m = X.shape
     m, n = np.float(m), np.float(n)
         
