@@ -153,8 +153,8 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
           if int(data.shape[0]) < int(x[i].shape[0]):
             data = np.concatenate((data, x[i]), axis=0)
   
-  data = divide_sample(data, window_length, hop_length)
-  X_train_all, X_test = train_test_split(data, test_size=0.2, random_state=42, shuffle=True)
+#   data = divide_sample(data, window_length, hop_length)
+  X_train_all, X_test = train_test_split(data, test_size=0.2, random_state=42, shuffle=False)
 
   # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
@@ -199,6 +199,9 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
     elif opt.scaler == 'handcrafted_features':
       X_train_all = handcrafted_features(X_train_all)
       X_test = handcrafted_features(X_test)
+      
+    X_train_all = divide_sample(X_train_all, window_length, hop_length)
+    X_test = divide_sample(X_test, window_length, hop_length)
   return X_train_all, X_test
 
 def convert_one_hot(x, state=True):
