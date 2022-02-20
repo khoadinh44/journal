@@ -135,15 +135,18 @@ def scaler(signal, scale_method):
   scale = scale_method().fit(signal)
   return scale.transform(signal), scale
 
-def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNRdb=10, opt=None):
-  data = []
-  X_train_all, X_test = [], []
+def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNdb=10, opt=None):
+  X_train_all = []
+  X_test = []
   for idx, i in enumerate(x):
     if len(x[i]) > 80:
       if X_train_all == []:
-        X_train_all, X_test = train_test_split(x[i], test_size=opt.test_rate, random_state=42, shuffle=False)
+        data = x[i].reshape(-1, 1)
+        X_train_all, X_test = train_test_split(data, test_size=opt.test_rate, random_state=42, shuffle=False)
       else:
-        each_X_train_all, each_X_test = train_test_split(x[i], test_size=opt.test_rate, random_state=42, shuffle=False)
+        data = x[i].reshape(-1, 1)
+        each_X_train_all, each_X_test = train_test_split(data, test_size=opt.test_rate, random_state=42, shuffle=False)
+
         X_train_all = np.concatenate((X_train_all, each_X_train_all), axis=0)
         X_test = np.concatenate((X_test, each_X_test), axis=0)
   
