@@ -15,8 +15,8 @@ def TransformerLayer(x=None, c=48, num_heads=4):
     k   = Dense(c, use_bias=False)(x)
     v   = Dense(c, use_bias=False)(x)
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-    fc1 = Dense(c, use_bias=False)(ma)
-    fc2 = Dense(c, use_bias=False)(fc1) + x
+    fc1 = Dense(c, use_bias=True)(ma)
+    fc2 = Dense(c, use_bias=True)(fc1) + x
     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
