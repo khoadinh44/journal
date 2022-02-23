@@ -22,6 +22,7 @@ from preprocessing.denoise_signal import Fourier
 from load_cases import get_data
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
+# Can use K-fold: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
           
