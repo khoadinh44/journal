@@ -9,31 +9,31 @@ from keras import regularizers
 from keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda
 from keras.models import Model
 
-# def TransformerLayer(x=None, c=48, num_heads=4):
-#     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-#     q   = Dense(c, use_bias=False)(x)
-#     k   = Dense(c, use_bias=False)(x)
-#     v   = Dense(c, use_bias=False)(x)
-#     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-#     fc1 = Dense(c, use_bias=True)(ma)
-#     fc2 = Dense(c, use_bias=True)(fc1) + x
-#     return fc2
-
 def TransformerLayer(x=None, c=48, num_heads=4):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
     q   = Dense(c, use_bias=False)(x)
     k   = Dense(c, use_bias=False)(x)
     v   = Dense(c, use_bias=False)(x)
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-    fc1 = Dense(c,  activation=tf.keras.layers.ReLU(),
-                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                    bias_regularizer=regularizers.l2(1e-4),
-                    activity_regularizer=regularizers.l2(1e-5))(ma)
-    fc2 = Dense(c,  activation=tf.keras.layers.ReLU(),
-                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                    bias_regularizer=regularizers.l2(1e-4),
-                    activity_regularizer=regularizers.l2(1e-5))(fc1) + x
+    fc1 = Dense(c, use_bias=False)(ma)
+    fc2 = Dense(c, use_bias=False)(fc1) + x
     return fc2
+
+# def TransformerLayer(x=None, c=48, num_heads=4):
+#     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
+#     q   = Dense(c, use_bias=False)(x)
+#     k   = Dense(c, use_bias=False)(x)
+#     v   = Dense(c, use_bias=False)(x)
+#     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
+#     fc1 = Dense(c,  activation=tf.keras.layers.ReLU(),
+#                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+#                     bias_regularizer=regularizers.l2(1e-4),
+#                     activity_regularizer=regularizers.l2(1e-5))(ma)
+#     fc2 = Dense(c,  activation=tf.keras.layers.ReLU(),
+#                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+#                     bias_regularizer=regularizers.l2(1e-4),
+#                     activity_regularizer=regularizers.l2(1e-5))(fc1) + x
+#     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
 def identity_block(input_tensor, kernel_size, filters, stage, block):
