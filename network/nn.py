@@ -15,25 +15,9 @@ def TransformerLayer(x=None, c=48, num_heads=4):
     k   = Dense(c, use_bias=False)(x)
     v   = Dense(c, use_bias=False)(x)
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-    fc1 = Dense(c, use_bias=False)(ma)
-    fc2 = Dense(c, use_bias=False)(fc1) + x
+    fc1 = Dense(c, use_bias=False)(ma)                            
+    fc2 = Dense(c, use_bias=False)(fc1) + x 
     return fc2
-
-# def TransformerLayer(x=None, c=48, num_heads=4):
-#     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-#     q   = Dense(c, use_bias=False)(x)
-#     k   = Dense(c, use_bias=False)(x)
-#     v   = Dense(c, use_bias=False)(x)
-#     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-#     fc1 = Dense(c,  activation=tf.keras.layers.ReLU(),
-#                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-#                     bias_regularizer=regularizers.l2(1e-4),
-#                     activity_regularizer=regularizers.l2(1e-5))(ma)
-#     fc2 = Dense(c,  activation=tf.keras.layers.ReLU(),
-#                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-#                     bias_regularizer=regularizers.l2(1e-4),
-#                     activity_regularizer=regularizers.l2(1e-5))(fc1) + x
-#     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
 def identity_block(input_tensor, kernel_size, filters, stage, block):
@@ -153,7 +137,7 @@ def CNN_C(opt):
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
     '''
     inputs = Input(shape=[400, 1])
-    x = Conv1D(48,
+    x = Conv1D(opt.num_classes*2,
                kernel_size=80,
                strides=4,
                padding='same',
@@ -164,12 +148,12 @@ def CNN_C(opt):
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     for i in range(3):
-        x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+        x = identity_block(x, kernel_size=3, filters=opt.num_classes*2, stage=1, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
     
-    x = TransformerLayer(x)
+    x = TransformerLayer(x, c=opt.num_classes*2)
     x = Dense(opt.num_classes, activation='softmax')(x)
 
     m = Model(inputs, x, name='resnet34')
