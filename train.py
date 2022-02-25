@@ -70,9 +70,11 @@ def train(data, labels,
 
   if opt.use_SNRdb: 
     for i in range(len(opt.SNRdb)):
+      test_data = np.squeeze(test_data)
       test = add_noise(test_data, opt.SNRdb[i])
+      test = np.expand_dims(test, axis=-1)
       print('\n----------------Adding noise Phase -----------------------')
-      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0, batch_size=32)
+      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0)
       print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
   else:
     _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
@@ -239,9 +241,6 @@ def parse_opt(known=False):
     parser.add_argument('--result_dir',               type=str,     default="./result/", help='exponential_decay_rate')
     parser.add_argument('--model_dir',                type=str,     default="/content/drive/Shareddrives/newpro112233/signal_machine/", help='direction to save model')
     parser.add_argument('--load_path',                type=str,      default=None,        help='path weight')
-
-          
-          
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
