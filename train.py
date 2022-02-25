@@ -7,12 +7,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from preprocessing.utils import handcrafted_features
 import argparse
-
+from sklearn.preprocessing import MinMaxScaler
+import keras
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
+from tensorflow.keras.models import load_model
 
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from network.enssemble import semble_transfer
@@ -40,40 +42,37 @@ def train(data, labels,
     model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
 
     model.summary()
-    history = model.fit(data, labels,
-                        epochs     = opt.epochs,
-                        batch_size = opt.batch_size,
-                        validation_data=(val_data, val_labels))
+    # history = model.fit(data, labels,
+    #                     epochs     = opt.epochs,
+    #                     batch_size = opt.batch_size,
+    #                     validation_data=(val_data, val_labels))
 
     if opt.use_DNN_A:
-      model.save(opt.save + opt.model_names[0] )
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
-  #     with open('DNN_A_history', 'wb') as file_pi: 
-        pickle.dump(history.history, file_pi)
-    elif opt.use_DNN_B:
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_B_history', 'wb') as file_pi:
-  #     with open('DNN_B_history', 'wb') as file_pi: 
-        pickle.dump(history.history, file_pi)
+      model.load_weights(opt.save + opt.model_names[0])
+  #     model.save(opt.save + opt.model_names[0])
+  #     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+  # #     with open('DNN_A_history', 'wb') as file_pi: 
+  #       pickle.dump(history.history, file_pi)
     elif opt.use_CNN_A:
-      model.save(opt.save + opt.model_names[1])
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
-  #     with open('CNN_A_history', 'wb') as file_pi: 
-        pickle.dump(history.history, file_pi)
-    elif opt.use_CNN_B:
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
-  #     with open('CNN_B_history', 'wb') as file_pi: 
-        pickle.dump(history.history, file_pi)
+      model.load_weights(opt.save + opt.model_names[1])
+  #     model.save(opt.save + opt.model_names[1])
+  #     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+  # #     with open('CNN_A_history', 'wb') as file_pi: 
+  #       pickle.dump(history.history, file_pi)
     elif opt.use_CNN_C:
-      model.save(opt.save + opt.model_names[2])
-      # model.load_weights(opt.save + opt.model_names[2])
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
-      # with open('CNN_C_history', 'wb') as file_pi: 
-        pickle.dump(history.history, file_pi)
+      # model.save(opt.save + opt.model_names[2])
+      model.load_weights(opt.save + opt.model_names[2])
+      # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+      # # with open('CNN_C_history', 'wb') as file_pi: 
+      #   pickle.dump(history.history, file_pi)
 
     if opt.use_SNRdb: 
       for i in range(len(opt.SNRdb)):
         test = add_noise(test_data, opt.SNRdb[i])
-        test = use_denoise(test, Fourier)
+        # test = use_denoise(test, Fourier)
+        scaler = MinMaxScaler()
+        scaler.fit(test)
+        test = scaler.transform(test)
         _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0)
         print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
     else:
@@ -201,13 +200,13 @@ def parse_opt(known=False):
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
+    parser.add_argument('--epochs',          type=int,   default=1,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
 
-    parser.add_argument('--use_SNRdb',                type=bool,    default=False)
+    parser.add_argument('--use_SNRdb',                type=bool,    default=True)
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
