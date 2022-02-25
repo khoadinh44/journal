@@ -151,7 +151,7 @@ def main(opt):
       X_train_all = handcrafted_features(X_train_all)
       X_test = handcrafted_features(X_test)
     else:
-    print('\n------------------none scaler------------------')
+      print('\n------------------none scaler------------------')
   
   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.01, random_state=42, shuffle=True)
 
