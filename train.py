@@ -67,16 +67,16 @@ def train(data, labels,
 #     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
 #     # with open('CNN_C_history', 'wb') as file_pi: 
 #       pickle.dump(history.history, file_pi)
-  with tf.device('/CPU:0'):
-    if opt.use_SNRdb: 
+
+  if opt.use_SNRdb: 
+    for i in range(len(opt.SNRdb)):
+      test = add_noise(test_data, opt.SNRdb[i])
       print('\n----------------Adding noise Phase -----------------------')
-      for i in range(len(opt.SNRdb)):
-        test = add_noise(test_data, opt.SNRdb[i])
-        _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0)
-        print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
-    else:
-      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
-      print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
+      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0, batch_size=32)
+      print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
+  else:
+    _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test_data, test_labels, verbose=0)
+    print(f'Score in test set: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
 
   
     
@@ -222,7 +222,7 @@ def parse_opt(known=False):
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--epochs',          type=int,   default=1,        help='Number of iterations for training')
+    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
