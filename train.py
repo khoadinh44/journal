@@ -8,6 +8,12 @@ from sklearn.metrics import accuracy_score
 from preprocessing.utils import handcrafted_features
 import argparse
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MaxAbsScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import QuantileTransformer
+from sklearn.preprocessing import PowerTransformer
 import keras
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -37,42 +43,35 @@ def train(data, labels,
     data = np.expand_dims(data, axis=-1)
     val_data = np.expand_dims(val_data, axis=-1)
 
-  with strategy.scope():
-    model = network(opt)
-    model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
+  model = network(opt)
+  model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
 
-    model.summary()
-    # history = model.fit(data, labels,
-    #                     epochs     = opt.epochs,
-    #                     batch_size = opt.batch_size,
-    #                     validation_data=(val_data, val_labels))
+  model.summary()
+  history = model.fit(data, labels,
+                      epochs     = opt.epochs,
+                      batch_size = opt.batch_size,
+                      validation_data=(val_data, val_labels))
 
-    if opt.use_DNN_A:
-      model.load_weights(opt.save + opt.model_names[0])
-  #     model.save(opt.save + opt.model_names[0])
-  #     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
-  # #     with open('DNN_A_history', 'wb') as file_pi: 
-  #       pickle.dump(history.history, file_pi)
-    elif opt.use_CNN_A:
-      model.load_weights(opt.save + opt.model_names[1])
-  #     model.save(opt.save + opt.model_names[1])
-  #     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
-  # #     with open('CNN_A_history', 'wb') as file_pi: 
-  #       pickle.dump(history.history, file_pi)
-    elif opt.use_CNN_C:
-      # model.save(opt.save + opt.model_names[2])
-      model.load_weights(opt.save + opt.model_names[2])
-      # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
-      # # with open('CNN_C_history', 'wb') as file_pi: 
-      #   pickle.dump(history.history, file_pi)
-
+#   if opt.use_DNN_A:
+#     model.save(opt.save + opt.model_names[0] + '.h5')
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+# #     with open('DNN_A_history', 'wb') as file_pi: 
+#       pickle.dump(history.history, file_pi)
+#   elif opt.use_CNN_A:
+#     model.save(opt.save + opt.model_names[1] + '.h5')
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+# #     with open('CNN_A_history', 'wb') as file_pi: 
+#       pickle.dump(history.history, file_pi)
+#   elif opt.use_CNN_C:
+#     model.save(opt.save + opt.model_names[2] + '.h5')
+#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+#     # with open('CNN_C_history', 'wb') as file_pi: 
+#       pickle.dump(history.history, file_pi)
+  with tf.device('/CPU:0'):
     if opt.use_SNRdb: 
+      print('\n----------------Adding noise Phase -----------------------')
       for i in range(len(opt.SNRdb)):
         test = add_noise(test_data, opt.SNRdb[i])
-        # test = use_denoise(test, Fourier)
-        scaler = MinMaxScaler()
-        scaler.fit(test)
-        test = scaler.transform(test)
         _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(test, test_labels, verbose=0)
         print(f'Score in test set in {opt.SNRdb[i]}dB: \n Accuracy: {test_acc}, F1: {test_f1_m}, Precision: {test_precision_m}, recall: {test_recall_m}' )
     else:
@@ -85,24 +84,31 @@ def main(opt):
   callback = [tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
   tf.get_logger().setLevel('ERROR')
           
-  with tf.device('/CPU:0'):
-    X_train_all, X_test, y_train_all, y_test = get_data(opt)
+  # with tf.device('/CPU:0'):
+  X_train_all, X_test, y_train_all, y_test = get_data(opt)
 
   # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
     folder = 'Fourier'
-    print('- Using DFK')
+    print('\n------------------Using DFK------------------')
+    X_train_all = use_denoise(X_train_all, Fourier)
+    X_test = use_denoise(X_test, Fourier)
   elif opt.denoise == 'Wavelet_denoise':
     folder = 'Wavelet_denoise'
-    print('- Using Wavelet_denoise')
+    print('\n------------------Using Wavelet_denoise------------------')
+    X_train_all = use_denoise(X_train_all, Wavelet_denoise)
+    X_test = use_denoise(X_test, Wavelet_denoise)
   elif opt.denoise == 'SVD':
     folder = 'SVD'
-    print('- Using SVD')
+    print('\n------------------Using SVD------------------')
+    X_train_all = use_denoise(X_train_all, SVD_denoise)
+    X_test = use_denoise(X_test, SVD_denoise)
   elif opt.denoise == 'savitzky_golay':
-    folder = 'savitzky_golay' 
-    print('- Using savitzky_golay')
+    print('\n------------------Using savitzky_golay------------------')
+    X_train_all = use_denoise(X_train_all, savitzky_golay)
+    X_test = use_denoise(X_test, savitzky_golay)
   else:
-    print('- none_denoise')
+    print('\n------------------none_denoise------------------')
     folder = 'none_denoise' 
   
   # Normalizing methods ################################################################################
@@ -111,21 +117,37 @@ def main(opt):
     X_test      = np.squeeze(X_test)
 
     if opt.scaler == 'MinMaxScaler':
-      print('- Using MinMaxScaler')
+      print('\n------------------MinMaxScaler------------------')
+      X_train_all, scale = scaler(X_train_all, MinMaxScaler)
+      X_test = scale.transform(X_test)
     elif opt.scaler == 'MaxAbsScaler':
-      print('- Using MaxAbsScaler')
+      print('\n------------------MaxAbsScaler------------------')
+      X_train_all, scale = scaler(X_train_all, MaxAbsScaler)
+      X_test = scale.transform(X_test)
     elif opt.scaler == 'StandardScaler':
-      print('- Using StandardScaler')
+      print('\n------------------StandardScaler------------------')
+      X_train_all, scale = scaler(X_train_all, StandardScaler)
+      X_test = scale.transform(X_test)
     elif opt.scaler == 'RobustScaler':
-      print('- Using RobustScaler')
+      print('\n------------------RobustScaler------------------')
+      X_train_all, scale = scaler(X_train_all, RobustScaler)
+      X_test = scale.transform(X_test)
     elif opt.scaler == 'Normalizer':
-      print('- Using Normalizer')
+      print('\n------------------Normalizer------------------')
+      X_train_all, scale = scaler(X_train_all, Normalizer)
+      X_test = scale.transform(X_test)
     elif opt.scaler == 'QuantileTransformer':
-      print('- Using QuantileTransformer')
+      print('\n------------------QuantileTransformer------------------')
+      X_train_all, scale = scaler(X_train_all, QuantileTransformer)
+      X_test = scale.transform(X_test)
     elif opt.scaler == 'PowerTransformer':
-      print('- Using PowerTransformer')
+      print('\n------------------PowerTransformer------------------')
+      X_train_all, scale = scaler(X_train_all, PowerTransformer)
+      X_test = scale.transform(X_test)
     elif opt.scaler == 'handcrafted_features':
-      print('- Using handcrafted_features')
+      print('\n------------------handcrafted_features------------------')
+      X_train_all = handcrafted_features(X_train_all)
+      X_test = handcrafted_features(X_test)
   
   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=0.2, random_state=42, shuffle=True)
 
