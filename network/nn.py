@@ -11,12 +11,27 @@ from keras.models import Model
 
 def TransformerLayer(x=None, c=48, num_heads=4):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-    q   = Dense(c, use_bias=False)(x)
-    k   = Dense(c, use_bias=False)(x)
-    v   = Dense(c, use_bias=False)(x)
+    q   = Dense(c, use_bias=False, 
+                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                  bias_regularizer=regularizers.l2(1e-4),
+                  activity_regularizer=regularizers.l2(1e-5))(x)
+    k   = Dense(c, use_bias=False, 
+                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                  bias_regularizer=regularizers.l2(1e-4),
+                  activity_regularizer=regularizers.l2(1e-5))(x)
+    v   = Dense(c, use_bias=False, 
+                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                  bias_regularizer=regularizers.l2(1e-4),
+                  activity_regularizer=regularizers.l2(1e-5))(x)
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-    fc1 = Dense(c, use_bias=False)(ma)                            
-    fc2 = cocatenate([Dense(c, use_bias=False)(fc1), x]) 
+    fc1 = Dense(c, use_bias=False, 
+                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                  bias_regularizer=regularizers.l2(1e-4),
+                  activity_regularizer=regularizers.l2(1e-5))(ma)                            
+    fc2 = Dense(c, use_bias=False, 
+                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                  bias_regularizer=regularizers.l2(1e-4),
+                  activity_regularizer=regularizers.l2(1e-5))(fc1) + x
     return fc2
 
 # def TransformerLayer(x=None, c=48, num_heads=4):
