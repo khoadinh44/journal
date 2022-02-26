@@ -11,24 +11,24 @@ from keras.models import Model
 
 def TransformerLayer(x=None, c=48, num_heads=4):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-    q   = Dense(c, use_bias=False, 
+    q   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    k   = Dense(c, use_bias=False, 
+    k   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    v   = Dense(c, use_bias=False, 
+    v   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-    fc1 = Dense(c, use_bias=False, 
+    fc1 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(ma)                            
-    fc2 = Dense(c, use_bias=False, 
+    fc2 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
@@ -188,6 +188,7 @@ def CNN_C(opt):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
+    # x = tf.keras.layers.Flatten()(x)
     
     x = TransformerLayer(x, c=48)
     x = Dense(opt.num_classes, activation='softmax')(x)
