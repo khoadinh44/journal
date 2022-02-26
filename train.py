@@ -52,21 +52,31 @@ def train(data, labels,
                       batch_size = opt.batch_size,
                       validation_data=(val_data, val_labels))
 
-#   if opt.use_DNN_A:
-#     model.save(opt.save + opt.model_names[0] + '.h5')
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
-# #     with open('DNN_A_history', 'wb') as file_pi: 
-#       pickle.dump(history.history, file_pi)
-#   elif opt.use_CNN_A:
-#     model.save(opt.save + opt.model_names[1] + '.h5')
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
-# #     with open('CNN_A_history', 'wb') as file_pi: 
-#       pickle.dump(history.history, file_pi)
-#   elif opt.use_CNN_C:
-#     model.save(opt.save + opt.model_names[2] + '.h5')
-#     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
-#     # with open('CNN_C_history', 'wb') as file_pi: 
-#       pickle.dump(history.history, file_pi)
+  if opt.use_DNN_A:
+    model.save(opt.save + opt.model_names[0] + '.h5')
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
+#     with open('DNN_A_history', 'wb') as file_pi: 
+      pickle.dump(history.history, file_pi)
+  elif opt.use_CNN_A:
+    model.save(opt.save + opt.model_names[1] + '.h5')
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
+#     with open('CNN_A_history', 'wb') as file_pi: 
+      pickle.dump(history.history, file_pi)
+  elif opt.use_CNN_C:
+    model.save(opt.save + opt.model_names[2] + '.h5')
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
+    # with open('CNN_C_history', 'wb') as file_pi: 
+      pickle.dump(history.history, file_pi)
+  elif opt.use_wavelet:
+    model.save(opt.save + opt.model_names[3] + '.h5')
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavelet_history', 'wb') as file_pi:
+    # with open('CNN_C_history', 'wb') as file_pi: 
+      pickle.dump(history.history, file_pi)
+  elif opt.use_wavelet_head:
+    model.save(opt.save + opt.model_names[4] + '.h5')
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavelet_head_history', 'wb') as file_pi:
+    # with open('CNN_C_history', 'wb') as file_pi: 
+      pickle.dump(history.history, file_pi)
 
   if opt.use_SNRdb: 
     for i in range(len(opt.SNRdb)):
@@ -236,7 +246,7 @@ def parse_opt(known=False):
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
-    parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_C'],   help='name of all NN models')
+    parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_C', 'wavenet', 'wavelet_head'],   help='name of all NN models')
     parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
     parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
     parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
