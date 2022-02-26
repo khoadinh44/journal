@@ -9,7 +9,7 @@ from keras import regularizers
 from keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda
 from keras.models import Model
 
-def TransformerLayer(x=None, c=48, num_heads=4):
+def TransformerLayer(x=None, c=48, num_heads=4*3):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
     q   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
