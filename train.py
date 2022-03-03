@@ -53,27 +53,27 @@ def train(data, labels,
                       validation_data=(val_data, val_labels))
 
   if opt.use_DNN_A:
-    model.save(opt.save + opt.model_names[0] + '.h5')
+    model.save(opt.save + opt.model_names[0])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/DNN_A_history', 'wb') as file_pi:
 #     with open('DNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_A:
-    model.save(opt.save + opt.model_names[1] + '.h5')
+    model.save(opt.save + opt.model_names[1])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
 #     with open('CNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_CNN_C:
-    model.save(opt.save + opt.model_names[2] + '.h5')
+    model.save(opt.save + opt.model_names[2])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_wavenet:
-    model.save(opt.save + opt.model_names[3] + '.h5')
+    model.save(opt.save + opt.model_names[3])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavenet_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_wavenet_head:
-    model.save(opt.save + opt.model_names[4] + '.h5')
+    model.save(opt.save + opt.model_names[4])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavenet_head_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
