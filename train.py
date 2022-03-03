@@ -67,14 +67,14 @@ def train(data, labels,
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
-  elif opt.use_wavelet:
+  elif opt.use_wavenet:
     model.save(opt.save + opt.model_names[3] + '.h5')
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavelet_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavenet_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
-  elif opt.use_wavelet_head:
+  elif opt.use_wavenet_head:
     model.save(opt.save + opt.model_names[4] + '.h5')
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavelet_head_history', 'wb') as file_pi:
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavenet_head_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
 
@@ -205,15 +205,15 @@ def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
     # Models and denoising methods--------------------------
-    parser.add_argument('--ML_method',      default=None, type=str)
+    parser.add_argument('--ML_method',   default=None, type=str)
     parser.add_argument('--use_DNN_A',   default=False, type=bool)
     parser.add_argument('--use_DNN_B',   default=False, type=bool)
     parser.add_argument('--use_CNN_A',   default=False, type=bool)
     parser.add_argument('--use_CNN_B',   default=False, type=bool)
     parser.add_argument('--use_CNN_C',   default=False, type=bool)
-    parser.add_argument('--use_wavenet',      default=False, type=bool)
-    parser.add_argument('--use_wavenet_head',      default=False, type=bool)
-    parser.add_argument('--ensemble',      default=False, type=bool)
+    parser.add_argument('--use_wavenet',       default=False, type=bool)
+    parser.add_argument('--use_wavenet_head',  default=False, type=bool)
+    parser.add_argument('--ensemble',          default=False, type=bool)
     parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
     parser.add_argument('--scaler',  type=str, default=None, help='handcrafted_features, MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
     
@@ -252,7 +252,7 @@ def parse_opt(known=False):
     parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
     parser.add_argument('--result_dir',               type=str,     default="./result/", help='exponential_decay_rate')
     parser.add_argument('--model_dir',                type=str,     default="/content/drive/Shareddrives/newpro112233/signal_machine/", help='direction to save model')
-    parser.add_argument('--load_path',                type=str,      default=None,        help='path weight')
+    parser.add_argument('--load_path',                type=str,     default=None,        help='path weight')
     
     opt = parser.parse_known_args()[0] if known else parser.parse_args()
     return opt
