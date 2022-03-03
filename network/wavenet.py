@@ -11,12 +11,12 @@ from .upsample import UpsampleNetwork
 
 def WaveNet(opt):
     inputs = Input(shape=[400, 1])
-    x = Conv1D(128, kernel_size=1, padding='causal')(inputs)
+    x = Conv1D(32, kernel_size=1, padding='causal')(inputs)
 
     skips = None
     for _ in range(2):
         for i in range(10):
-            x, h = ResidualConv1DGLU(128, 256, kernel_size=3, skip_out_channels=128, dilation_rate=2 ** i)(x)
+            x, h = ResidualConv1DGLU(32, 256, kernel_size=3, skip_out_channels=64, dilation_rate=2 ** i)(x)
             if skips is None:
                 skips = h
             else:
@@ -24,14 +24,14 @@ def WaveNet(opt):
     x = skips
     x = tf.keras.layers.ReLU()(x)
 
-    x = Conv1D(128, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l2(l=0.0001))(x)
+    x = Conv1D(32, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l2(l=0.0001))(x)
     x = tf.keras.layers.ReLU()(x)
-    x = Conv1D(256, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l2(l=0.0001))(x)
+    x = Conv1D(64, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l2(l=0.0001))(x)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
     if opt.multi_head == True:
-      x = TransformerLayer(x=x, c=256)
+      x = TransformerLayer(x=x, c=64)
       x = Dense(opt.num_classes, activation='softmax')(x)
       m = Model(inputs, x, name='wavenet_multi_head')
     else:
