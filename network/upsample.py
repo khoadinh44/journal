@@ -9,7 +9,10 @@ class UpsampleCond(tf.keras.Model):
 
         self.conv = tf.keras.layers.Conv2D(1, kernel_size=(1, rate * 2 + 1),
                                       padding='same', use_bias=False,
-                                      kernel_initializer=tf.constant_initializer(1. / (rate * 2 + 1)))
+                                      kernel_initializer=tf.constant_initializer(1. / (rate * 2 + 1)),
+                                      kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                      bias_regularizer=regularizers.l2(1e-4),
+                                      activity_regularizer=regularizers.l2(1e-5))
 
     @tf.function
     def call(self, x):
