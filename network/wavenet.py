@@ -24,9 +24,13 @@ def WaveNet(opt):
     x = skips
     x = tf.keras.layers.ReLU()(x)
 
-    x = Conv1D(32, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l2(l=0.0001))(x)
+    x = Conv1D(32, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                                    bias_regularizer=regularizers.l2(1e-4),
+                                                    activity_regularizer=regularizers.l2(1e-5))(x)
     x = tf.keras.layers.ReLU()(x)
-    x = Conv1D(64, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l2(l=0.0001))(x)
+    x = Conv1D(64, kernel_size=1, padding='causal', kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                                    bias_regularizer=regularizers.l2(1e-4),
+                                                    activity_regularizer=regularizers.l2(1e-5))(x)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
