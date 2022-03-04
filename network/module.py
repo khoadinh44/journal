@@ -69,22 +69,30 @@ class ResidualConv1DGLU(tf.keras.Model):
                                    padding='causal',
                                    dilation_rate=dilation_rate,
                                    residual_channels=residual_channels,
-                                   kernel_regularizer=regularizers.l2(l=0.0001))
+                                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                  bias_regularizer=regularizers.l2(1e-4),
+                                  activity_regularizer=regularizers.l2(1e-5))
 
         self.conv_c = Conv1D(gate_channels,
                              kernel_size=1,
                              padding='causal',
-                             kernel_regularizer=regularizers.l2(l=0.0001))
+                             kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                              bias_regularizer=regularizers.l2(1e-4),
+                              activity_regularizer=regularizers.l2(1e-5))
 
         self.conv_skip = Conv1D(skip_out_channels,
                                 kernel_size=1,
                                 padding='causal',
-                                kernel_regularizer=regularizers.l2(l=0.0001))
+                                kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                bias_regularizer=regularizers.l2(1e-4),
+                                activity_regularizer=regularizers.l2(1e-5))
 
         self.conv_out = Conv1D(residual_channels,
                                kernel_size=1,
                                padding='causal',
-                               kernel_regularizer=regularizers.l2(l=0.0001))
+                               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                                bias_regularizer=regularizers.l2(1e-4),
+                                activity_regularizer=regularizers.l2(1e-5))
 
     @tf.function
     def call(self, inputs):
