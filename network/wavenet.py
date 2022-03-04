@@ -35,7 +35,7 @@ def WaveNet(opt):
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
     if opt.multi_head == True:
-      x = TransformerLayer(x=x, c=64, num_heads=64/4)
+      x = TransformerLayer(x=x, c=64, num_heads=64//4)
       x = Dense(opt.num_classes, activation='softmax')(x)
       m = Model(inputs, x, name='wavenet_multi_head')
     else:
