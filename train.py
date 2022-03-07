@@ -33,7 +33,7 @@ from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, W
 # Can use K-fold: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
-callback = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2)
+callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=1)
           
 def train(data, labels,
           val_data, val_labels,
@@ -231,7 +231,8 @@ def parse_opt(known=False):
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
     
-    parser.add_argument('--MFPT_data',   default=True, type=bool)
+    parser.add_argument('--PU_data',     default=True, type=bool)
+    parser.add_argument('--MFPT_data',   default=False, type=bool)
     parser.add_argument('--data_normal', default=False, type=bool)
     parser.add_argument('--data_12k',    default=False, type=bool)
     parser.add_argument('--data_48k',    default=False, type=bool)
