@@ -103,7 +103,7 @@ def CNN_A(opt):
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
     '''
-    inputs = Input(shape=[400, 1])
+    inputs = Input(shape=[opt.input_shape, 1])
     x = Conv1D(48,
                kernel_size=80,
                strides=4,
@@ -143,7 +143,7 @@ def CNN_B(num_classes, opt):
   return model
 
 def DNN_A(opt):
-  input_ = keras.layers.Input(shape=[400, ])
+  input_ = keras.layers.Input(shape=[opt.input_shape, ])
   hidden1 = keras.layers.Dense(300, activation=tf.keras.layers.ReLU(), 
                                      kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                                      bias_regularizer=regularizers.l2(1e-4),
@@ -172,7 +172,7 @@ def CNN_C(opt):
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
     '''
-    inputs = Input(shape=[400, 1])
+    inputs = Input(shape=[opt.input_shape, 1])
     x = Conv1D(48,
                kernel_size=80,
                strides=4,
