@@ -106,6 +106,8 @@ def divide_sample(x=None, window_length=400, hop_length=200):
   '''
   The shape of x must be (n_sample, )
   '''
+  if len(x.shape) > 1:
+    x = x.reshape(-1, )
   a = []
   window = 0
   all_hop_length = 0
