@@ -380,4 +380,4 @@ if opt.MFPT_data:
     KI18 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI18'))
     KI16 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI16'))
     OR_Damage_test = np.concatenate((KI14, KI21, KI17, KI18, KI16))
-    OR_Damage_test_label = one_hot(1, 3)
+    OR_Damage_test_label = one_hot(2, 3)
