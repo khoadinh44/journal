@@ -164,7 +164,8 @@ def main(opt):
     else:
       print('\n------------------none scaler------------------')
   
-  X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=opt.test_rate, random_state=42, shuffle=True)
+#   X_train, X_val, y_train, y_val = train_test_split(X_train_all, y_train_all, test_size=opt.test_rate, random_state=42, shuffle=True)
+  X_train, X_val, y_train, y_val = X_train_all, X_test, y_train_all, y_test
 
   # Machine learning models #####################################################################################################
   if opt.ML_method != None:
