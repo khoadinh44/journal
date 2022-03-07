@@ -391,4 +391,21 @@ def get_data(opt):
     y_train = np.concatenate((baseline_1_label, baseline_2_label, OuterRaceFault_1_label, OuterRaceFault_2_label, OuterRaceFault_vload_1_label, OuterRaceFault_vload_2_label, OuterRaceFault_vload_4_label, OuterRaceFault_vload_5_label, OuterRaceFault_vload_7_label, InnerRaceFault_vload_1_label, InnerRaceFault_vload_2_label, InnerRaceFault_vload_4_label, InnerRaceFault_vload_5_label, InnerRaceFault_vload_7_label))
     X_test = np.concatenate((baseline_3, baseline_2, OuterRaceFault_3, OuterRaceFault_vload_3, OuterRaceFault_vload_6, InnerRaceFault_vload_3, InnerRaceFault_vload_6))
     y_test = np.concatenate((baseline_3_label, baseline_2_label, OuterRaceFault_3_label, OuterRaceFault_vload_3_label, OuterRaceFault_vload_6_label, InnerRaceFault_vload_3_label, InnerRaceFault_vload_6_label))
+  
+  if opt.PU_data:
+    from load_data import Healthy_train, Healthy_train_label, OR_Damage_train, OR_Damage_train_label, IR_Damage_train, IR_Damage_train_label,\
+                          Healthy_test, Healthy_test_label, OR_Damage_test, OR_Damage_test_label, IR_Damage_test, IR_Damage_test_label
+    
+    Healthy_train_label = convert_one_hot(Healthy_train_label) * Healthy_train.shape[0]
+    OR_Damage_train_label = convert_one_hot(OR_Damage_train_label) * OR_Damage_train.shape[0]
+    IR_Damage_train_label = convert_one_hot(IR_Damage_train_label) * IR_Damage_train.shape[0]
+
+    Healthy_test_label = convert_one_hot(Healthy_test_label) * Healthy_test.shape[0]
+    OR_Damage_test_label = convert_one_hot(OR_Damage_test_label) * OR_Damage_test.shape[0]
+    IR_Damage_test_label = convert_one_hot(IR_Damage_test_label) * IR_Damage_test.shape[0]
+
+    X_train = np.concatenate((Healthy_train, OR_Damage_train, IR_Damage_train))
+    y_train = np.concatenate((Healthy_train_label, OR_Damage_train_label, IR_Damage_train_label))
+    X_test = np.concatenate((Healthy_test, OR_Damage_test, IR_Damage_test))
+    y_test = np.concatenate((Healthy_test_label, OR_Damage_test_label, IR_Damage_test_label))
   return X_train, X_test, y_train, y_test
