@@ -102,7 +102,7 @@ def one_hot(pos, num_class):
     num[0, pos] = 1
     return num
 
-def divide_sample(x, window_length, hop_length):
+def divide_sample(x=None, window_length=400, hop_length=200):
   '''
   The shape of x must be (n_sample, )
   '''
