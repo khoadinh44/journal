@@ -1,6 +1,8 @@
 from keras import backend as K
+import os
 import numpy as np
 import tensorflow as tf
+import scipy.io
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import MaxAbsScaler
 from sklearn.preprocessing import StandardScaler
@@ -11,6 +13,19 @@ from sklearn.preprocessing import PowerTransformer
 from sklearn.model_selection import train_test_split
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
+
+def load_PU_data(path):
+  data = np.array([])
+  for name in os.listdir(path):
+    if name.split('.')[-1] == 'mat':
+      path_signal = path + '/' + name
+      file_name = path_signal.split('/')[-1]
+      name = file_name.split('.')[0]
+      signal = scipy.io.loadmat(path_signal)[name]
+      signal = signal[0][0][2][0][6][2]  #Take out the data
+      signal = signal.reshape(-1, )
+      data = np.concatenate((data, signal))
+  return data
 
 def add_noise(signal, SNRdb, case_1=True, case_2=False):
   if len(signal.shape)>1:
