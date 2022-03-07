@@ -300,6 +300,9 @@ if opt.MFPT_data:
     baseline_1 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/1 - Three Baseline Conditions/baseline_1.mat')[0][0][1]
     baseline_2 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/1 - Three Baseline Conditions/baseline_2.mat')[0][0][1]
     baseline_3 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/1 - Three Baseline Conditions/baseline_3.mat')[0][0][1]
+    baseline_1_label = one_hot(0, 21)
+    baseline_2_label = one_hot(2, 21)
+    baseline_3_label = one_hot(3, 21)
     
     # Outer rate ################################################
     OuterRaceFault_1 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/2 - Three Outer Race Fault Conditions/OuterRaceFault_1.mat')[0][0][2]
@@ -312,6 +315,17 @@ if opt.MFPT_data:
     OuterRaceFault_vload_5 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/3 - Seven More Outer Race Fault Conditions/OuterRaceFault_vload_5.mat')[0][0][2]
     OuterRaceFault_vload_6 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/3 - Seven More Outer Race Fault Conditions/OuterRaceFault_vload_6.mat')[0][0][2]
     OuterRaceFault_vload_7 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/3 - Seven More Outer Race Fault Conditions/OuterRaceFault_vload_7.mat')[0][0][2]
+    OuterRaceFault_1_label = one_hot(4, 21)
+    OuterRaceFault_2_label = one_hot(5, 21)
+    OuterRaceFault_3_label = one_hot(6, 21)
+    OuterRaceFault_vload_1_label = one_hot(7, 21)
+    OuterRaceFault_vload_2_label = one_hot(8, 21)
+    OuterRaceFault_vload_3_label = one_hot(9, 21)
+    OuterRaceFault_vload_4_label = one_hot(10, 21)
+    OuterRaceFault_vload_5_label = one_hot(11, 21)
+    OuterRaceFault_vload_6_label = one_hot(12, 21)
+    OuterRaceFault_vload_7_label = one_hot(13, 21)
+    
     
     # Inter rate ###################################################################################################################################
     InnerRaceFault_vload_1 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/4 - Seven Inner Race Fault Conditions/InnerRaceFault_vload_1.mat')[0][0][2]
@@ -321,5 +335,11 @@ if opt.MFPT_data:
     InnerRaceFault_vload_5 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/4 - Seven Inner Race Fault Conditions/InnerRaceFault_vload_5.mat')[0][0][2]
     InnerRaceFault_vload_6 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/4 - Seven Inner Race Fault Conditions/InnerRaceFault_vload_6.mat')[0][0][2]
     InnerRaceFault_vload_7 = scipy.io.loadmat('/content/drive/Shareddrives/newpro112233/signal_machine/MFPT Fault Data Sets/4 - Seven Inner Race Fault Conditions/InnerRaceFault_vload_7.mat')[0][0][2]
-
+    InnerRaceFault_vload_1_label = one_hot(14, 21)
+    InnerRaceFault_vload_2_label = one_hot(15, 21)
+    InnerRaceFault_vload_3_label = one_hot(16, 21)
+    InnerRaceFault_vload_4_label = one_hot(17, 21)
+    InnerRaceFault_vload_5_label = one_hot(18, 21)
+    InnerRaceFault_vload_6_label = one_hot(19, 21)
+    InnerRaceFault_vload_7_label = one_hot(20, 21)
     
