@@ -363,6 +363,30 @@ def get_data(opt):
                           InnerRaceFault_vload_1, InnerRaceFault_vload_2, InnerRaceFault_vload_3, InnerRaceFault_vload_4, InnerRaceFault_vload_5, InnerRaceFault_vload_6, InnerRaceFault_vload_7,\
                           InnerRaceFault_vload_1_label, InnerRaceFault_vload_2_label, InnerRaceFault_vload_3_label, InnerRaceFault_vload_4_label, InnerRaceFault_vload_5_label, InnerRaceFault_vload_6_label, InnerRaceFault_vload_7_label
     
+    baseline_1_label = convert_one_hot(baseline_1_label) * baseline_1.shape[0]
+    baseline_2_label = convert_one_hot(baseline_2_label) * baseline_2.shape[0]
+    baseline_3_label = convert_one_hot(baseline_3_label) * baseline_3.shape[0]
+
+    OuterRaceFault_1_label = convert_one_hot(OuterRaceFault_1_label) * OuterRaceFault_1.shape[0]
+    OuterRaceFault_2_label = convert_one_hot(OuterRaceFault_2_label) * OuterRaceFault_2.shape[0]
+    OuterRaceFault_3_label = convert_one_hot(OuterRaceFault_3_label) * OuterRaceFault_3.shape[0]
+
+    OuterRaceFault_vload_1_label = convert_one_hot(OuterRaceFault_vload_1_label) * OuterRaceFault_vload_1.shape[0]
+    OuterRaceFault_vload_2_label = convert_one_hot(OuterRaceFault_vload_2_label) * OuterRaceFault_vload_2.shape[0]
+    OuterRaceFault_vload_3_label = convert_one_hot(OuterRaceFault_vload_3_label) * OuterRaceFault_vload_3.shape[0]
+    OuterRaceFault_vload_4_label = convert_one_hot(OuterRaceFault_vload_4_label) * OuterRaceFault_vload_4.shape[0]
+    OuterRaceFault_vload_5_label = convert_one_hot(OuterRaceFault_vload_5_label) * OuterRaceFault_vload_5.shape[0]
+    OuterRaceFault_vload_6_label = convert_one_hot(OuterRaceFault_vload_6_label) * OuterRaceFault_vload_6.shape[0]
+    OuterRaceFault_vload_7_label = convert_one_hot(OuterRaceFault_vload_7_label) * OuterRaceFault_vload_7.shape[0]
+
+    InnerRaceFault_vload_1_label = convert_one_hot(InnerRaceFault_vload_1_label) * InnerRaceFault_vload_1.shape[0]
+    InnerRaceFault_vload_2_label = convert_one_hot(InnerRaceFault_vload_2_label) * InnerRaceFault_vload_2.shape[0]
+    InnerRaceFault_vload_3_label = convert_one_hot(InnerRaceFault_vload_3_label) * InnerRaceFault_vload_3.shape[0]
+    InnerRaceFault_vload_4_label = convert_one_hot(InnerRaceFault_vload_4_label) * InnerRaceFault_vload_4.shape[0]
+    InnerRaceFault_vload_5_label = convert_one_hot(InnerRaceFault_vload_5_label) * InnerRaceFault_vload_5.shape[0]
+    InnerRaceFault_vload_6_label = convert_one_hot(InnerRaceFault_vload_6_label) * InnerRaceFault_vload_6.shape[0]
+    InnerRaceFault_vload_7_label = convert_one_hot(InnerRaceFault_vload_7_label) * InnerRaceFault_vload_7.shape[0]
+
     X_train = np.concatenate((baseline_1, baseline_2, OuterRaceFault_1, OuterRaceFault_2, OuterRaceFault_vload_1, OuterRaceFault_vload_2, OuterRaceFault_vload_4, OuterRaceFault_vload_5, OuterRaceFault_vload_7, InnerRaceFault_vload_1, InnerRaceFault_vload_2, InnerRaceFault_vload_4, InnerRaceFault_vload_5, InnerRaceFault_vload_7))
     y_train = np.concatenate((baseline_1_label, baseline_2_label, OuterRaceFault_1_label, OuterRaceFault_2_label, OuterRaceFault_vload_1_label, OuterRaceFault_vload_2_label, OuterRaceFault_vload_4_label, OuterRaceFault_vload_5_label, OuterRaceFault_vload_7_label, InnerRaceFault_vload_1_label, InnerRaceFault_vload_2_label, InnerRaceFault_vload_4_label, InnerRaceFault_vload_5_label, InnerRaceFault_vload_7_label))
     X_test = np.concatenate((baseline_3, baseline_2, OuterRaceFault_3, OuterRaceFault_vload_3, OuterRaceFault_vload_6, InnerRaceFault_vload_3, InnerRaceFault_vload_6))
