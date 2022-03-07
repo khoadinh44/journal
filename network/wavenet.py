@@ -10,7 +10,7 @@ from .upsample import UpsampleNetwork
 # Reference:  https://github.com/kokeshing/WaveNet-tf2
 
 def WaveNet(opt):
-    inputs = Input(shape=[400, 1])
+    inputs = Input(shape=[opt.input_shape, 1])
     x = Conv1D(32, kernel_size=1, padding='causal')(inputs)
 
     skips = None
