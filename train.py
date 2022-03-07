@@ -33,7 +33,7 @@ from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, W
 # Can use K-fold: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
-callback = [tf.keras.callbacks.EarlyStopping(monitor='loss', patience=2)]
+callback = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2)
           
 def train(data, labels,
           val_data, val_labels,
