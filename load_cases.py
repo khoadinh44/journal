@@ -363,5 +363,8 @@ def get_data(opt):
                           InnerRaceFault_vload_1, InnerRaceFault_vload_2, InnerRaceFault_vload_3, InnerRaceFault_vload_4, InnerRaceFault_vload_5, InnerRaceFault_vload_6, InnerRaceFault_vload_7,\
                           InnerRaceFault_vload_1_label, InnerRaceFault_vload_2_label, InnerRaceFault_vload_3_label, InnerRaceFault_vload_4_label, InnerRaceFault_vload_5_label, InnerRaceFault_vload_6_label, InnerRaceFault_vload_7_label,\
     
-  
+    X_train = np.concatenate((baseline_1, baseline_2, OuterRaceFault_1, OuterRaceFault_2, OuterRaceFault_vload_1, OuterRaceFault_vload_2, OuterRaceFault_vload_4, OuterRaceFault_vload_5, OuterRaceFault_vload_7, InnerRaceFault_vload_1, InnerRaceFault_vload_2, InnerRaceFault_vload_4, InnerRaceFault_vload_5, InnerRaceFault_vload_7))
+    y_train = np.concatenate((baseline_1_label, baseline_2_label, OuterRaceFault_1_label, OuterRaceFault_2_label, OuterRaceFault_vload_1_label, OuterRaceFault_vload_2_label, OuterRaceFault_vload_4_label, OuterRaceFault_vload_5_label, OuterRaceFault_vload_7_label, InnerRaceFault_vload_1_label, InnerRaceFault_vload_2_label, InnerRaceFault_vload_4_label, InnerRaceFault_vload_5_label, InnerRaceFault_vload_7_label))
+    X_test = np.concatenate((baseline_3, baseline_2, OuterRaceFault_3, OuterRaceFault_vload_3, OuterRaceFault_vload_6, InnerRaceFault_vload_3, InnerRaceFault_vload_6))
+    y_test = np.concatenate((baseline_3_label, baseline_2_label, OuterRaceFault_3_label, OuterRaceFault_vload_3_label, OuterRaceFault_vload_6_label, InnerRaceFault_vload_3_label, InnerRaceFault_vload_6_label))
   return X_train, X_test, y_train, y_test
