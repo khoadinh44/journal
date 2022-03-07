@@ -343,3 +343,41 @@ if opt.MFPT_data:
     InnerRaceFault_vload_6_label = one_hot(2, 3)
     InnerRaceFault_vload_7_label = one_hot(2, 3)
     
+  if opt.PU_data:
+    # Training ################################################
+    K002 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/K002'))
+    Healthy_train = K002
+    Healthy_train_label = one_hot(0, 3)
+
+    KA01 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA01'))
+    KA05 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA05'))
+    KA07 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA07'))
+    OR_Damage_train = np.concatenate((KA01, KA05, KA07))
+    OR_Damage_train_label = one_hot(1, 3)
+    
+    KI01 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI01'))
+    KI05 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI05'))
+    KI07 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI07'))
+    IR_Damage_train = np.concatenate((KI01, KI05, KI07))
+    IR_Damage_train_label = one_hot(2, 3)
+
+    # Testing ###################################################
+    K001 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/K001'))
+    Healthy_test = K001
+    Healthy_test_label = one_hot(0, 3)
+
+    KA22 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA22'))
+    KA04 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA04'))
+    KA15 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA15'))
+    KA30 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA30'))
+    KA16 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA16'))
+    OR_Damage_test = np.concatenate((KA22, KA04, KA15, KA30, KA16))
+    OR_Damage_test_label = one_hot(1, 3)
+
+    KI14 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI14'))
+    KI21 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI21'))
+    KI17 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI17'))
+    KI18 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI18'))
+    KI16 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI16'))
+    OR_Damage_test = np.concatenate((KI14, KI21, KI17, KI18, KI16))
+    OR_Damage_test_label = one_hot(1, 3)
