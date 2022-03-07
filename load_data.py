@@ -3,7 +3,7 @@ import pandas as pd
 import scipy.io
 import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
-from preprocessing.utils import get_spectrogram, one_hot, concatenate_data, divide_sample
+from preprocessing.utils import get_spectrogram, one_hot, concatenate_data, divide_sample, load_PU_data
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import MaxAbsScaler
@@ -343,7 +343,7 @@ if opt.MFPT_data:
     InnerRaceFault_vload_6_label = one_hot(2, 3)
     InnerRaceFault_vload_7_label = one_hot(2, 3)
     
-  if opt.PU_data:
+if opt.PU_data:
     # Training ################################################
     K002 = divide_sample(load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/K002'))
     Healthy_train = K002
