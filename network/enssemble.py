@@ -29,11 +29,11 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
       keras.backend.clear_session()
 
   model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-  X_train = np.squeeze(X_train)
-  y_train = invert_one_hot(y_train)
+  # X_train = np.squeeze(X_train)
+  # y_train = invert_one_hot(y_train)
 
-  X_test = np.squeeze(X_test)
-  y_test = invert_one_hot(y_test)
+  # X_test = np.squeeze(X_test)
+  # y_test = invert_one_hot(y_test)
 
   model.fit(X_train, y_train)
   test_predictions = model.predict(X_test)
