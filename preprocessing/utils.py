@@ -16,6 +16,8 @@ from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, W
 
 def load_PU_data(path):
   data = np.array([])
+  all_data = []
+  min_l = 0
   for name in os.listdir(path):
     if name.split('.')[-1] == 'mat':
       path_signal = path + '/' + name
@@ -24,7 +26,15 @@ def load_PU_data(path):
       signal = scipy.io.loadmat(path_signal)[name]
       signal = signal[0][0][2][0][6][2]  #Take out the data
       signal = signal.reshape(-1, )
-      data = np.concatenate((data, signal))
+      if min_l == 0:
+        min_l = int(signal.shape[0])
+      elif min_l > signal.shape[0]:
+        min_l = int(signal.shape[0])   
+      all_data.append(signal)
+      
+    for i in all_data:
+      each_data = i[:min_l]
+      data = np.concatenate((data, each_data))
   return data
 
 def add_noise(signal, SNRdb, case_1=True, case_2=False):
