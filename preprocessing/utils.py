@@ -32,9 +32,9 @@ def load_PU_data(path):
         min_l = int(signal.shape[0])   
       all_data.append(signal)
       
-    for i in all_data:
-      each_data = i[:min_l].tolist()
-      data.append(each_data)
+  for i in all_data:
+    each_data = i[:min_l].tolist()
+    data.append(each_data)
   return np.array(data)
 
 def add_noise(signal, SNRdb, case_1=True, case_2=False):
