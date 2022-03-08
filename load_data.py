@@ -346,38 +346,48 @@ if opt.MFPT_data:
 if opt.PU_data:
     # Training ################################################
     K002 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/K002')
-    Healthy_train = K002
-    Healthy_train_label = one_hot(0, 3)
 
     KA01 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA01')
     KA05 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA05')
     KA07 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA07')
-    OR_Damage_train = np.concatenate((KA01, KA05, KA07))
-    OR_Damage_train_label = one_hot(1, 3)
     
     KI01 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI01')
     KI05 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI05')
     KI07 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI07')
-    IR_Damage_train = np.concatenate((KI01, KI05, KI07))
-    IR_Damage_train_label = one_hot(2, 3)
 
     # Testing ###################################################
     K001 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/K001')
-    Healthy_test = K001
-    Healthy_test_label = one_hot(0, 3)
 
     KA22 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA22')
     KA04 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA04')
     KA15 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA15')
     KA30 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA30')
     KA16 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA16')
-    OR_Damage_test = np.concatenate((KA22, KA04, KA15, KA30, KA16))
-    OR_Damage_test_label = one_hot(1, 3)
 
     KI14 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI14')
     KI21 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI21')
     KI17 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI17')
     KI18 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI18')
     KI16 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI16')
-    IR_Damage_test = np.concatenate((KI14, KI21, KI17, KI18, KI16))
+    
+    # load ###############################################
+    min_ = np.min((K002.shape[1], KA01.shape[1], KA07.shape[1], KI01.shape[1], KI05.shape[1], KI05.shape[1], KI07.shape[1],\
+                  KA22.shape[1], KA04.shape[1], KA15.shape[1], KA30.shape[1], KA16.shape[1],\
+                  KI14.shape[1], KI21.shape[1], KI17.shape[1], KI18.shape[1], KI16.shape[1]))
+    Healthy_train = K002[:, :min_]
+    Healthy_train_label = one_hot(0, 3)
+
+    OR_Damage_train = np.concatenate((KA01[:, :min_], KA05[:, :min_], KA07[:, :min_]))
+    OR_Damage_train_label = one_hot(1, 3)
+
+    IR_Damage_train = np.concatenate((KI01[:, :min_], KI05[:, :min_], KI07[:, :min_]))
+    IR_Damage_train_label = one_hot(2, 3)
+
+    Healthy_test = K001[:, :min_]
+    Healthy_test_label = one_hot(0, 3)
+
+    OR_Damage_test = np.concatenate((KA22[:, :min_], KA04[:, :min_], KA15[:, :min_], KA30[:, :min_], KA16[:, :min_]))
+    OR_Damage_test_label = one_hot(1, 3)
+    
+    IR_Damage_test = np.concatenate((KI14[:, :min_], KI21[:, :min_], KI17[:, :min_], KI18[:, :min_], KI16[:, :min_]))
     IR_Damage_test_label = one_hot(2, 3)
