@@ -3,8 +3,8 @@ from tensorflow import keras
 import numpy as np
 from preprocessing.utils import accuracy_m
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
-
-def semble_transfer(opt, X_test, y_test):
+from sklearn.ensemble import RandomForestClassifier
+def semble_transfer(opt, X_test, y_test, X_train, y_train):
   y_pred = np.zeros(shape=y_test.shape)
   l = 0
   
@@ -24,6 +24,18 @@ def semble_transfer(opt, X_test, y_test):
       y_pred += curr_y_pred
       l += 1
       keras.backend.clear_session()
+
+  model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+  X_train = np.squeeze(X_train)
+  y_train = invert_one_hot(y_train)
+
+  X_test = np.squeeze(X_test)
+  y_test = invert_one_hot(y_test)
+
+  model.fit(X_train, y_train)
+  test_predictions = model.predict(X_test)
+  y_pred += test_predictions
+  l += 1
     
   y_pred = y_pred / l
   print('Test accuracy: ', accuracy_m(y_test, y_pred))
