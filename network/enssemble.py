@@ -10,12 +10,16 @@ def semble_transfer(opt, X_test, y_test):
   
   for name in opt.model_names:
     all_path = opt.model_dir + name 
-    if name == 'DNN':
-      model = DNN_A(opt)
+    if name == 'CNN_A':
+      model = CNN_A(opt)
+    elif name == 'CNN_C':
+      model = CNN_C(opt)
+    
+    if name == 'CNN_A' or name == 'CNN_C':
       model.load_weights(all_path)
-    curr_y_pred = model.predict(X_test)
-    keras.backend.clear_session()
-    np.save(opt.model_dir + name + '.npy', curr_y_pred)
+      curr_y_pred = model.predict(X_test)
+      keras.backend.clear_session()
+      np.save(opt.model_dir + name + '.npy', curr_y_pred)
     
     y_pred += curr_y_pred
     l += 1
