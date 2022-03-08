@@ -15,7 +15,7 @@ from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
 def load_PU_data(path):
-  data = np.array([])
+  data = []
   all_data = []
   min_l = 0
   for name in os.listdir(path):
@@ -33,9 +33,9 @@ def load_PU_data(path):
       all_data.append(signal)
       
     for i in all_data:
-      each_data = i[:min_l]
-      data = np.concatenate((data, each_data))
-  return data
+      each_data = i[:min_l].tolist()
+      data.append(each_data)
+  return np.array(data)
 
 def add_noise(signal, SNRdb, case_1=True, case_2=False):
   if len(signal.shape)>1:
