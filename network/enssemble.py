@@ -4,6 +4,9 @@ import numpy as np
 from preprocessing.utils import accuracy_m
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from sklearn.ensemble import RandomForestClassifier
+from preprocessing.utils import invert_one_hot
+
+
 def semble_transfer(opt, X_test, y_test, X_train, y_train):
   y_pred = np.zeros(shape=y_test.shape)
   l = 0
