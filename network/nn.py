@@ -34,27 +34,6 @@ def TransformerLayer(x=None, c=48, num_heads=4*3):
                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
     return fc2
 
-# def TransformerLayer(x=None, c=48, num_heads=4):
-#     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-#     a = tf.keras.layers.LayerNormalization()(x)
-#     q   = Dense(c, use_bias=False)(a)
-#     k   = Dense(c, use_bias=False)(a)
-#     v   = Dense(c, use_bias=False)(a)
-#     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-#     ma = tf.keras.layers.Dropout(0.1)(ma)
-
-#     a2 = tf.keras.layers.LayerNormalization()(ma) 
-#     fc1 = Dense(c, kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-#                                   bias_regularizer=regularizers.l2(1e-4),
-#                                   activity_regularizer=regularizers.l2(1e-5))(a2) 
-#     fc1 = Activation('relu')(fc1)
-#     fc1 = tf.keras.layers.Dropout(0.1)(fc1)                    
-#     fc2 = concatenate([Dense(c, kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-#                                   bias_regularizer=regularizers.l2(1e-4),
-#                                   activity_regularizer=regularizers.l2(1e-5))(fc1), ma])
-#     fc2 = tf.keras.layers.Dropout(0.1)(fc2)
-#     return fc2
-
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
 def identity_block(input_tensor, kernel_size, filters, stage, block):
     conv_name_base = 'res' + str(stage) + str(block) + '_branch'
@@ -167,6 +146,35 @@ def DNN_B(opt):
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
 
+# def CNN_C(opt):
+#     '''
+#     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
+#     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
+#     '''
+#     inputs = Input(shape=[opt.input_shape, 1])
+#     x = Conv1D(48,
+#                kernel_size=80,
+#                strides=4,
+#                padding='same',
+#                kernel_initializer='glorot_uniform',
+#                kernel_regularizer=regularizers.l2(l=0.0001),)(inputs)
+#     x = BatchNormalization()(x)
+#     x = Activation('relu')(x)
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     for i in range(3):
+#         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+#     x = GlobalAveragePooling1D()(x)
+#     # x = tf.keras.layers.Flatten()(x)
+    
+#     x = TransformerLayer(x, c=48)
+#     x = Dense(opt.num_classes, activation='softmax')(x)
+
+#     m = Model(inputs, x, name='resnet34')
+#     return m
+
 def CNN_C(opt):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
@@ -187,10 +195,23 @@ def CNN_C(opt):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(4):
+        x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(6):
+        x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(3):
+        x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
+
     x = GlobalAveragePooling1D()(x)
-    # x = tf.keras.layers.Flatten()(x)
     
-    x = TransformerLayer(x, c=48)
+    x = TransformerLayer(x, c=384)
     x = Dense(opt.num_classes, activation='softmax')(x)
 
     m = Model(inputs, x, name='resnet34')
