@@ -21,9 +21,9 @@ def semble_transfer(opt, X_test, y_test):
       keras.backend.clear_session()
       np.save(opt.model_dir + name + '.npy', curr_y_pred)
     
-    y_pred += curr_y_pred
-    l += 1
-    keras.backend.clear_session()
+      y_pred += curr_y_pred
+      l += 1
+      keras.backend.clear_session()
     
   y_pred = y_pred / l
   print('Test accuracy: ', accuracy_m(y_test, y_pred))
