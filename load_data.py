@@ -371,9 +371,9 @@ if opt.PU_data:
     KI16 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI16')
     
     # load ###############################################
-    min_ = np.min((K002.shape[1], KA01.shape[1], KA07.shape[1], KI01.shape[1], KI05.shape[1], KI05.shape[1], KI07.shape[1],\
-                  KA22.shape[1], KA04.shape[1], KA15.shape[1], KA30.shape[1], KA16.shape[1],\
-                  KI14.shape[1], KI21.shape[1], KI17.shape[1], KI18.shape[1], KI16.shape[1]))
+    min_ = np.min((K002.shape[1], KA01.shape[1], KA07.shape[1], KI01.shape[1], KI05.shape[1], KI07.shape[1],\
+                  K001.shape[1], KA22.shape[1], KA04.shape[1], KA15.shape[1], KA30.shape[1], KA16.shape[1],\
+                  KA05.shape[1], KI14.shape[1], KI21.shape[1], KI17.shape[1], KI18.shape[1], KI16.shape[1]))
     Healthy_train = K002[:, :min_]
     Healthy_train_label = one_hot(0, 3)
 
