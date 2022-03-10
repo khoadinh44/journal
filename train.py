@@ -33,7 +33,7 @@ from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, W
 # Can use K-fold: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.KFold.html
 gpus = tf.config.list_logical_devices('GPU')
 strategy = tf.distribute.MirroredStrategy(gpus)
-callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2)
+# callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2)
 # callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
           
 def train(data, labels,
@@ -52,8 +52,8 @@ def train(data, labels,
   history = model.fit(data, labels,
                       epochs     = opt.epochs,
                       batch_size = opt.batch_size,
-                      validation_data=(val_data, val_labels),
-                      callbacks=[callback])
+                      validation_data=(val_data, val_labels),)
+                      # callbacks=[callback])
 
   if opt.use_DNN_A:
     model.save(opt.save + opt.model_names[0])
@@ -241,7 +241,7 @@ def parse_opt(known=False):
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--epochs',          type=int,   default=20,        help='Number of iterations for training')
+    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
     parser.add_argument('--input_shape',     type=int,   default=400,        help='shape of 1-D input data')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
