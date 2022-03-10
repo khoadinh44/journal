@@ -146,35 +146,6 @@ def DNN_B(opt):
   model = keras.models.Model(inputs=[input_A, input_B], outputs=[output])
   return model
 
-# def CNN_C(opt):
-#     '''
-#     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
-#     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
-#     '''
-#     inputs = Input(shape=[opt.input_shape, 1])
-#     x = Conv1D(48,
-#                kernel_size=80,
-#                strides=4,
-#                padding='same',
-#                kernel_initializer='glorot_uniform',
-#                kernel_regularizer=regularizers.l2(l=0.0001),)(inputs)
-#     x = BatchNormalization()(x)
-#     x = Activation('relu')(x)
-#     x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-#     for i in range(3):
-#         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
-
-#     x = MaxPooling1D(pool_size=4, strides=None)(x)
-#     x = GlobalAveragePooling1D()(x)
-#     # x = tf.keras.layers.Flatten()(x)
-    
-#     x = TransformerLayer(x, c=48)
-#     x = Dense(opt.num_classes, activation='softmax')(x)
-
-#     m = Model(inputs, x, name='resnet34')
-#     return m
-
 def CNN_C(opt):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
@@ -195,24 +166,53 @@ def CNN_C(opt):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-    for i in range(4):
-        x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
-
-    x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-    for i in range(6):
-        x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
-
-    x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-    for i in range(3):
-        x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
-
     x = GlobalAveragePooling1D()(x)
+    # x = tf.keras.layers.Flatten()(x)
     
-    x = TransformerLayer(x, c=384)
+    x = TransformerLayer(x, c=48)
     x = Dense(opt.num_classes, activation='softmax')(x)
 
     m = Model(inputs, x, name='resnet34')
     return m
+
+# def CNN_C(opt):
+#     '''
+#     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
+#     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
+#     '''
+#     inputs = Input(shape=[opt.input_shape, 1])
+#     x = Conv1D(48,
+#                kernel_size=80,
+#                strides=4,
+#                padding='same',
+#                kernel_initializer='glorot_uniform',
+#                kernel_regularizer=regularizers.l2(l=0.0001),)(inputs)
+#     x = BatchNormalization()(x)
+#     x = Activation('relu')(x)
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     for i in range(3):
+#         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     for i in range(4):
+#         x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
+
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     for i in range(6):
+#         x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
+
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     for i in range(3):
+#         x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
+
+#     x = GlobalAveragePooling1D()(x)
+    
+#     x = TransformerLayer(x, c=384)
+#     x = Dense(opt.num_classes, activation='softmax')(x)
+
+#     m = Model(inputs, x, name='resnet34')
+#     return m
