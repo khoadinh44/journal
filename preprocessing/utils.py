@@ -14,6 +14,12 @@ from sklearn.model_selection import train_test_split
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
+def scale_data(signal, scale):
+  data = []
+  for i in range(len(signal)//scale):
+    data.append(np.average(signal[i*scale: i*scale+scale])) 
+  return np.array(data)
+
 def load_PU_data(path):
   data = []
   all_data = []
