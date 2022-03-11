@@ -15,10 +15,13 @@ from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
 def scale_data(signal, scale):
-  data = []
-  for i in range(len(signal)//scale):
-    data.append(np.average(signal[i*scale: i*scale+scale])) 
-  return np.array(data)
+  all_data = []
+  for each_signal in signal:
+    data = []
+    for i in range(len(each_signal)//scale):
+      data.append(np.average(each_signal[i*scale: i*scale+scale])) 
+    all_data.append(data)
+  return np.array(all_data)
 
 def load_PU_data(path):
   data = []
