@@ -32,7 +32,7 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
       keras.backend.clear_session()
 
   model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-  X_train_all = use_denoise(X_train_all, Fourier)
+  X_train = use_denoise(X_train, Fourier)
   X_test = use_denoise(X_test, Fourier)
 
   model.fit(X_train, y_train)
