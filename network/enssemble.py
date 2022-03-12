@@ -5,6 +5,8 @@ from preprocessing.utils import accuracy_m
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from sklearn.ensemble import RandomForestClassifier
 from preprocessing.utils import invert_one_hot
+from preprocessing.utils import use_denoise
+from preprocessing.denoise_signal import Fourier
 
 
 def semble_transfer(opt, X_test, y_test, X_train, y_train):
@@ -13,12 +15,13 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
   
   for name in opt.model_names:
     all_path = opt.model_dir + name 
-    if name == 'CNN_A':
-      model = CNN_A(opt)
-    elif name == 'CNN_C':
+    # if name == 'CNN_A':
+    #   model = CNN_A(opt)
+    if name == 'CNN_C':
       model = CNN_C(opt)
     
-    if name == 'CNN_A' or name == 'CNN_C':
+    # if name == 'CNN_A' or name == 'CNN_C':
+    if name == 'CNN_C':
       model.load_weights(all_path)
       curr_y_pred = model.predict(X_test)
       keras.backend.clear_session()
@@ -29,11 +32,8 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
       keras.backend.clear_session()
 
   model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-  # X_train = np.squeeze(X_train)
-  # y_train = invert_one_hot(y_train)
-
-  # X_test = np.squeeze(X_test)
-  # y_test = invert_one_hot(y_test)
+  X_train_all = use_denoise(X_train_all, Fourier)
+  X_test = use_denoise(X_test, Fourier)
 
   model.fit(X_train, y_train)
   test_predictions = model.predict(X_test)
