@@ -202,7 +202,7 @@ def main(opt):
   elif opt.use_wavenet_head:
     train(X_train, y_train, X_val, y_val, X_test, y_test, WaveNet_Head, folder, opt)
   elif opt.ensemble:
-    semble_transfer(opt, X_test, y_test)
+    semble_transfer(opt, X_test, y_test, X_train, y_train)
   
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
