@@ -4,7 +4,8 @@ import numpy as np
 from preprocessing.utils import accuracy_m
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from sklearn.ensemble import RandomForestClassifier
-from preprocessing.utils import invert_one_hot
+from sklearn.svm import SVC
+from preprocessing.utils import invert_one_hot, convert_one_hot
 from preprocessing.utils import use_denoise
 from preprocessing.denoise_signal import Fourier
 
@@ -31,12 +32,14 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
       l += 1
       keras.backend.clear_session()
 
-  model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-  X_train = use_denoise(X_train, Fourier)
-  X_test = use_denoise(X_test, Fourier)
+  model = SVC(kernel='rbf', probability=True)
+  y_train = invert_one_hot(y_train)
+  # X_train = use_denoise(X_train, Fourier)
+  # X_test = use_denoise(X_test, Fourier)
 
   model.fit(X_train, y_train)
   test_predictions = model.predict(X_test)
+  test_predictions = convert_one_hot(test_predictions)
   y_pred += test_predictions
   l += 1
     
