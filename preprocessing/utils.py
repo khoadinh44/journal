@@ -235,17 +235,11 @@ def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand
       
   return X_train_all, X_test
 
-def convert_one_hot(x, state=True):
-    if state == False:
-      index = None
-      x = np.squeeze(x)
-
-      for idx, i in enumerate(x):
-        if i == 1:
-          index = idx
-      return [index]
-    else:
-      return x.tolist()
+def convert_one_hot(x, num_class=3):
+  data = np.zeros((int(x.shape[0]), num_class))
+  for idx, i in enumerate(x):
+    data[idx][i] = 1
+  return data
 
 def invert_one_hot(x):
   labels = []
