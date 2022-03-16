@@ -133,8 +133,8 @@ def get_spectrogram(waveform):
 def convert_spectrogram(waveform):
   data = []
   for each_signal in waveform:
-    each = get_spectrogram(each_signal)
-    three_dims = np.expand_dims(cv2.merge((each, each, each)))
+    each = get_spectrogram(each_signal).numpy()
+    three_dims = np.expand_dims(cv2.merge((each, each, each)), axis=0)
     if data == []:
       data = three_dims
     else:
