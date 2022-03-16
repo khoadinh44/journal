@@ -17,21 +17,23 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
   
   for name in opt.model_names:
     all_path = opt.model_dir + name 
-    if name == 'CNN_B':
-      inputs = keras.Input(shape=(360, 360, 3))
-      outputs = resnet18(inputs)
-      model = keras.Model(inputs, outputs)
+    
+    if name == 'CNN_C':
+      model = CNN_C(opt)
+      model.load_weights(all_path)
       curr_y_pred = model.predict(X_test)
       keras.backend.clear_session()
       np.save(opt.model_dir + name + '.npy', curr_y_pred)
     
       y_pred += curr_y_pred
       l += 1
-
-    
-    if name == 'CNN_C':
-      model = CNN_C(opt)
-      model.load_weights(all_path)
+      
+    if name == 'CNN_B':
+      X_train = convert_spectrogram(X_train)
+      X_test = convert_spectrogram(X_test)
+      inputs = keras.Input(shape=(360, 360, 3))
+      outputs = resnet18(inputs)
+      model = keras.Model(inputs, outputs)
       curr_y_pred = model.predict(X_test)
       keras.backend.clear_session()
       np.save(opt.model_dir + name + '.npy', curr_y_pred)
