@@ -22,10 +22,11 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
 from tensorflow.keras.models import load_model
 
-from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
+from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
+from network.resnet import resnet18
 from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
-from preprocessing.utils import recall_m, precision_m, f1_m, use_denoise, add_noise, scaler, invert_one_hot
+from preprocessing.utils import recall_m, precision_m, f1_m, use_denoise, add_noise, scaler, invert_one_hot, convert_spectrogram
 from preprocessing.denoise_signal import Fourier
 from load_cases import get_data
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
@@ -44,8 +45,13 @@ def train(data, labels,
   if opt.use_CNN_A:
     data = np.expand_dims(data, axis=-1)
     val_data = np.expand_dims(val_data, axis=-1)
-
-  model = network(opt)
+    model = network(opt)
+  elif opt.use_CNN_B:
+    inputs = keras.Input(shape=(360, 360, 3))
+    outputs = network(inputs)
+    model = keras.Model(inputs,  num_classes=3)
+  else:
+    model = network(opt)
   model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
 
   model.summary()
@@ -100,6 +106,9 @@ def main(opt):
           
   # with tf.device('/CPU:0'):
   X_train_all, X_test, y_train_all, y_test = get_data(opt)
+  if opt.use_CNN_B:
+    X_train_all = convert_spectrogram(X_train_all)
+    X_test = convert_spectrogram(X_test)
 
   # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
@@ -195,6 +204,8 @@ def main(opt):
     train(X_train, y_train, X_val, y_val, X_test, y_test, DNN_A, folder, opt)
   elif opt.use_CNN_A:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_A, folder, opt)
+  elif opt.use_CNN_B:
+    train(X_train, y_train, X_val, y_val, X_test, y_test, resnet18, folder, opt)
   elif opt.use_CNN_C:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
@@ -252,7 +263,7 @@ def parse_opt(known=False):
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
-    parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_C', 'wavenet', 'wavelet_head'],   help='name of all NN models')
+    parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_B', 'CNN_C', 'wavenet', 'wavelet_head'],   help='name of all NN models')
     parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
     parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
     parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
