@@ -215,7 +215,7 @@ def main(opt):
   elif opt.use_CNN_A:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_A, folder, opt)
   elif opt.use_CNN_B:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, resnet34, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, resnet18, folder, opt)
   elif opt.use_CNN_C:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
