@@ -130,12 +130,13 @@ def get_spectrogram(waveform):
   return spectrogram
 
 def convert_spectrogram(waveform):
-  data = None
+  data = []
   for each_signal in waveform:
-    if data == None:
-      data = get_spectrogram(each_signal)
+    each = np.expand_dims(get_spectrogram(each_signal), axis=0)
+    if data == []:
+      data = each
     else:
-      data = np.concatenate((data, get_spectrogram(each_signal)))
+      data = np.concatenate((data, each))
   return data
 
 def one_hot(pos, num_class):
