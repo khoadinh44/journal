@@ -136,9 +136,9 @@ def convert_spectrogram(waveform):
     each = np.expand_dims(get_spectrogram(each_signal).numpy(), axis=0)
     # three_dims = np.expand_dims(cv2.merge((each, each, each)), axis=0)
     if data == []:
-      data = three_dims
+      data = each
     else:
-      data = np.concatenate((data, three_dims))
+      data = np.concatenate((data, each))
   return data
 
 def one_hot(pos, num_class):
