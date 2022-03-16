@@ -105,9 +105,9 @@ def signal_to_IFMs(x):
     The input signal is normalized to the bound of [0, 1]
     https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9211470
     '''
-    min = np.min(x)
-    max = np.max(x)
-    return (x-min)/(max-min)
+    min_ = np.min(x)
+    max_ = np.max(x)
+    return (x-min_)/(max_-min_)
     
 def get_spectrogram(waveform):
   # Zero-padding for an audio waveform with less than 16,000 samples.
@@ -130,9 +130,12 @@ def get_spectrogram(waveform):
   return spectrogram
 
 def convert_spectrogram(waveform):
-  data = np.array([])
+  data = None
   for each_signal in waveform:
-    data = np.concatenate((data, get_spectrogram(each_signal)))
+    if data == None:
+      data = get_spectrogram(each_signal)
+    else:
+      data = np.concatenate((data, get_spectrogram(each_signal)))
   return data
 
 def one_hot(pos, num_class):
