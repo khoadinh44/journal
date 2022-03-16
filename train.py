@@ -113,9 +113,9 @@ def main(opt):
           
   # with tf.device('/CPU:0'):
   X_train_all, X_test, y_train_all, y_test = get_data(opt)
-  if opt.use_CNN_B:
-    X_train_all = convert_spectrogram(X_train_all)
-    X_test = convert_spectrogram(X_test)
+  # if opt.use_CNN_B:
+  #   X_train_all = convert_spectrogram(X_train_all)
+  #   X_test = convert_spectrogram(X_test)
 
   print('Shape of training data:', X_train_all.shape)
   print('Shape of testing data:', X_test.shape)
