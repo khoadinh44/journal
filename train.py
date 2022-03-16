@@ -1,12 +1,13 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
+import keras
 import pickle
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from preprocessing.utils import handcrafted_features
 import argparse
+
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import MaxAbsScaler
 from sklearn.preprocessing import StandardScaler
@@ -14,7 +15,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import QuantileTransformer
 from sklearn.preprocessing import PowerTransformer
-import keras
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
@@ -28,6 +29,7 @@ from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
 from preprocessing.utils import recall_m, precision_m, f1_m, use_denoise, add_noise, scaler, invert_one_hot, convert_spectrogram
 from preprocessing.denoise_signal import Fourier
+from preprocessing.utils import handcrafted_features
 from load_cases import get_data
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
@@ -109,6 +111,9 @@ def main(opt):
   if opt.use_CNN_B:
     X_train_all = convert_spectrogram(X_train_all)
     X_test = convert_spectrogram(X_test)
+
+  print('Shape of training data:', X_train_all.shape)
+  print('Shape of testing data:', X_test.shape)
 
   # Denoising methods ###################################################################################
   if opt.denoise == 'DFK':
