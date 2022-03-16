@@ -129,6 +129,12 @@ def get_spectrogram(waveform):
   spectrogram = spectrogram[..., tf.newaxis]
   return spectrogram
 
+def convert_spectrogram(waveform):
+  data = np.array([])
+  for each_signal in waveform:
+    data = np.concatenate((data, get_spectrogram(each_signal)))
+  return data
+
 def one_hot(pos, num_class):
     num = np.zeros((1, num_class))
     num[0, pos] = 1
