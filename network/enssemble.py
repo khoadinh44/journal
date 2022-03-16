@@ -2,6 +2,7 @@ from tensorflow import keras
 # import keras
 import numpy as np
 from preprocessing.utils import accuracy_m
+from network.resnet import resnet18, resnet34
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
@@ -16,13 +17,20 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
   
   for name in opt.model_names:
     all_path = opt.model_dir + name 
-    # if name == 'CNN_A':
-    #   model = CNN_A(opt)
+    if name == 'CNN_B':
+      inputs = keras.Input(shape=(360, 360, 3))
+      outputs = resnet18(inputs)
+      model = keras.Model(inputs, outputs)
+      curr_y_pred = model.predict(X_test)
+      keras.backend.clear_session()
+      np.save(opt.model_dir + name + '.npy', curr_y_pred)
+    
+      y_pred += curr_y_pred
+      l += 1
+
+    
     if name == 'CNN_C':
       model = CNN_C(opt)
-    
-    # if name == 'CNN_A' or name == 'CNN_C':
-    if name == 'CNN_C':
       model.load_weights(all_path)
       curr_y_pred = model.predict(X_test)
       keras.backend.clear_session()
@@ -30,7 +38,6 @@ def semble_transfer(opt, X_test, y_test, X_train, y_train):
     
       y_pred += curr_y_pred
       l += 1
-      keras.backend.clear_session()
 
   model = SVC(kernel='rbf', probability=True)
   y_train = invert_one_hot(y_train)
