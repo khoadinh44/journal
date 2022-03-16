@@ -24,7 +24,7 @@ from sklearn.svm import SVC
 from tensorflow.keras.models import load_model
 
 from network.nn import DNN_A, DNN_B, CNN_A, CNN_B, CNN_C
-from network.resnet import resnet18
+from network.resnet import resnet18, resnet34
 from network.enssemble import semble_transfer
 from network.wavenet import  WaveNet
 from preprocessing.utils import recall_m, precision_m, f1_m, use_denoise, add_noise, scaler, invert_one_hot, convert_spectrogram
@@ -51,7 +51,7 @@ def train(data, labels,
   elif opt.use_CNN_B:
     inputs = keras.Input(shape=(360, 360, 3))
     outputs = network(inputs)
-    model = keras.Model(inputs,  num_classes=3)
+    model = keras.Model(inputs, outputs)
   else:
     model = network(opt)
   model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
@@ -73,18 +73,23 @@ def train(data, labels,
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_A_history', 'wb') as file_pi:
 #     with open('CNN_A_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
-  elif opt.use_CNN_C:
+  elif opt.use_CNN_B:
     model.save(opt.save + opt.model_names[2])
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_B_history', 'wb') as file_pi:
+#     with open('CNN_A_history', 'wb') as file_pi: 
+      pickle.dump(history.history, file_pi)
+  elif opt.use_CNN_C:
+    model.save(opt.save + opt.model_names[3])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/CNN_C_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_wavenet:
-    model.save(opt.save + opt.model_names[3])
+    model.save(opt.save + opt.model_names[4])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavenet_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
   elif opt.use_wavenet_head:
-    model.save(opt.save + opt.model_names[4])
+    model.save(opt.save + opt.model_names[5])
     with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/{folder}/wavenet_head_history', 'wb') as file_pi:
     # with open('CNN_C_history', 'wb') as file_pi: 
       pickle.dump(history.history, file_pi)
@@ -210,7 +215,7 @@ def main(opt):
   elif opt.use_CNN_A:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_A, folder, opt)
   elif opt.use_CNN_B:
-    train(X_train, y_train, X_val, y_val, X_test, y_test, resnet18, folder, opt)
+    train(X_train, y_train, X_val, y_val, X_test, y_test, resnet34, folder, opt)
   elif opt.use_CNN_C:
     train(X_train, y_train, X_val, y_val, X_test, y_test, CNN_C, folder, opt)
   elif opt.use_wavenet:
