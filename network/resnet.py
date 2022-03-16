@@ -2,7 +2,7 @@
 import math
 from tensorflow import keras
 from tensorflow.keras import layers
-
+# https://github.com/jimmyyhwu/resnet18-tf2/blob/master/resnet.py
 kaiming_normal = keras.initializers.VarianceScaling(scale=2.0, mode='fan_out', distribution='untruncated_normal')
 
 def conv3x3(x, out_planes, stride=1, name=None):
