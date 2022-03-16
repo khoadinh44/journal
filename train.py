@@ -49,7 +49,7 @@ def train(data, labels,
     val_data = np.expand_dims(val_data, axis=-1)
     model = network(opt)
   elif opt.use_CNN_B:
-    inputs = keras.Input(shape=(360, 360, 3))
+    inputs = keras.Input(shape=(360, 360, 1))
     outputs = network(inputs)
     model = keras.Model(inputs, outputs)
   else:
