@@ -49,7 +49,7 @@ def train(data, labels,
     val_data = np.expand_dims(val_data, axis=-1)
     model = network(opt)
   elif opt.use_CNN_B:
-    inputs = keras.Input(shape=(opt.input_shape, opt.input_shape, 1))
+    inputs = keras.Input(shape=(255, 255, 1))
     outputs = network(inputs)
     model = keras.Model(inputs, outputs)
   else:
@@ -114,8 +114,8 @@ def main(opt):
   # with tf.device('/CPU:0'):
   X_train_all, X_test, y_train_all, y_test = get_data(opt)
   if opt.use_CNN_B:
-    X_train_all = convert_spectrogram(X_train_all)
-    X_test = convert_spectrogram(X_test)
+    X_train_all = convert_spectrogram(X_train_all)/255.
+    X_test = convert_spectrogram(X_test)/255.
 
   print('Shape of training data:', X_train_all.shape)
   print('Shape of testing data:', X_test.shape)
