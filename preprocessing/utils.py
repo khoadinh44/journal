@@ -120,7 +120,7 @@ def get_spectrogram(waveform):
   # clips are of the same length.
   equal_length = tf.concat([waveform, zero_padding], 0)
   # Convert the waveform to a spectrogram via a STFT.
-  spectrogram = tf.signal.stft(equal_length, frame_length=255*4, frame_step=502, fft_length=502*2-1)
+  spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=502, fft_length=502*2-1)
   # spectrogram = tf.signal.stft(equal_length, frame_length=255, frame_step=128-1)
   # Obtain the magnitude of the STFT.
   spectrogram = tf.abs(spectrogram)
