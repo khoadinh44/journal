@@ -113,9 +113,9 @@ def main(opt):
           
   # with tf.device('/CPU:0'):
   X_train_all, X_test, y_train_all, y_test = get_data(opt)
-  # if opt.use_CNN_B:
-  #   X_train_all = convert_spectrogram(X_train_all)
-  #   X_test = convert_spectrogram(X_test)
+  if opt.use_CNN_B:
+    X_train_all = convert_spectrogram(X_train_all)
+    X_test = convert_spectrogram(X_test)
 
   print('Shape of training data:', X_train_all.shape)
   print('Shape of testing data:', X_test.shape)
@@ -264,7 +264,7 @@ def parse_opt(known=False):
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
-    parser.add_argument('--input_shape',     type=int,   default=510,        help='shape of 1-D input data')
+    parser.add_argument('--input_shape',     type=int,   default=502,        help='shape of 1-D input data')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
