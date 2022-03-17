@@ -58,7 +58,7 @@ def resnet(x, blocks_per_layer, num_classes=3):
 
     x = layers.GlobalAveragePooling2D(name='avgpool')(x)
     initializer = keras.initializers.RandomUniform(-1.0 / math.sqrt(512), 1.0 / math.sqrt(512))
-    x = layers.Dense(units=num_classes, kernel_initializer=initializer, bias_initializer=initializer, name='fc')(x)
+    x = layers.Dense(units=num_classes, activation='softmax', kernel_initializer=initializer, bias_initializer=initializer, name='fc')(x)
 
     return x
 
