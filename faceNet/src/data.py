@@ -28,24 +28,14 @@ def parse_image_function(image_path, label, image_size):
     return image, label
 
 
-def get_dataset(dir, params, phase='train'):
-
-    dir_paths  =  os.listdir(dir)
-    dir_paths  =  [os.path.join(dir, dir_path) for dir_path in dir_paths]
-
-    image_paths = []
-    image_label = []
-    for dir_path in dir_paths:
-        for image_path in os.listdir(dir_path):
-            image_paths.append(os.path.join(dir_path, image_path))
-            image_label.append(dir_path.split('/')[-1])
+def get_dataset(data, labels, params, phase='train'):
 
     AUTOTUNE   =  tf.data.experimental.AUTOTUNE
-    dataset    =  tf.data.Dataset.from_tensor_slices((image_paths, image_label))
+    dataset    =  tf.data.Dataset.from_tensor_slices((data, labels))
     dataset    =  dataset.map(lambda x, y: parse_image_function(x, y, params.image_size))
     dataset    =  dataset.batch(params.batch_size).prefetch(AUTOTUNE)
     
-    return dataset, len(image_paths)
+    return dataset, int(data.shape[0])
 
 
 if __name__ == "__main__":
