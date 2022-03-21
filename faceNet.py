@@ -51,6 +51,7 @@ class Trainer():
             print('\nIntializing from scratch\n')
         
         X_train_all, X_test, y_train_all, y_test = get_data(opt)
+       
         self.train_dataset, self.train_samples = get_dataset(X_train_all, y_train_all, self.params, 'train')
         
         if self.valid:
@@ -132,10 +133,9 @@ def parse_opt(known=False):
     
     parser.add_argument('--epoch', default=200, type=int, help="Number epochs to train the model for")
     parser.add_argument('--params_dir', default='hyperparameters/batch_hard.json', help="Experiment directory containing params.json")
-    parser.add_argument('--data_dir', default='data/', help="Directory containing the dataset")
     parser.add_argument('--validate', default='1', help="Is there an validation dataset available")
-    parser.add_argument('--ckpt_dir', default='/faceNet/', help="Directory containing the Checkpoints")
-    parser.add_argument('--log_dir', default='/faceNet/', help="Directory containing the Logs")
+    parser.add_argument('--ckpt_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
+    parser.add_argument('--log_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
     parser.add_argument('--restore', default='0', help="Restart the model from the previous Checkpoint")
     
     # Models and denoising methods--------------------------
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     opt = parse_opt()
     trainer = Trainer(opt)
     
-    for i in range(args.epoch):
+    for i in range(opt.epoch):
         trainer.train(i)
 
 
