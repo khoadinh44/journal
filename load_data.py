@@ -12,7 +12,8 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import QuantileTransformer
 from sklearn.preprocessing import PowerTransformer
-from train import parse_opt
+# from train import parse_opt
+from faceNet import parse_opt
 
 opt = parse_opt()
 
