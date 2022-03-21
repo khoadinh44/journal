@@ -19,7 +19,7 @@ class Trainer():
         
         self.params      = Params(opt.params_dir)
         self.valid       = 1 if opt.validate == '1' else 0
-        self.model       = face_model(self.params)
+        self.model       = face_model(opt)
         
         
         self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
@@ -172,7 +172,7 @@ def parse_opt(known=False):
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
+    parser.add_argument('--num_classes',     type=int,   default=128,         help='Number of classes')
     parser.add_argument('--input_shape',     type=int,   default=400,        help='shape of 1-D input data')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
@@ -194,8 +194,7 @@ def parse_opt(known=False):
     return opt
     
 if __name__ == '__main__':
-    
-#     trainer = Trainer(args.params_dir, args.data_dir, args.validate, args.ckpt_dir, args.log_dir, args.restore)
+    opt = parse_opt()
     trainer = Trainer(opt)
     
     for i in range(args.epoch):
