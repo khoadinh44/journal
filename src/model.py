@@ -67,8 +67,6 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
                kernel_size=kernel_size,
                strides=1,
                padding='same',
-              #  kernel_initializer='glorot_uniform',
-              #  kernel_regularizer=regularizers.l2(l=0.0001),
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
               activity_regularizer=regularizers.l2(1e-5),
@@ -80,18 +78,12 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
                kernel_size=kernel_size,
                strides=1,
                padding='same',
-              #  kernel_initializer='glorot_uniform',
-              #  kernel_regularizer=regularizers.l2(l=0.0001),
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
               activity_regularizer=regularizers.l2(1e-5),
               name=conv_name_base + '2b')(x)
     x = BatchNormalization(name=bn_name_base + '2b')(x)
 
-    # up-sample from the activation maps.
-    # otherwise it's a mismatch. Recommendation of the authors.
-    # here we x2 the number of filters.
-    # See that as duplicating everything and concatenate them.
     if input_tensor.shape[2] != x.shape[2]:
         x = layers.add([x, Lambda(lambda y: K.repeat_elements(y, rep=2, axis=2))(input_tensor)])
     else:
@@ -101,7 +93,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = Activation('relu')(x)
     return x
 
-def CNN_C(opt):
+def CNN_C(opt, input_):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
@@ -124,15 +116,17 @@ def CNN_C(opt):
     x = GlobalAveragePooling1D()(x)
     
     x = TransformerLayer(x, c=48)
-    return x
+    m = Model(inputs, x, name='resnet34')(input_)
+    return m
 
 class face_model(tf.keras.Model):
   def __init__(self, opt):
     super(face_model, self).__init__()
-    self.base_model = CNN_C(opt)
+    self.opt = opt
+    self.base_model = CNN_C
     self.embedding_layer = tf.keras.layers.Dense(units=opt.num_classes)
     
-  def call(self, images):
-    x = self.base_model(images)
+  def call(self, data_input):
+    x = self.base_model(self.opt, data_input)
     x = self.embedding_layer(x)
     return x
