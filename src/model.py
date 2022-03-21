@@ -30,8 +30,6 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 #         # return tf.keras.Model(tf.keras.layers.Input([128, 128, 3]), self.embedding_layer)
 #         return x
     
-    
-
 
 def TransformerLayer(x=None, c=48, num_heads=4*3):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
@@ -103,7 +101,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = Activation('relu')(x)
     return x
 
-def face_model(params):
+def CNN_C(opt):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
@@ -126,7 +124,15 @@ def face_model(params):
     x = GlobalAveragePooling1D()(x)
     
     x = TransformerLayer(x, c=48)
-    x = Dense(params.embedding_size, activation='softmax')(x)
+    return x
 
-    m = Model(inputs, x, name='resnet34')
-    return m
+class face_model(tf.keras.Model):
+  def __init__(self, opt):
+    super(face_model, self).__init__()
+    self.base_model = CNN_C(opt)
+    self.embedding_layer = tf.keras.layers.Dense(units=opt.num_classes)
+    
+  def call(self, images):
+    x = self.base_model(images)
+    x = self.embedding_layer(x)
+    return x
