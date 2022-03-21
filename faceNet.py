@@ -5,10 +5,10 @@ import tensorflow as tf
 from progressbar import *
 import angular_grad
 from load_cases import get_data
-from faceNet.src.params import Params
-from faceNet.src.model  import face_model
-from faceNet.src.data   import get_dataset
-from faceNet.src.triplet_loss import batch_all_triplet_loss, batch_hard_triplet_loss, adapted_triplet_loss
+from src.params import Params
+from src.model  import face_model
+from src.data   import get_dataset
+from src.triplet_loss import batch_all_triplet_loss, batch_hard_triplet_loss, adapted_triplet_loss
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -152,7 +152,7 @@ def parse_opt(known=False):
     parser.add_argument('--scaler',  type=str, default=None, help='handcrafted_features, MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
     
     # Run case------------------------------------------------
-    parser.add_argument('--case_0_6',  default=False,  type=bool)
+    parser.add_argument('--case_0_6',  default=True,  type=bool)
     parser.add_argument('--case_1_7',  default=False,  type=bool)
     parser.add_argument('--case_2_8',  default=False,  type=bool)
     parser.add_argument('--case_3_9',  default=False,  type=bool)
@@ -165,16 +165,15 @@ def parse_opt(known=False):
     
     parser.add_argument('--PU_data',     default=True, type=bool)
     parser.add_argument('--MFPT_data',   default=False, type=bool)
-    parser.add_argument('--data_normal', default=False, type=bool)
-    parser.add_argument('--data_12k',    default=False, type=bool)
+    parser.add_argument('--data_normal', default=True, type=bool)
+    parser.add_argument('--data_12k',    default=True, type=bool)
     parser.add_argument('--data_48k',    default=False, type=bool)
     parser.add_argument('--multi_head',  default=False, type=bool)
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
     parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
-    parser.add_argument('--input_shape',     type=int,   default=502,        help='shape of 1-D input data')
+    parser.add_argument('--input_shape',     type=int,   default=400,        help='shape of 1-D input data')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
