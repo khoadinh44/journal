@@ -4,10 +4,10 @@ import datetime
 import tensorflow as tf
 from progressbar import *
 import angular_grad
-from src.params import Params
-from src.model  import face_model
-from src.data   import get_dataset
-from src.triplet_loss import batch_all_triplet_loss, batch_hard_triplet_loss, adapted_triplet_loss
+from faceNet.src.params import Params
+from faceNet.src.model  import face_model
+from faceNet.src.data   import get_dataset
+from faceNet.src.triplet_loss import batch_all_triplet_loss, batch_hard_triplet_loss, adapted_triplet_loss
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -132,8 +132,8 @@ if __name__ == '__main__':
     parser.add_argument('--params_dir', default='hyperparameters/batch_hard.json', help="Experiment directory containing params.json")
     parser.add_argument('--data_dir', default='data/', help="Directory containing the dataset")
     parser.add_argument('--validate', default='0', help="Is there an validation dataset available")
-    parser.add_argument('--ckpt_dir', default='/content/drive/Shareddrives/newpro112233/yolo_with_wildface/face/tf_ckpt_128/', help="Directory containing the Checkpoints")
-    parser.add_argument('--log_dir', default='/content/drive/Shareddrives/newpro112233/yolo_with_wildface/face/logs_128/', help="Directory containing the Logs")
+    parser.add_argument('--ckpt_dir', default='/faceNet/', help="Directory containing the Checkpoints")
+    parser.add_argument('--log_dir', default='/faceNet/', help="Directory containing the Logs")
     parser.add_argument('--restore', default='0', help="Restart the model from the previous Checkpoint")
     args = parser.parse_args()
     
