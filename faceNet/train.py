@@ -4,6 +4,7 @@ import datetime
 import tensorflow as tf
 from progressbar import *
 import angular_grad
+from load_cases import get_data
 from faceNet.src.params import Params
 from faceNet.src.model  import face_model
 from faceNet.src.data   import get_dataset
@@ -14,11 +15,12 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 class Trainer():
-    def __init__(self, json_path, data_dir, validate, ckpt_dir, log_dir, restore):
+    def __init__(self, opt):
         
-        self.params      = Params(json_path)
-        self.valid       = 1 if validate == '1' else 0
+        self.params      = Params(opt.params_dir)
+        self.valid       = 1 if opt.validate == '1' else 0
         self.model       = face_model(self.params)
+        
         
         self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
                                                                           decay_steps=10000, decay_rate=0.96, staircase=True)
@@ -26,7 +28,7 @@ class Trainer():
         # self.optimizer = angular_grad.AngularGrad()
         self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0,dtype=tf.int64),
                                                valid_steps=tf.Variable(0,dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
-        self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, ckpt_dir, 3)
+        self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, opt.ckpt_dir, 3)
         
         if self.params.triplet_strategy == "batch_all":
             self.loss = batch_all_triplet_loss
@@ -38,20 +40,21 @@ class Trainer():
             self.loss = adapted_triplet_loss
             
         current_time = datetime.datetime.now().strftime("%d-%m-%Y_%H%M%S")
-        log_dir += current_time + '/train/'
-        self.train_summary_writer = tf.summary.create_file_writer(log_dir)
+        opt.log_dir += current_time + '/train/'
+        self.train_summary_writer = tf.summary.create_file_writer(opt.log_dir)
             
-        if restore == '1':
+        if opt.restore == '1':
             self.checkpoint.restore(self.ckptmanager.latest_checkpoint)
             print(f'\nRestored from Checkpoint : {self.ckptmanager.latest_checkpoint}\n')
         
         else:
             print('\nIntializing from scratch\n')
-            
-        self.train_dataset, self.train_samples = get_dataset(data_dir, self.params, 'train')
+        
+        X_train_all, X_test, y_train_all, y_test = get_data(opt)
+        self.train_dataset, self.train_samples = get_dataset(X_train_all, y_train_all, self.params, 'train')
         
         if self.valid:
-            self.valid_dataset, self.valid_samples = get_dataset(data_dir, self.params, 'val')
+            self.valid_dataset, self.valid_samples = get_dataset(X_test, y_test, self.params, 'val')
         
         
     def __call__(self, epoch):
@@ -124,25 +127,79 @@ class Trainer():
             
         return loss
 
-
-if __name__ == '__main__':
-    
+def parse_opt(known=False):
     parser = argparse.ArgumentParser()
+    
     parser.add_argument('--epoch', default=200, type=int, help="Number epochs to train the model for")
     parser.add_argument('--params_dir', default='hyperparameters/batch_hard.json', help="Experiment directory containing params.json")
     parser.add_argument('--data_dir', default='data/', help="Directory containing the dataset")
-    parser.add_argument('--validate', default='0', help="Is there an validation dataset available")
+    parser.add_argument('--validate', default='1', help="Is there an validation dataset available")
     parser.add_argument('--ckpt_dir', default='/faceNet/', help="Directory containing the Checkpoints")
     parser.add_argument('--log_dir', default='/faceNet/', help="Directory containing the Logs")
     parser.add_argument('--restore', default='0', help="Restart the model from the previous Checkpoint")
-    args = parser.parse_args()
     
-    trainer = Trainer(args.params_dir, args.data_dir, args.validate, args.ckpt_dir, args.log_dir, args.restore)
+    # Models and denoising methods--------------------------
+    parser.add_argument('--ML_method',   default=None, type=str)
+    parser.add_argument('--use_DNN_A',   default=False, type=bool)
+    parser.add_argument('--use_DNN_B',   default=False, type=bool)
+    parser.add_argument('--use_CNN_A',   default=False, type=bool)
+    parser.add_argument('--use_CNN_B',   default=False, type=bool)
+    parser.add_argument('--use_CNN_C',   default=False, type=bool)
+    parser.add_argument('--use_wavenet',       default=False, type=bool)
+    parser.add_argument('--use_wavenet_head',  default=False, type=bool)
+    parser.add_argument('--ensemble',          default=False, type=bool)
+    parser.add_argument('--denoise', type=str, default=None, help='types of NN: DFK, Wavelet_denoise, SVD, savitzky_golay, None. DFK is our proposal.')
+    parser.add_argument('--scaler',  type=str, default=None, help='handcrafted_features, MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
+    
+    # Run case------------------------------------------------
+    parser.add_argument('--case_0_6',  default=False,  type=bool)
+    parser.add_argument('--case_1_7',  default=False,  type=bool)
+    parser.add_argument('--case_2_8',  default=False,  type=bool)
+    parser.add_argument('--case_3_9',  default=False,  type=bool)
+    parser.add_argument('--case_4_10', default=False,  type=bool) # Turn on all cases before
+    parser.add_argument('--case_5_11', default=False, type=bool)
+    
+    parser.add_argument('--case_12', default=False, type=bool) # turn on case_4_10
+    parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
+    parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
+    
+    parser.add_argument('--PU_data',     default=True, type=bool)
+    parser.add_argument('--MFPT_data',   default=False, type=bool)
+    parser.add_argument('--data_normal', default=False, type=bool)
+    parser.add_argument('--data_12k',    default=False, type=bool)
+    parser.add_argument('--data_48k',    default=False, type=bool)
+    parser.add_argument('--multi_head',  default=False, type=bool)
+
+    # Parameters---------------------------------------------
+    parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
+    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
+    parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
+    parser.add_argument('--input_shape',     type=int,   default=502,        help='shape of 1-D input data')
+    parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
+    parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
+    parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
+
+    parser.add_argument('--use_SNRdb',                type=bool,    default=False)
+    parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
+    parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
+    parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
+    parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_B', 'CNN_C', 'wavenet', 'wavelet_head'],   help='name of all NN models')
+    parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
+    parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
+    parser.add_argument('--beta_1',                   type=float,   default=0.9,         help='beta_1')
+    parser.add_argument('--result_dir',               type=str,     default="./result/", help='exponential_decay_rate')
+    parser.add_argument('--model_dir',                type=str,     default="/content/drive/Shareddrives/newpro112233/signal_machine/", help='direction to save model')
+    parser.add_argument('--load_path',                type=str,     default=None,        help='path weight')
+    
+    opt = parser.parse_known_args()[0] if known else parser.parse_args()
+    return opt
+    
+if __name__ == '__main__':
+    
+#     trainer = Trainer(args.params_dir, args.data_dir, args.validate, args.ckpt_dir, args.log_dir, args.restore)
+    trainer = Trainer(opt)
     
     for i in range(args.epoch):
         trainer.train(i)
 
 
-# 1 record - /root/shared_folder/Harish/Facenet/data
-# 10 records - /root/shared_folder/Amaan/face/FaceNet-and-FaceLoss-collections-tensorflow2.0/data10faces_aligned_tfrcd
-# Complete record - /root/shared_folder/Amaan/face/FaceNet-and-FaceLoss-collections-tensorflow2.0/data2/
