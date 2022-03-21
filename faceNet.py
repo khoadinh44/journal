@@ -163,7 +163,7 @@ def parse_opt(known=False):
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
     
-    parser.add_argument('--PU_data',     default=True, type=bool)
+    parser.add_argument('--PU_data',     default=False, type=bool)
     parser.add_argument('--MFPT_data',   default=False, type=bool)
     parser.add_argument('--data_normal', default=True, type=bool)
     parser.add_argument('--data_12k',    default=True, type=bool)
