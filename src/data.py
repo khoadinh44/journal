@@ -1,13 +1,13 @@
 import os
 import numpy as np
-# import pandas as pd
+from preprocessing.utils import invert_one_hot
 import tensorflow as tf
 
 # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 def get_dataset(data, labels, params, phase='train'):
-
+    labels = invert_one_hot(labels)
     AUTOTUNE   =  tf.data.experimental.AUTOTUNE
     dataset    =  tf.data.Dataset.from_tensor_slices((data, labels))
     dataset    =  dataset.map(lambda x, y: parse_image_function(x, y, params.image_size))
