@@ -1,4 +1,5 @@
 from src.data import get_dataset
+from scipy.spatial.distance import cosine, euclidean
 from load_cases import get_data
 from src.params import Params
 from faceNet import parse_opt
@@ -84,7 +85,7 @@ class FaceNetOneShotRecognitor(object):
         each_label = {}
         for i in range(test_embs.shape[0]):
             distances = []
-            for j in range(len(self.train_paths)):
+            for j in range(self.train_samples):
                 # the min of clustering
                 distances.append(np.min([euclidean(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
                 # distances.append(np.min([cosine(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
