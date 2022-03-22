@@ -136,6 +136,7 @@ def parse_opt(known=False):
     parser.add_argument('--validate', default='1', help="Is there an validation dataset available")
     parser.add_argument('--ckpt_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
     parser.add_argument('--log_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
+    parser.add_argument('--emb_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/emb1.npy', help="Directory containing the Checkpoints")
     parser.add_argument('--restore', default='0', help="Restart the model from the previous Checkpoint")
     
     # Models and denoising methods--------------------------
