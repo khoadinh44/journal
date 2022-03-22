@@ -15,11 +15,12 @@ opt = parse_opt()
 class FaceNetOneShotRecognitor(object):
     def __init__(self, opt, X_train_all, y_train_all):
         self.path_weight = opt.ckpt_dir
+        self.opt         = opt
         self.params      = Params(opt.params_dir)
         
         # INITIALIZE MODELS
         self.model       = face_model(opt)
-        self.optimizer = angular_grad.AngularGrad()
+        self.optimizer   = angular_grad.AngularGrad()
         self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0, dtype=tf.int64),
                                                valid_steps=tf.Variable(0, dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
         self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, self.path_weight, 3)
@@ -42,24 +43,24 @@ class FaceNetOneShotRecognitor(object):
             all_data.append(i)
         return np.squeeze(np.array(all_data))
     
-    def __calc_embs(self, input_data, batch_size=32):
+    def __calc_embs(self, input_data):
         pd = []
-        for start in tqdm(range(0, self.train_samples, batch_size)):
-            embeddings = self.model(self.load_data(input_data[start: start+batch_size]))
+        for start in tqdm(range(0, self.train_samples, self.opt.batch_size)):
+            embeddings = self.model(self.load_data(input_data[start: start+self.opt.batch_size]))
             pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
         return np.array(pd)
     
     def __calc_emb_test(self, input_data):
         pd = []
-        if input_data.shape[0] == 1:
+        if len(input_data) == 1:
             embeddings = self.model(input_data)
-        elif input_data.shape[0] > 1:
-            for start in tqdm(range(0, self.train_samples, batch_size)):
-                embeddings = self.model(input_data[start: start+batch_size])
+        elif len(input_data) > 1:
+            for start in tqdm(range(0, self.train_samples, self.opt.batch_size)):
+                embeddings = self.model(input_data[start: start+self.opt.batch_size])
         pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
         return np.array(pd)
       
-    def train_or_load(self, batch_size, cons=True):
+    def train_or_load(self, cons=True):
         for ID, (train_data, train_label) in enumerate(self.train_dataset):
             self.df_train.loc[len(self.df_train)] = [np.squeeze(train_data.numpy()), ID, train_label.numpy()[0]]
 
@@ -68,7 +69,7 @@ class FaceNetOneShotRecognitor(object):
         for i in tqdm(range(self.train_samples)):
             label2idx.append(np.asarray(self.df_train[self.df_train.label == i].index))
         if cons:
-            train_embs = self.__calc_embs(self.df_train.all_train_data, batch_size)
+            train_embs = self.__calc_embs(self.df_train.all_train_data)
             np.save(opt.emb_dir, train_embs)
         else:
             train_embs = np.load(opt.emb_dir, allow_pickle=True)
@@ -111,8 +112,7 @@ if __name__ == '__main__':
     print('Shape of test data: ', X_test.shape)
 
     model = FaceNetOneShotRecognitor(opt, X_train_all, y_train_all)
-    train_embs, label2idx = model.train_or_load(batch_size=64, cons=False)
+    train_embs, label2idx = model.train_or_load(cons=False)
     
     params = Params(opt.params_dir)
-    valid_dataset, valid_samples = get_dataset(X_test, y_test, params, 'val')
-    people = model.predict(test_data=valid_dataset, train_embs=train_embs, label2idx=label2idx)
+    people = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx)
