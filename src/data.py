@@ -10,7 +10,6 @@ def get_dataset(data, labels, params, phase='train'):
     labels = invert_one_hot(labels)
     AUTOTUNE   =  tf.data.experimental.AUTOTUNE
     dataset    =  tf.data.Dataset.from_tensor_slices((data, labels))
-    dataset    =  dataset.map(lambda x, y: parse_image_function(x, y, params.image_size))
     dataset    =  dataset.batch(params.batch_size).prefetch(AUTOTUNE)
     
     return dataset, int(data.shape[0])
