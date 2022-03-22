@@ -1,6 +1,16 @@
 from src.data import get_dataset
+from load_cases import get_data
 from src.params import Params
-from faceNet import opt
+from faceNet import parse_opt
+from src.model  import face_model
+import angular_grad
+import tensorflow as tf
+import glob 
+import pandas as pd
+from tqdm import tqdm
+import numpy as np
+
+opt = parse_opt()
 
 class FaceNetOneShotRecognitor(object):
     def __init__(self, opt, X_train_all, y_train_all):
@@ -8,11 +18,10 @@ class FaceNetOneShotRecognitor(object):
         self.params      = Params(opt.params_dir)
         
         # INITIALIZE MODELS
-        self.params      = Params(args.params_dir)
-        self.model       = face_model(self.params)
+        self.model       = face_model(opt)
         self.optimizer = angular_grad.AngularGrad()
-        self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0,dtype=tf.int64),
-                                               valid_steps=tf.Variable(0,dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
+        self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0, dtype=tf.int64),
+                                               valid_steps=tf.Variable(0, dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
         self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, self.path_weight, 3)
             
         self.checkpoint.restore(self.ckptmanager.latest_checkpoint)
@@ -20,44 +29,46 @@ class FaceNetOneShotRecognitor(object):
 
         self.graph = tf.compat.v1.get_default_graph()
         
-        self.train_data = glob.glob(path_train)
-        self.nb_classes = len(self.train_paths)
-        
         self.train_dataset, self.train_samples = get_dataset(X_train_all, y_train_all, self.params, 'train')
-        self.df_train = pd.DataFrame(columns=['image', 'label', 'name'])
+        self.df_train = pd.DataFrame(columns=['all_train_data', 'label', 'name'])
         
     def __l2_normalize(self, x, axis=-1, epsilon=1e-10):
         output = x / np.sqrt(np.maximum(np.sum(np.square(x), axis=axis, keepdims=True), epsilon))
         return output
     
+    def load_data(self, input_data):
+        all_data = []
+        for i in input_data:
+            all_data.append(i)
+        return np.squeeze(np.array(all_data))
+    
     def __calc_embs(self, input_data, batch_size=32):
         pd = []
-        for start in tqdm(range(0, len(filepaths), batch_size)):
-            embeddings = self.model(input_data[start: start+batch_size])
+        for start in tqdm(range(0, self.train_samples, batch_size)):
+            embeddings = self.model(self.load_data(input_data[start: start+batch_size]))
             pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
         return np.array(pd)
     
     def __calc_emb_test(self, input_data):
         pd = []
-        if (int(input_data.shape[0]) == 1):
+        if input_data.shape[0] == 1:
             embeddings = self.model(input_data)
-        elif (int(input_data.shape[0]) > 1):
-            for start in tqdm(range(0, len(filepaths), batch_size)):
+        elif input_data.shape[0] > 1:
+            for start in tqdm(range(0, self.train_samples, batch_size)):
                 embeddings = self.model(input_data[start: start+batch_size])
         pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
         return np.array(pd)
       
     def train_or_load(self, batch_size, cons=True):
         for ID, (train_data, train_label) in enumerate(self.train_dataset):
-            for image in images:
-                self.df_train.loc[self.train_samples] = [train_data, ID, train_label]
+            self.df_train.loc[len(self.df_train)] = [np.squeeze(train_data.numpy()), ID, train_label.numpy()[0]]
 
         # TRAINING
         label2idx = []
         for i in tqdm(range(self.train_samples)):
             label2idx.append(np.asarray(self.df_train[self.df_train.label == i].index))
         if cons:
-            train_embs = self.__calc_embs(self.df_train.image, batch_size)
+            train_embs = self.__calc_embs(self.df_train.all_train_data, batch_size)
             np.save(opt.emb_dir, train_embs)
         else:
             train_embs = np.load(opt.emb_dir, allow_pickle=True)
@@ -95,9 +106,13 @@ class FaceNetOneShotRecognitor(object):
 
 if __name__ == '__main__':
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
+
+    print('Shape of train data: ', X_train_all.shape)
+    print('Shape of test data: ', X_test.shape)
+
     model = FaceNetOneShotRecognitor(opt, X_train_all, y_train_all)
-    train_embs, label2idx = model.train_or_load(batch_size=64, cons=True)
+    train_embs, label2idx = model.train_or_load(batch_size=64, cons=False)
     
     params = Params(opt.params_dir)
-    self.valid_dataset, self.valid_samples = get_dataset(X_test, y_test, params, 'val')
-    people = model.predict(faces=faces, train_embs=train_embs, label2idx=label2idx)
+    valid_dataset, valid_samples = get_dataset(X_test, y_test, params, 'val')
+    people = model.predict(test_data=valid_dataset, train_embs=train_embs, label2idx=label2idx)
