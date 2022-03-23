@@ -10,6 +10,7 @@ import glob
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 opt = parse_opt()
 
@@ -55,10 +56,11 @@ class FaceNetOneShotRecognitor(object):
         pd = []
         if len(input_data) == 1:
             embeddings = self.model(input_data)
+            pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
         elif len(input_data) > 1:
             for start in tqdm(range(0, self.train_samples, self.opt.batch_size)):
                 embeddings = self.model(input_data[start: start+self.opt.batch_size])
-        pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
+                pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
         return np.array(pd)
       
     def train_or_load(self, cons=True):
@@ -79,19 +81,19 @@ class FaceNetOneShotRecognitor(object):
 
         return train_embs, label2idx
       
-    def predict(self, test_data, train_embs, label2idx, threshold=0.15):
+    def predict(self, test_data, train_embs, label2idx, threshold=1.2):
         test_embs = self.__calc_emb_test(test_data)
-        print('test_embs: ', test_embs.shape)
         test_embs = np.concatenate(test_embs)
         print('\ntest_embs: ', test_embs.shape)
         each_label = {}
+
         for i in range(test_embs.shape[0]):
             distances = []
             for j in range(self.train_samples):
                 # the min of clustering
                 distances.append(np.min([euclidean(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
                 # distances.append(np.min([cosine(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
-            print(distances)
+            print(np.min(distances))
             if np.min(distances) > threshold:
                 each_label[i] = 'Unknown'
             else:
@@ -103,17 +105,15 @@ class FaceNetOneShotRecognitor(object):
             for idx in each_label:
                 if each_label[idx] != 'Unknown':
                     name = self.df_train[(self.df_train['label'] == each_label[idx])].name.iloc[0]
-                    name = name.split("/")[-1]
+                    # name = name.split("/")[-1]
+                    print(name)
                     each_label[idx] = name
-        print('\nLabel: ', each_label)
+
+        each_label = list(each_label.values())
         return each_label
 
 if __name__ == '__main__':
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
-    X_train_all = X_train_all[:100]
-    X_test = X_test[:100]
-    y_train_all = y_train_all[:100]
-    y_test = y_test[:100]
 
     print('Shape of train data: ', X_train_all.shape)
     print('Shape of test data: ', X_test.shape)
@@ -122,4 +122,6 @@ if __name__ == '__main__':
     train_embs, label2idx = model.train_or_load(cons=True)
     
     params = Params(opt.params_dir)
-    each_label = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx)
+    y_pred = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx)
+    acc = accuracy_score(y_test, y_pred)
+    print(f'\n--------------Test accuracy: {acc}----------------')
