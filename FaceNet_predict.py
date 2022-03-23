@@ -81,7 +81,9 @@ class FaceNetOneShotRecognitor(object):
       
     def predict(self, test_data, train_embs, label2idx, threshold=0.15):
         test_embs = self.__calc_emb_test(test_data)
-#         test_embs = np.concatenate(test_embs)
+        print('test_embs: ', test_embs.shape)
+        test_embs = np.concatenate(test_embs)
+        print('\ntest_embs: ', test_embs.shape)
         each_label = {}
         for i in range(test_embs.shape[0]):
             distances = []
@@ -89,7 +91,7 @@ class FaceNetOneShotRecognitor(object):
                 # the min of clustering
                 distances.append(np.min([euclidean(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
                 # distances.append(np.min([cosine(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
-
+            print(distances)
             if np.min(distances) > threshold:
                 each_label[i] = 'Unknown'
             else:
@@ -103,11 +105,15 @@ class FaceNetOneShotRecognitor(object):
                     name = self.df_train[(self.df_train['label'] == each_label[idx])].name.iloc[0]
                     name = name.split("/")[-1]
                     each_label[idx] = name
-
-        return people
+        print('\nLabel: ', each_label)
+        return each_label
 
 if __name__ == '__main__':
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
+    X_train_all = X_train_all[:100]
+    X_test = X_test[:100]
+    y_train_all = y_train_all[:100]
+    y_test = y_test[:100]
 
     print('Shape of train data: ', X_train_all.shape)
     print('Shape of test data: ', X_test.shape)
@@ -116,4 +122,4 @@ if __name__ == '__main__':
     train_embs, label2idx = model.train_or_load(cons=False)
     
     params = Params(opt.params_dir)
-    people = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx)
+    each_label = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx)
