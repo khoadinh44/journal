@@ -80,7 +80,7 @@ class FaceNetOneShotRecognitor(object):
 
         return train_embs, label2idx
       
-    def predict(self, test_data, train_embs, label2idx, threshold=1.7):
+    def predict(self, test_data, train_embs, label2idx, threshold=1.1):
         test_embs = self.__calc_emb_test(test_data)
         test_embs = np.concatenate(test_embs)
         print('\ntest_embs: ', test_embs.shape)
