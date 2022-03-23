@@ -119,7 +119,7 @@ if __name__ == '__main__':
     print('Shape of test data: ', X_test.shape)
 
     model = FaceNetOneShotRecognitor(opt, X_train_all, y_train_all)
-    train_embs, label2idx = model.train_or_load(cons=False)
+    train_embs, label2idx = model.train_or_load(cons=True)
     
     params = Params(opt.params_dir)
     each_label = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx)
