@@ -51,6 +51,8 @@ class Trainer():
             print('\nIntializing from scratch\n')
         
         X_train_all, X_test, y_train_all, y_test = get_data(opt)
+        print(f'Shape of training data: {X_train_all.shape}\n')
+        print(f'Shape of testing data: {X_test.shape}\n')
        
         self.train_dataset, self.train_samples = get_dataset(X_train_all, y_train_all, self.params, 'train')
         
@@ -131,7 +133,7 @@ class Trainer():
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('--epoch', default=200, type=int, help="Number epochs to train the model for")
+    parser.add_argument('--epoch', default=10, type=int, help="Number epochs to train the model for")
     parser.add_argument('--params_dir', default='hyperparameters/batch_hard.json', help="Experiment directory containing params.json")
     parser.add_argument('--validate', default='1', help="Is there an validation dataset available")
     parser.add_argument('--ckpt_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
@@ -175,7 +177,7 @@ def parse_opt(known=False):
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',     type=int,   default=128,         help='Number of classes')
     parser.add_argument('--input_shape',     type=int,   default=250604,        help='shape of 1-D input data')
-    parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
+    parser.add_argument('--batch_size',      type=int,   default=64,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
 
