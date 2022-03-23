@@ -377,18 +377,42 @@ if opt.PU_data:
                   KA05.shape[1], KI14.shape[1], KI21.shape[1], KI17.shape[1], KI18.shape[1], KI16.shape[1]))
     Healthy_train = K002[:, :min_]
     Healthy_train_label = one_hot(0, 3)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/Healthy_train.npy', 'wb') as f:
+        np.save(f, Healthy_train)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/Healthy_train_label.npy', 'wb') as f:
+        np.save(f, Healthy_train_label)
 
     OR_Damage_train = np.concatenate((KA01[:, :min_], KA05[:, :min_], KA07[:, :min_]))
     OR_Damage_train_label = one_hot(1, 3)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/OR_Damage_train.npy', 'wb') as f:
+        np.save(f, OR_Damage_train)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/OR_Damage_train_label.npy', 'wb') as f:
+        np.save(f, OR_Damage_train_label)
 
     IR_Damage_train = np.concatenate((KI01[:, :min_], KI05[:, :min_], KI07[:, :min_]))
     IR_Damage_train_label = one_hot(2, 3)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/IR_Damage_train.npy', 'wb') as f:
+        np.save(f, IR_Damage_train)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/IR_Damage_train_label.npy', 'wb') as f:
+        np.save(f, IR_Damage_train_label)
 
     Healthy_test = K001[:, :min_]
     Healthy_test_label = one_hot(0, 3)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/Healthy_test.npy', 'wb') as f:
+        np.save(f, Healthy_test)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/Healthy_test_label.npy', 'wb') as f:
+        np.save(f, Healthy_test_label)
 
     OR_Damage_test = np.concatenate((KA22[:, :min_], KA04[:, :min_], KA15[:, :min_], KA30[:, :min_], KA16[:, :min_]))
     OR_Damage_test_label = one_hot(1, 3)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/OR_Damage_test.npy', 'wb') as f:
+        np.save(f, OR_Damage_test)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/OR_Damage_test_label.npy', 'wb') as f:
+        np.save(f, OR_Damage_test_label)
     
     IR_Damage_test = np.concatenate((KI14[:, :min_], KI21[:, :min_], KI17[:, :min_], KI18[:, :min_], KI16[:, :min_]))
     IR_Damage_test_label = one_hot(2, 3)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/IR_Damage_test.npy', 'wb') as f:
+        np.save(f, IR_Damage_test)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/IR_Damage_test_label.npy', 'wb') as f:
+        np.save(f, IR_Damage_test_label)
