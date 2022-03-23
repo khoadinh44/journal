@@ -11,6 +11,7 @@ import pandas as pd
 from tqdm import tqdm
 import numpy as np
 from sklearn.metrics import accuracy_score
+from preprocessing.utils import invert_one_hot
 
 opt = parse_opt()
 
@@ -93,9 +94,8 @@ class FaceNetOneShotRecognitor(object):
                 # the min of clustering
                 distances.append(np.min([euclidean(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
                 # distances.append(np.min([cosine(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
-            print(np.min(distances))
             if np.min(distances) > threshold:
-                each_label[i] = 'Unknown'
+                each_label[i] = 100
             else:
                 res = np.argsort(distances)[0]
                 each_label[i] = res
@@ -103,10 +103,8 @@ class FaceNetOneShotRecognitor(object):
         names = []
         if len(each_label) > 0:
             for idx in each_label:
-                if each_label[idx] != 'Unknown':
+                if each_label[idx] != 100:
                     name = self.df_train[(self.df_train['label'] == each_label[idx])].name.iloc[0]
-                    # name = name.split("/")[-1]
-                    print(name)
                     each_label[idx] = name
 
         each_label = list(each_label.values())
@@ -114,6 +112,7 @@ class FaceNetOneShotRecognitor(object):
 
 if __name__ == '__main__':
     X_train_all, X_test, y_train_all, y_test = get_data(opt)
+    y_test = invert_one_hot(y_test)
 
     print('Shape of train data: ', X_train_all.shape)
     print('Shape of test data: ', X_test.shape)
