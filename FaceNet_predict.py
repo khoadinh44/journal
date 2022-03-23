@@ -40,10 +40,16 @@ class FaceNetOneShotRecognitor(object):
         output = x / np.sqrt(np.maximum(np.sum(np.square(x), axis=axis, keepdims=True), epsilon))
         return output
     
+    def load_data(self, input_data):
+      all_data = []
+      for i in input_data:
+        all_data.append(i)
+      return np.array(all_data)
+
     def __calc_embs(self, input_data):
         pd = []
         for start in tqdm(range(0, len(input_data), self.opt.batch_size)):
-            embeddings = self.model(input_data[start: start+self.opt.batch_size])
+            embeddings = self.model(self.load_data(input_data[start: start+self.opt.batch_size]))
             pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
         return np.array(pd)
     
@@ -74,7 +80,7 @@ class FaceNetOneShotRecognitor(object):
 
         return train_embs, label2idx
       
-    def predict(self, test_data, train_embs, label2idx, threshold=1.2):
+    def predict(self, test_data, train_embs, label2idx, threshold=1.7):
         test_embs = self.__calc_emb_test(test_data)
         test_embs = np.concatenate(test_embs)
         print('\ntest_embs: ', test_embs.shape)
@@ -113,7 +119,6 @@ if __name__ == '__main__':
     train_embs, label2idx = model.train_or_load(cons=False)
     
     params = Params(opt.params_dir)
-    y_pred = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx, threshold=1.2)
-    print(np.array(y_test).shape, np.array(y_pred).shape)
+    y_pred = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx)
     acc = accuracy_score(y_test, y_pred)
     print(f'\n--------------Test accuracy: {acc}----------------')
