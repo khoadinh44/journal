@@ -153,7 +153,7 @@ def parse_opt(known=False):
     parser.add_argument('--scaler',  type=str, default=None, help='handcrafted_features, MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
     
     # Run case------------------------------------------------
-    parser.add_argument('--case_0_6',  default=True,  type=bool)
+    parser.add_argument('--case_0_6',  default=False,  type=bool)
     parser.add_argument('--case_1_7',  default=False,  type=bool)
     parser.add_argument('--case_2_8',  default=False,  type=bool)
     parser.add_argument('--case_3_9',  default=False,  type=bool)
@@ -164,10 +164,10 @@ def parse_opt(known=False):
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
     
-    parser.add_argument('--PU_data',     default=False, type=bool)
+    parser.add_argument('--PU_data',     default=True, type=bool)
     parser.add_argument('--MFPT_data',   default=False, type=bool)
-    parser.add_argument('--data_normal', default=True, type=bool)
-    parser.add_argument('--data_12k',    default=True, type=bool)
+    parser.add_argument('--data_normal', default=False, type=bool)
+    parser.add_argument('--data_12k',    default=False, type=bool)
     parser.add_argument('--data_48k',    default=False, type=bool)
     parser.add_argument('--multi_head',  default=False, type=bool)
 
