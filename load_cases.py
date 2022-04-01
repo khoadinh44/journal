@@ -392,7 +392,7 @@ def get_data(opt):
     X_test = np.concatenate((baseline_3, baseline_2, OuterRaceFault_3, OuterRaceFault_vload_3, OuterRaceFault_vload_6, InnerRaceFault_vload_3, InnerRaceFault_vload_6))
     y_test = np.concatenate((baseline_3_label, baseline_2_label, OuterRaceFault_3_label, OuterRaceFault_vload_3_label, OuterRaceFault_vload_6_label, InnerRaceFault_vload_3_label, InnerRaceFault_vload_6_label))
   
-  if opt.PU_data:
+  if opt.PU_data_table_8:
     from load_data import Healthy_train, Healthy_train_label, OR_Damage_train, OR_Damage_train_label, IR_Damage_train, IR_Damage_train_label,\
                           Healthy_test, Healthy_test_label, OR_Damage_test, OR_Damage_test_label, IR_Damage_test, IR_Damage_test_label
     
