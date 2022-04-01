@@ -3,7 +3,7 @@ import pandas as pd
 import scipy.io
 import tensorflow as tf
 from preprocessing.denoise_signal import Fourier, SVD_denoise, Wavelet, Wavelet_denoise, savitzky_golay
-from preprocessing.utils import get_spectrogram, one_hot, concatenate_data, divide_sample, load_PU_data, scale_data
+from preprocessing.utils import get_spectrogram, one_hot, concatenate_data, divide_sample, load_PU_data, scale_data, load_table_10
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import MaxAbsScaler
@@ -344,7 +344,7 @@ if opt.MFPT_data:
     InnerRaceFault_vload_6_label = one_hot(2, 3)
     InnerRaceFault_vload_7_label = one_hot(2, 3)
     
-if opt.PU_data:
+if opt.PU_data_table_8:
     load = True
 
     if load == False:
@@ -449,3 +449,31 @@ if opt.PU_data:
             np.save(f, IR_Damage_test_label)
 
     print('Finish loading data process!\n')
+    
+if opt.PU_data_table_10:
+    print('\t\t\t Loading Healthy class...\t\t\t\n')
+    K001 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/K001')
+    K002 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/K002')
+    K003 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/K003')
+    K004 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/K004')
+    K005 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/K005')
+    
+    print('\t\t\t Loading Outer ring damage...\t\t\t\n')
+    KA04 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KA04')
+    KA15 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KA15')
+    KA16 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KA16')
+    KA22 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KA22')
+    KA30 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KA30')
+    
+    print('\t\t\t Loading Inner ring damage...\t\t\t\n')
+    KI04 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KI04')
+    KI14 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KI14')
+    KI16 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KI16')
+    KI18 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KI18')
+    KI21 = load_table_10('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/new_form/KI21')
+    
+    print('\t\t\t Loading all data...\t\t\t\n')
+    Healthy = np.concatenate((K001, K002, K003, K004, K005))
+    Outer_ring_damage = np.concatenate((KA04, KA15, KA16, KA22, KA30))
+    Inner_ring_damage = np.concatenate((KI04, KI14, KI16, KI18, KI21))
+    
