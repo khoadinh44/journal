@@ -111,10 +111,7 @@ def train(data, labels,
 def main(opt):
   tf.get_logger().setLevel('ERROR')
           
-  # with tf.device('/CPU:0'):
-  if opt.PU_data_table_10:
-    X_train_all, X_test, y_train_all, y_test = get_data(opt)
-  else:
+  X_train_all, X_test, y_train_all, y_test = get_data(opt)
                     
   if opt.use_CNN_B:
     X_train_all = convert_spectrogram(X_train_all)/255.
