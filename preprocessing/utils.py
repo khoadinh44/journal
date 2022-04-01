@@ -24,6 +24,14 @@ def scale_data(signal, scale):
     all_data.append(data)
   return np.array(all_data)
 
+def load_table_10(path):
+  all_data = []
+  for name in os.listdir(path):
+    each_path = os.path.join(path, name)
+    each_data = np.load(each_path)
+    all_data.append(each_data)
+  return np.expand_dims(all_data, axis=0)
+  
 def load_PU_data(path):
   data = []
   all_data = []
