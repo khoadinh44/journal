@@ -28,7 +28,7 @@ class Trainer():
         # self.optimizer = angular_grad.AngularGrad()
         self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0,dtype=tf.int64),
                                                valid_steps=tf.Variable(0,dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
-        self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, opt.ckpt_dir, 1)
+        self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, opt.ckpt_dir, 3)
         
         if self.params.triplet_strategy == "batch_all":
             self.loss = batch_all_triplet_loss
@@ -133,7 +133,7 @@ class Trainer():
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('--epoch', default=1, type=int, help="Number epochs to train the model for")
+    parser.add_argument('--epoch', default=3, type=int, help="Number epochs to train the model for")
     parser.add_argument('--params_dir', default='hyperparameters/batch_hard.json', help="Experiment directory containing params.json")
     parser.add_argument('--validate', default='1', help="Is there an validation dataset available")
     parser.add_argument('--ckpt_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
