@@ -25,7 +25,7 @@ def scale_data(signal, scale):
   return np.array(all_data)
 
 def to_one_hot(label):
-  new_label = np.zeros((len(label), np.max(label)))
+  new_label = np.zeros((len(label), np.max(label)+1))
   for idx, val in enumerate(label):
     new_label[idx, val] = 1
   return new_label
