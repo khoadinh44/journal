@@ -1,4 +1,4 @@
-from facenet import Trainer, parse_opt
+from faceNet import Trainer, parse_opt
 from FaceNet_predict import FaceNetOneShotRecognitor
 from load_data import Healthy, Outer_ring_damage, Inner_ring_damage 
 from preprocessing.utils import invert_one_hot
