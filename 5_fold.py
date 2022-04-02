@@ -2,6 +2,7 @@ from facenet import Trainer, parse_opt
 from FaceNet_predict import FaceNetOneShotRecognitor
 from load_data import Healthy, Outer_ring_damage, Inner_ring_damage 
 from preprocessing.utils import invert_one_hot
+from src.params import Params
 
 from src.data import get_dataset
 from scipy.spatial.distance import cosine, euclidean
@@ -23,6 +24,7 @@ print('\t\t\t Loading labels...')
 Healthy_label = [0]*len(Healthy)
 Outer_ring_damage_label = [1]*len(Outer_ring_damage)
 Inner_ring_damage_label = [2]*len(Inner_ring_damage)
+accuracy = []
 
 for i in range(len(Healthy)):
   X_train_Healthy = Healthy[i: i+3]
@@ -65,3 +67,25 @@ for i in range(len(Healthy)):
   X_test = np.concatenate((X_test_Healthy, X_test_Outer_ring_damage, X_test_Inner_ring_damage))
   y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
   print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
+  
+  print('\n Train phase...')
+  trainer = Trainer(opt)
+  for i in range(opt.epoch):
+      trainer.train(i)
+  
+  print('\n Test phase...')
+  model = FaceNetOneShotRecognitor(opt, X_train, y_train)
+  train_embs, label2idx = model.train_or_load(cons=True)
+  
+  params = Params(opt.params_dir)
+  this_acc = []
+  for thres in opt.threshold:
+    y_pred = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx, threshold=opt.threshold)
+    acc = accuracy_score(y_test, y_pred)
+    this_acc.append(acc)
+    print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
+  
+  accuracy.append(max(this_acc))
+
+print('\n FINISH!')
+print('Test accuracy: ', np.mean(accuracy))
