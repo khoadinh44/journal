@@ -20,8 +20,8 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 
 opt = parse_opt()
-print('\n\n\t *****************START*************\n\n')
 print('\t\t\t Loading labels...')
+print('\n\n\t *****************START*************\n\n')
 accuracy = []
 
 for i in range(len(Healthy)):
