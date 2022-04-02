@@ -7,7 +7,8 @@ import tensorflow as tf
 # tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 def get_dataset(data, labels, params, phase='train'):
-    # labels = invert_one_hot(labels)
+    if len(np.array(labels).shape) > 1:
+      labels = invert_one_hot(labels)
     AUTOTUNE   =  tf.data.experimental.AUTOTUNE
     dataset    =  tf.data.Dataset.from_tensor_slices((data, labels))
     dataset    =  dataset.batch(params.batch_size).prefetch(AUTOTUNE)
