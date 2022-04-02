@@ -41,11 +41,17 @@ def load_table_10_spe(data, label):
   new_label = []
   for idx, each_data in enumerate(data):
     each_data = np.squeeze(each_data)
-    new_data.append(each_data)
+    if new_data == []
+      new_data = each_data
+    else:
+      new_data = np.concatenate((new_data, each_data))
     
     each_label = label[idx]
     each_label = [each_label]*len(each_data)
-    new_label.append(each_label)
+    if new_label == []
+      new_label = each_label
+    else:
+      new_label = np.concatenate((new_label, each_label))
   return np.array(new_data), np.array(new_label)
 
 def load_PU_data(path):
