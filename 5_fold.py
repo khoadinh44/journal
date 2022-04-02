@@ -25,6 +25,8 @@ accuracy = []
 
 for i in range(len(Healthy)):
   X_train_Healthy = Healthy[i: i+3]
+  if len(X_train_Healthy) != 3:
+    break
   y_train_Healthy = [0]*len(X_train_Healthy)
   X_train_Healthy, y_train_Healthy = load_table_10_spe(X_train_Healthy, y_train_Healthy)
   print(f'\n Shape of the Health train data and label: {X_train_Healthy.shape}, {y_train_Healthy.shape}')
@@ -42,8 +44,6 @@ for i in range(len(Healthy)):
   X_train = np.concatenate((X_train_Healthy, X_train_Outer_ring_damage, X_train_Inner_ring_damage))
   y_train = np.concatenate((y_train_Healthy, y_train_Outer_ring_damage, y_train_Inner_ring_damage))
   print(f'\n Shape of train data: {X_train.shape}, {y_train.shape}')
-  if len(X_train_Inner_ring_damage) != 3:
-    break
   
   print('\n------------------------------------------------')
 
