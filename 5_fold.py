@@ -1,8 +1,9 @@
 from faceNet import Trainer, parse_opt
 from FaceNet_predict import FaceNetOneShotRecognitor
 from load_data import Healthy, Outer_ring_damage, Inner_ring_damage 
-from preprocessing.utils import invert_one_hot, load_table_10_spe
+from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot
 from src.params import Params
+from network.nn import CNN_C
 
 from src.data import get_dataset
 from scipy.spatial.distance import cosine, euclidean
@@ -19,7 +20,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 
 opt = parse_opt()
-print('\n\n\t\t\t *****************START*************\n\n')
+print('\n\n\t *****************START*************\n\n')
 print('\t\t\t Loading labels...')
 accuracy = []
 
@@ -69,24 +70,39 @@ for i in range(len(Healthy)):
   y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
   print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
   
-  print('\n Train phase...')
-  trainer = Trainer(opt, X_train, X_test, y_train, y_test)
-  for i in range(opt.epoch):
-      trainer.train(i)
-  
-  print('\n Test phase...')
-  model = FaceNetOneShotRecognitor(opt, X_train, y_train)
-  train_embs, label2idx = model.train_or_load(cons=True)
-  
-  params = Params(opt.params_dir)
-  this_acc = []
-  for thres in opt.threshold:
-    y_pred = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx, threshold=thres)
-    acc = accuracy_score(y_test, y_pred)
-    this_acc.append(acc)
-    print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
-  
-  accuracy.append(max(this_acc))
+  if opt.faceNet:
+    print('\n Train phase...')
+    trainer = Trainer(opt, X_train, X_test, y_train, y_test)
+    for i in range(opt.epoch):
+        trainer.train(i)
+    
+    print('\n Test phase...')
+    model = FaceNetOneShotRecognitor(opt, X_train, y_train)
+    train_embs, label2idx = model.train_or_load(cons=True)
+    
+    params = Params(opt.params_dir)
+    this_acc = []
+    for thres in opt.threshold:
+      y_pred = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx, threshold=thres)
+      acc = accuracy_score(y_test, y_pred)
+      this_acc.append(acc)
+      print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
+    
+    accuracy.append(max(this_acc))
+  else:
+    y_train = to_one_hot(y_train)
+    y_test = to_one_hot(y_test)
+    print('\n\t\t\t Load model...')
+    model = CNN_C(opt)
+    model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
+
+    model.summary()
+    history = model.fit(X_train, y_train,
+                        epochs     = opt.epochs,
+                        batch_size = opt.batch_size,
+                        validation_data=(X_test, y_test),)
+    _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
+    accuracy.append(test_acc)
 
 print('\n FINISH!')
 print('Test accuracy: ', np.mean(accuracy))
