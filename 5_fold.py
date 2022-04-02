@@ -98,7 +98,7 @@ for i in range(len(Healthy)):
 
     model.summary()
     history = model.fit(X_train, y_train,
-                        epochs     = opt.epochs,
+                        epochs     = opt.epoch,
                         batch_size = opt.batch_size,
                         validation_data=(X_test, y_test),)
     _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
