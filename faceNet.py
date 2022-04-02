@@ -140,6 +140,7 @@ def parse_opt(known=False):
     parser.add_argument('--log_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
     parser.add_argument('--emb_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/emb1.npy', help="Directory containing the Checkpoints")
     parser.add_argument('--restore', default='0', help="Restart the model from the previous Checkpoint")
+    parser.add_argument('--threshold',          type=str,     default=[0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5],   help='num_mels')
     
     # Models and denoising methods--------------------------
     parser.add_argument('--ML_method',   default=None, type=str)
@@ -203,5 +204,3 @@ if __name__ == '__main__':
     
     for i in range(opt.epoch):
         trainer.train(i)
-
-
