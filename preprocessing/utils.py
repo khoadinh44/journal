@@ -31,7 +31,19 @@ def load_table_10(path):
     each_data = np.load(each_path)
     all_data.append(each_data)
   return np.expand_dims(all_data, axis=0)
-  
+
+def load_table_10_spe(data, label):
+  new_data = []
+  new_label = []
+  for idx, each_data in enumerate(data):
+    each_data = np.squeeze(each_data)
+    new_data.append(each_data)
+    
+    each_label = label[idx]
+    each_label = [each_label]*len(each_data)
+    new_label.append(each_label)
+  return np.array(new_data), np.array(new_label)
+
 def load_PU_data(path):
   data = []
   all_data = []
