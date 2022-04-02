@@ -15,7 +15,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 class Trainer():
-    def __init__(self, opt):
+    def __init__(self, opt, X_train_all, X_test, y_train_all, y_test):
         
         self.params      = Params(opt.params_dir)
         self.valid       = 1 if opt.validate == '1' else 0
@@ -50,7 +50,7 @@ class Trainer():
         else:
             print('\nIntializing from scratch\n')
         
-        X_train_all, X_test, y_train_all, y_test = get_data(opt)
+        
         print(f'Shape of training data: {X_train_all.shape}\n')
         print(f'Shape of testing data: {X_test.shape}\n')
        
@@ -199,8 +199,9 @@ def parse_opt(known=False):
     return opt
     
 if __name__ == '__main__':
+    X_train_all, X_test, y_train_all, y_test = get_data(opt)
     opt = parse_opt()
-    trainer = Trainer(opt)
+    trainer = Trainer(opt, X_train_all, X_test, y_train_all, y_test)
     
     for i in range(opt.epoch):
         trainer.train(i)
