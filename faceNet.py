@@ -133,8 +133,8 @@ class Trainer():
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('--epoch', default=2, type=int, help="Number epochs to train the model for")
-    parser.add_argument('--params_dir', default='hyperparameters/batch_hard.json', help="Experiment directory containing params.json")
+    parser.add_argument('--epoch', default=10, type=int, help="Number epochs to train the model for")
+    parser.add_argument('--params_dir', default='hyperparameters/batch_adaptive.json', help="Experiment directory containing params.json")
     parser.add_argument('--validate', default='1', help="Is there an validation dataset available")
     parser.add_argument('--ckpt_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
     parser.add_argument('--log_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
