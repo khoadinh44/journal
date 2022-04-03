@@ -20,26 +20,37 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 
 opt = parse_opt()
+
 print('\t\t\t Loading labels...')
+Healthy_label           = [0]*len(Healthy)
+Outer_ring_damage_label = [1]*len(Outer_ring_damage)
+Inner_ring_damage_label = [2]*len(Inner_ring_damage)
+
+Healthy, Healthy_label = load_table_10_spe(Healthy, Healthy_label)
+Outer_ring_damage, Outer_ring_damage_label = load_table_10_spe(Outer_ring_damage, Outer_ring_damage_label)
+Inner_ring_damage, Inner_ring_damage_label = load_table_10_spe(Inner_ring_damage, Inner_ring_damage_label)
+
 print('\n\n\t *************START*************\n\n')
 accuracy = []
 
-for i in range(len(Healthy)):
-  X_train_Healthy = Healthy[i: i+3]
-  if len(X_train_Healthy) != 3:
+for i in range(5):
+
+  distance_Healthy = 0.6*len(Healthy)
+  start_Healthy    = 0.2*i
+  X_train_Healthy = Healthy[start_Healthy: start_Healthy*distance_Healthy]
+  if len(X_train_Healthy) < distance_Healthy:
     break
-  y_train_Healthy = [0]*len(X_train_Healthy)
-  X_train_Healthy, y_train_Healthy = load_table_10_spe(X_train_Healthy, y_train_Healthy)
+  y_train_Healthy = Healthy_label[start_Healthy: start_Healthy*distance_Healthy]
   print(f'\n Shape of the Health train data and label: {X_train_Healthy.shape}, {y_train_Healthy.shape}')
   
-  X_train_Outer_ring_damage = Outer_ring_damage[i: i+3]
-  y_train_Outer_ring_damage = [1]*len(X_train_Outer_ring_damage)
-  X_train_Outer_ring_damage, y_train_Outer_ring_damage = load_table_10_spe(X_train_Outer_ring_damage, y_train_Outer_ring_damage)
+  distance_Outer_ring_damage = 0.6*len(Outer_ring_damage)
+  start_Outer_ring_damage    = 0.2*i
+  X_train_Outer_ring_damage, y_train_Outer_ring_damage = Outer_ring_damage[start_Outer_ring_damage: start_Outer_ring_damage*distance_Outer_ring_damage], Outer_ring_damage_label[start_Outer_ring_damage: start_Outer_ring_damage*distance_Outer_ring_damage]
   print(f'\n Shape of the Outer ring damage train data and label: {X_train_Outer_ring_damage.shape}, {y_train_Outer_ring_damage.shape}')
   
-  X_train_Inner_ring_damage = Inner_ring_damage[i: i+3]
-  y_train_Inner_ring_damage = [2]*len(X_train_Inner_ring_damage)
-  X_train_Inner_ring_damage, y_train_Inner_ring_damage = load_table_10_spe(X_train_Inner_ring_damage, y_train_Inner_ring_damage)
+  distance_Inner_ring_damage = 0.6*len(Inner_ring_damage)
+  start_Inner_ring_damage    = 0.2*i
+  X_train_Inner_ring_damage, y_train_Inner_ring_damage = Inner_ring_damage[start_Inner_ring_damage: start_Inner_ring_damage*distance_Inner_ring_damage], Inner_ring_damage_label[start_Inner_ring_damage: start_Inner_ring_damage*distance_Inner_ring_damage]
   print(f'\n Shape of the Inner ring damage train data and label: {X_train_Inner_ring_damage.shape}, {y_train_Inner_ring_damage.shape}')
   
   X_train = np.concatenate((X_train_Healthy, X_train_Outer_ring_damage, X_train_Inner_ring_damage))
@@ -48,22 +59,19 @@ for i in range(len(Healthy)):
   
   print('\n------------------------------------------------')
 
-  h = [a for a in range(len(Healthy)) if a not in range(i, i+3)]
+  h = [a for a in range(len(Healthy)) if a not in range(start_Healthy, start_Healthy*distance_Healthy)]
   X_test_Healthy = Healthy[h]
-  y_test_Healthy = [0]*len(X_test_Healthy)
-  X_test_Healthy, y_test_Healthy = load_table_10_spe(X_test_Healthy, y_test_Healthy)
+  y_test_Healthy = Healthy_label[h]
   print(f'\n Shape of the Health test data and label: {X_test_Healthy.shape}, {y_test_Healthy.shape}')
   
-  k = [a for a in range(len(Outer_ring_damage)) if a not in range(i, i+3)]
-  X_test_Outer_ring_damage = Outer_ring_damage[k]
-  y_test_Outer_ring_damage = [1]*len(X_test_Outer_ring_damage)
-  X_test_Outer_ring_damage, y_test_Outer_ring_damage = load_table_10_spe(X_test_Outer_ring_damage, y_test_Outer_ring_damage)
+  k = [a for a in range(len(Outer_ring_damage)) if a not in range(start_Outer_ring_damage, start_Outer_ring_damage*distance_Outer_ring_damage)]
+  X_test_Outer_ring_damage = Outer_ring_damage[h]
+  y_test_Outer_ring_damage = Outer_ring_damage_label[h]
   print(f'\n Shape of the Outer ring damage test data and label: {X_test_Outer_ring_damage.shape}, {y_test_Outer_ring_damage.shape}')
   
-  l = [a for a in range(len(Inner_ring_damage)) if a not in range(i, i+3)]
-  X_test_Inner_ring_damage = Inner_ring_damage[l]
-  y_test_Inner_ring_damage = [2]*len(X_test_Inner_ring_damage)
-  X_test_Inner_ring_damage, y_test_Inner_ring_damage = load_table_10_spe(X_test_Inner_ring_damage, y_test_Inner_ring_damage)
+  l = [a for a in range(len(Inner_ring_damage)) if a not in range(start_Inner_ring_damage, start_Inner_ring_damage*distance_Inner_ring_damage)]
+  X_test_Inner_ring_damage = Inner_ring_damage[h]
+  y_test_Inner_ring_damage = Inner_ring_damage_label[h]
   print(f'\n Shape of the Inner ring damage test data and label: {X_test_Inner_ring_damage.shape}, {y_test_Inner_ring_damage.shape}')
   
   X_test = np.concatenate((X_test_Healthy, X_test_Outer_ring_damage, X_test_Inner_ring_damage))
