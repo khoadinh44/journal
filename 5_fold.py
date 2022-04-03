@@ -21,7 +21,7 @@ from sklearn.metrics import accuracy_score
 
 opt = parse_opt()
 print('\t\t\t Loading labels...')
-print('\n\n\t *****************START*************\n\n')
+print('\n\n\t *************START*************\n\n')
 accuracy = []
 
 for i in range(len(Healthy)):
@@ -73,21 +73,22 @@ for i in range(len(Healthy)):
 
   if opt.faceNet:
     print('\n Train phase...')
-    X_test = np.expand_dims(X_test, axis=-1)
-    X_train = np.expand_dims(X_train, axis=-1)
+    X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
+    X_train = np.expand_dims(X_train, axis=-1).astype(np.float32)
 
     trainer = Trainer(opt, X_train, X_test, y_train, y_test)
     for i in range(opt.epoch):
         trainer.train(i)
     
-    print('\n Test phase...')
+    print('\n Saving embedding phase...')
     model = FaceNetOneShotRecognitor(opt, X_train, y_train)
-    train_embs, label2idx = model.train_or_load(cons=True)
+    train_embs = model.train_or_load(cons=True)
     
     params = Params(opt.params_dir)
     this_acc = []
     for thres in opt.threshold:
-      y_pred = model.predict(test_data=X_test, train_embs=train_embs, label2idx=label2idx, threshold=thres)
+      print('\n Predict phase...')
+      y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=thres)
       acc = accuracy_score(y_test, y_pred)
       this_acc.append(acc)
       print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
