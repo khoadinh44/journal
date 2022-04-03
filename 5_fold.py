@@ -4,13 +4,14 @@ from load_data import Healthy, Outer_ring_damage, Inner_ring_damage
 from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot
 from src.params import Params
 from network.nn import CNN_C
-
 from src.data import get_dataset
-from scipy.spatial.distance import cosine, euclidean
 from load_cases import get_data
 from src.params import Params
 from faceNet import parse_opt
 from src.model  import face_model
+
+from sklearn.utils import shuffle
+from scipy.spatial.distance import cosine, euclidean
 import angular_grad
 import tensorflow as tf
 import glob 
@@ -29,6 +30,11 @@ Inner_ring_damage_label = [2]*len(Inner_ring_damage)
 Healthy, Healthy_label = load_table_10_spe(Healthy, Healthy_label)
 Outer_ring_damage, Outer_ring_damage_label = load_table_10_spe(Outer_ring_damage, Outer_ring_damage_label)
 Inner_ring_damage, Inner_ring_damage_label = load_table_10_spe(Inner_ring_damage, Inner_ring_damage_label)
+
+Healthy, Healthy_label = shuffle(Healthy, Healthy_label)
+Outer_ring_damage, Outer_ring_damage_label = shuffle(Outer_ring_damage, Outer_ring_damage_label)
+Inner_ring_damage, Inner_ring_damage_label = shuffle(Inner_ring_damage, Inner_ring_damage_label)
+
 print('\n\n\t *************START*************\n\n')
 accuracy = []
 
@@ -36,7 +42,6 @@ for i in range(5):
   distance_Healthy = int(0.6*len(Healthy))
   start_Healthy    = int(0.2*i*len(Healthy))
   X_train_Healthy = Healthy[start_Healthy: start_Healthy+distance_Healthy]
-  print(len(X_train_Healthy), distance_Healthy)
   if len(X_train_Healthy) < distance_Healthy:
     break
   y_train_Healthy = Healthy_label[start_Healthy: start_Healthy+distance_Healthy]
