@@ -31,9 +31,10 @@ Healthy, Healthy_label = load_table_10_spe(Healthy, Healthy_label)
 Outer_ring_damage, Outer_ring_damage_label = load_table_10_spe(Outer_ring_damage, Outer_ring_damage_label)
 Inner_ring_damage, Inner_ring_damage_label = load_table_10_spe(Inner_ring_damage, Inner_ring_damage_label)
 
-Healthy, Healthy_label = shuffle(Healthy, Healthy_label)
-Outer_ring_damage, Outer_ring_damage_label = shuffle(Outer_ring_damage, Outer_ring_damage_label)
-Inner_ring_damage, Inner_ring_damage_label = shuffle(Inner_ring_damage, Inner_ring_damage_label)
+np.random.seed(0)
+Healthy, Healthy_label = shuffle(Healthy, Healthy_label, random_state=0)
+Outer_ring_damage, Outer_ring_damage_label = shuffle(Outer_ring_damage, Outer_ring_damage_label, random_state=0)
+Inner_ring_damage, Inner_ring_damage_label = shuffle(Inner_ring_damage, Inner_ring_damage_label, random_state=0)
 
 print('\n\n\t *************START*************\n\n')
 accuracy = []
