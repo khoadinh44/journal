@@ -9,6 +9,7 @@ import tensorflow as tf
 def get_dataset(data, labels, params, phase='train'):
     if len(np.array(labels).shape) > 1:
       labels = invert_one_hot(labels)
+    data = np.expand_dims(data, axis=-1)
     AUTOTUNE   =  tf.data.experimental.AUTOTUNE
     dataset    =  tf.data.Dataset.from_tensor_slices((data, labels))
     dataset    =  dataset.batch(params.batch_size).prefetch(AUTOTUNE)
