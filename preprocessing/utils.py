@@ -39,7 +39,8 @@ def load_table_10(path):
       all_data = each_data
     else:
       all_data = np.concatenate((all_data, each_data))
-
+      
+  all_data = scale_data(all_data, 2)
   return np.expand_dims(all_data, axis=0)
 
 def load_table_10_spe(data, label):
