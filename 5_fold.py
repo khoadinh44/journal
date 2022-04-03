@@ -69,6 +69,7 @@ for i in range(len(Healthy)):
   X_test = np.concatenate((X_test_Healthy, X_test_Outer_ring_damage, X_test_Inner_ring_damage))
   y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
   print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
+  print('\n------------------------------------------------')
   
   if opt.faceNet:
     print('\n Train phase...')
