@@ -70,9 +70,12 @@ for i in range(len(Healthy)):
   y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
   print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
   print('\n------------------------------------------------')
-  
+
   if opt.faceNet:
     print('\n Train phase...')
+    X_test = np.expand_dims(X_test, axis=-1)
+    X_train = np.expand_dims(X_train, axis=-1)
+
     trainer = Trainer(opt, X_train, X_test, y_train, y_test)
     for i in range(opt.epoch):
         trainer.train(i)
@@ -90,6 +93,7 @@ for i in range(len(Healthy)):
       print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
     
     accuracy.append(max(this_acc))
+    print(f'\n\t\t********* FINISHING ROUND {i}*********\n\n\n')
   else:
     y_train = to_one_hot(y_train)
     y_test = to_one_hot(y_test)
