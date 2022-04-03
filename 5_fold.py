@@ -70,28 +70,28 @@ for i in range(5):
   print(f'\n Shape of the Health test data and label: {X_test_Healthy.shape}, {y_test_Healthy.shape}')
   
   k = [a for a in range(len(Outer_ring_damage)) if a not in range(start_Outer_ring_damage, start_Outer_ring_damage+distance_Outer_ring_damage)]
-  X_test_Outer_ring_damage = Outer_ring_damage[h]
-  y_test_Outer_ring_damage = Outer_ring_damage_label[h]
+  X_test_Outer_ring_damage = Outer_ring_damage[k]
+  y_test_Outer_ring_damage = Outer_ring_damage_label[k]
   print(f'\n Shape of the Outer ring damage test data and label: {X_test_Outer_ring_damage.shape}, {y_test_Outer_ring_damage.shape}')
   
   l = [a for a in range(len(Inner_ring_damage)) if a not in range(start_Inner_ring_damage, start_Inner_ring_damage+distance_Inner_ring_damage)]
-  X_test_Inner_ring_damage = Inner_ring_damage[h]
-  y_test_Inner_ring_damage = Inner_ring_damage_label[h]
+  X_test_Inner_ring_damage = Inner_ring_damage[l]
+  y_test_Inner_ring_damage = Inner_ring_damage_label[l]
   print(f'\n Shape of the Inner ring damage test data and label: {X_test_Inner_ring_damage.shape}, {y_test_Inner_ring_damage.shape}')
   
   X_test = np.concatenate((X_test_Healthy, X_test_Outer_ring_damage, X_test_Inner_ring_damage))
   y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
   print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
   print('\n------------------------------------------------')
-
+  # print(i)
   if opt.faceNet:
     print('\n Train phase...')
     X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
     X_train = np.expand_dims(X_train, axis=-1).astype(np.float32)
 
     trainer = Trainer(opt, X_train, X_test, y_train, y_test)
-    for i in range(opt.epoch):
-        trainer.train(i)
+    for iteration in range(opt.epoch):
+        trainer.train(iteration)
     
     print('\n Saving embedding phase...')
     model = FaceNetOneShotRecognitor(opt, X_train, y_train)
@@ -107,7 +107,7 @@ for i in range(5):
       print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
     
     accuracy.append(max(this_acc))
-    print(f'\n\t\t********* FINISHING ROUND {i}*********\n\n\n')
+    print(f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n')
   else:
     y_train = to_one_hot(y_train)
     y_test = to_one_hot(y_test)
