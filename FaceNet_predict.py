@@ -84,7 +84,7 @@ class FaceNetOneShotRecognitor(object):
             for j in range(self.train_samples):
                 # the min of clustering
                 distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
-                # distances.append(np.min([cosine(test_embs[i].reshape(-1), train_embs[k].reshape(-1)) for k in label2idx[j]]))
+                # distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
             if np.min(distances) > threshold:
                 list_label[i] = 100  # 100 is represented for unknown object
             else:
