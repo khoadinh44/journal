@@ -133,15 +133,15 @@ class Trainer():
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('--epoch', default=1, type=int, help="Number epochs to train the model for")
+    parser.add_argument('--epoch',      default=5, type=int, help="Number epochs to train the model for")
     parser.add_argument('--params_dir', default='hyperparameters/batch_adaptive.json', help="Experiment directory containing params.json")
-    parser.add_argument('--validate', default='1', help="Is there an validation dataset available")
-    parser.add_argument('--ckpt_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
-    parser.add_argument('--log_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
-    parser.add_argument('--emb_dir', default='/content/drive/Shareddrives/newpro112233/signal_machine/emb1.npy', help="Directory containing the Checkpoints")
-    parser.add_argument('--restore', default='0', help="Restart the model from the previous Checkpoint")
-    parser.add_argument('--threshold',          type=str,     default=[1.2, 1.25, 1.3, 1.35,  1.4, 1.45, 1.5, 1.6, 1.7],   help='num_mels')
-    parser.add_argument('--faceNet',   default=True, type=bool)
+    parser.add_argument('--validate',   default='1', help="Is there an validation dataset available")
+    parser.add_argument('--ckpt_dir',   default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
+    parser.add_argument('--log_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
+    parser.add_argument('--emb_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/emb1.npy', help="Directory containing the Checkpoints")
+    parser.add_argument('--restore',    default='0', help="Restart the model from the previous Checkpoint")
+    parser.add_argument('--threshold',  default=[0.9, 1., 1.1, 1.15, 1.17, 1.2, 1.22, 1.25, 1.27, 1.3], type=str, help='num_mels')
+    parser.add_argument('--faceNet',    default=False, type=bool)
 
     # Models and denoising methods--------------------------
     parser.add_argument('--ML_method',   default=None, type=str)
@@ -170,15 +170,15 @@ def parse_opt(known=False):
     
     parser.add_argument('--PU_data_table_10',     default=True, type=bool)
     parser.add_argument('--PU_data_table_8',      default=False, type=bool)
-    parser.add_argument('--MFPT_data',   default=False, type=bool)
-    parser.add_argument('--data_normal', default=False, type=bool)
-    parser.add_argument('--data_12k',    default=False, type=bool)
-    parser.add_argument('--data_48k',    default=False, type=bool)
-    parser.add_argument('--multi_head',  default=False, type=bool)
+    parser.add_argument('--MFPT_data',            default=False, type=bool)
+    parser.add_argument('--data_normal',          default=False, type=bool)
+    parser.add_argument('--data_12k',             default=False, type=bool)
+    parser.add_argument('--data_48k',             default=False, type=bool)
+    parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--num_classes',     type=int,   default=128,         help='128 Number of classes in faceNet')
+    parser.add_argument('--num_classes',     type=int,   default=3,         help='128 Number of classes in faceNet')
     parser.add_argument('--input_shape',     type=int,   default=255900,        help='255900 in 5-fold or 250604 in the only training.')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
