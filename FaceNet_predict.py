@@ -13,6 +13,12 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from preprocessing.utils import invert_one_hot
 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import VotingClassifier
+from sklearn.svm import SVC
+
 opt = parse_opt()
 
 class FaceNetOneShotRecognitor(object):
@@ -24,7 +30,9 @@ class FaceNetOneShotRecognitor(object):
         
         # INITIALIZE MODELS
         self.model       = face_model(opt)
-        self.optimizer   = angular_grad.AngularGrad()
+        self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
+                                                                          decay_steps=10000, decay_rate=0.96, staircase=True)
+        self.optimizer   = tf.keras.optimizers.Adam(learning_rate=self.lr_schedule, beta_1=0.9, beta_2=0.999, epsilon=0.1)
         self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0, dtype=tf.int64),
                                                valid_steps=tf.Variable(0, dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
         self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, self.path_weight, 3)
@@ -79,25 +87,41 @@ class FaceNetOneShotRecognitor(object):
         print(' Train embs: ', train_embs.shape)
         list_label = {}
 
-        for i in range(test_embs.shape[0]):
-            distances = []
-            for j in range(self.train_samples):
-                # the min of clustering
-                distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
-                # distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
-            if np.min(distances) > threshold:
-                list_label[i] = 100  # 100 is represented for unknown object
-            else:
-                res = np.argsort(distances)[0]  # this ID
-                list_label[i] = res
+        if self.opt.Use_euclidean:
+          for i in range(test_embs.shape[0]):
+              distances = []
+              for j in range(self.train_samples):
+                  # the min of clustering
+                  distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
+                  # distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
+              if np.min(distances) > threshold:
+                  list_label[i] = 100  # 100 is represented for unknown object
+              else:
+                  res = np.argsort(distances)[0]  # this ID
+                  list_label[i] = res
 
-        if len(list_label) > 0:
-            for idx in list_label:
-                if list_label[idx] != 100:
-                    name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
-                    list_label[idx] = name
+          if len(list_label) > 0:
+              for idx in list_label:
+                  if list_label[idx] != 100:
+                      name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
+                      list_label[idx] = name
 
-        list_label = list(list_label.values())
+          list_label = list(list_label.values())
+        
+        else:
+          train_label = self.df_train['name']
+          print(train_label)
+          if opt.ML_method == 'SVM':
+            model = SVC(kernel='rbf', probability=True)
+          elif opt.ML_method == 'RandomForestClassifier':
+            model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+          elif opt.ML_method == 'LogisticRegression':     
+            model = LogisticRegression(random_state=1)
+          elif opt.ML_method == 'GaussianNB':
+            model = GaussianNB()
+          model.fit(train_embs, train_label)
+          list_label = model.predict(test_data)
+          
         return list_label
 
 if __name__ == '__main__':
