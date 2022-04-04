@@ -21,6 +21,19 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 
 opt = parse_opt()
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
+
+print(color.GREEN + f'Hello World !' + color.END)
 
 print('\t\t\t Loading labels...')
 Healthy_label           = [0]*len(Healthy)
@@ -36,7 +49,7 @@ Healthy, Healthy_label = shuffle(Healthy, Healthy_label, random_state=0)
 Outer_ring_damage, Outer_ring_damage_label = shuffle(Outer_ring_damage, Outer_ring_damage_label, random_state=0)
 Inner_ring_damage, Inner_ring_damage_label = shuffle(Inner_ring_damage, Inner_ring_damage_label, random_state=0)
 
-print('\n\n\t *************START*************\n\n')
+print(color.GREEN + '\n\n\t *************START*************\n\n' + color.END)
 accuracy = []
 
 for i in range(5):
@@ -115,7 +128,7 @@ for i in range(5):
         this_acc.append(acc)
         print(f'\n--------------Test accuracy: {acc} in {i}----------------')
     accuracy.append(max(this_acc))
-    print(f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n')
+    print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
     
   else:
     y_train = to_one_hot(y_train)
@@ -133,4 +146,4 @@ for i in range(5):
     accuracy.append(test_acc)
 
 print('\n FINISH!')
-print('Test accuracy: ', np.mean(accuracy))
+print(color.CYAN + f'Test accuracy: {np.mean(accuracy)}' + color.END)
