@@ -30,9 +30,10 @@ class FaceNetOneShotRecognitor(object):
         
         # INITIALIZE MODELS
         self.model       = face_model(opt)
-        self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
-                                                                          decay_steps=10000, decay_rate=0.96, staircase=True)
-        self.optimizer   = tf.keras.optimizers.Adam(learning_rate=self.lr_schedule, beta_1=0.9, beta_2=0.999, epsilon=0.1)
+        self.optimizer = angular_grad.AngularGrad()
+        # self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
+        #                                                                   decay_steps=10000, decay_rate=0.96, staircase=True)
+        # self.optimizer   = tf.keras.optimizers.Adam(learning_rate=self.lr_schedule, beta_1=0.9, beta_2=0.999, epsilon=0.1)
         self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0, dtype=tf.int64),
                                                valid_steps=tf.Variable(0, dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
         self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, self.path_weight, 3)
