@@ -127,7 +127,7 @@ class FaceNetOneShotRecognitor(object):
           elif opt.ML_method == 'GaussianNB':
             model = GaussianNB()
           model.fit(train_embs, train_label)
-          list_label = model.predict(test_data)
+          list_label = model.predict(test_embs)
           
         return list_label
 
