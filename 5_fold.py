@@ -33,7 +33,6 @@ class color:
    UNDERLINE = '\033[4m'
    END = '\033[0m'
 
-print(color.GREEN + f'Hello World !' + color.END)
 
 print('\t\t\t Loading labels...')
 Healthy_label           = [0]*len(Healthy)
