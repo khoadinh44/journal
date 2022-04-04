@@ -22,10 +22,10 @@ class Trainer():
         self.model       = face_model(opt)
         
         
-        self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
-                                                                          decay_steps=10000, decay_rate=0.96, staircase=True)
-        self.optimizer   = tf.keras.optimizers.Adam(learning_rate=self.lr_schedule, beta_1=0.9, beta_2=0.999, epsilon=0.1)
-        # self.optimizer = angular_grad.AngularGrad()
+        # self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
+        #                                                                   decay_steps=10000, decay_rate=0.96, staircase=True)
+        # self.optimizer   = tf.keras.optimizers.Adam(learning_rate=self.lr_schedule, beta_1=0.9, beta_2=0.999, epsilon=0.1)
+        self.optimizer = angular_grad.AngularGrad()
         self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0,dtype=tf.int64),
                                                valid_steps=tf.Variable(0,dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
         self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, opt.ckpt_dir, 3)
@@ -133,16 +133,16 @@ class Trainer():
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('--epoch',      default=1, type=int, help="Number epochs to train the model for")
-    parser.add_argument('--params_dir', default='hyperparameters/batch_all.json', help="Experiment directory containing params.json")
+    parser.add_argument('--epoch',      default=100, type=int, help="Number epochs to train the model for")
+    parser.add_argument('--params_dir', default='hyperparameters/batch_adaptive.json', help="Experiment directory containing params.json")
     parser.add_argument('--validate',   default='1', help="Is there an validation dataset available")
     parser.add_argument('--ckpt_dir',   default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
     parser.add_argument('--log_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
     parser.add_argument('--emb_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/emb1.npy', help="Directory containing the Checkpoints")
     parser.add_argument('--restore',    default='0', help="Restart the model from the previous Checkpoint")
-    parser.add_argument('--threshold',  default=[0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5, 1.6], type=str, help='num_mels')
-    parser.add_argument('--faceNet',          default=False, type=bool)
-    parser.add_argument('--Use_euclidean',    default=False, type=bool)
+    parser.add_argument('--threshold',  default=[0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9], type=str, help='num_mels')
+    parser.add_argument('--faceNet',          default=True, type=bool)
+    parser.add_argument('--Use_euclidean',    default=True, type=bool)
 
     # Models and denoising methods--------------------------
     parser.add_argument('--ML_method',   default='RandomForestClassifier', type=str)
@@ -179,7 +179,7 @@ def parse_opt(known=False):
 
     # Parameters---------------------------------------------
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--num_classes',     type=int,   default=3,          help='128 Number of classes in faceNet')
+    parser.add_argument('--num_classes',     type=int,   default=512,          help='128 Number of classes in faceNet')
     parser.add_argument('--input_shape',     type=int,   default=255900,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
     parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
