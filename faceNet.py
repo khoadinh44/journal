@@ -133,13 +133,13 @@ class Trainer():
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('--epoch',      default=1, type=int, help="Number epochs to train the model for")
+    parser.add_argument('--epoch',      default=150, type=int, help="Number epochs to train the model for")
     parser.add_argument('--params_dir', default='hyperparameters/batch_adaptive.json', help="Experiment directory containing params.json")
     parser.add_argument('--validate',   default='1', help="Is there an validation dataset available")
     parser.add_argument('--ckpt_dir',   default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
     parser.add_argument('--log_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
     parser.add_argument('--emb_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/emb1.npy', help="Directory containing the Checkpoints")
-    parser.add_argument('--restore',    default='0', help="Restart the model from the previous Checkpoint")
+    parser.add_argument('--restore',    default='1', help="Restart the model from the previous Checkpoint")
     parser.add_argument('--threshold',  default=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9], type=str, help='num_mels')
     parser.add_argument('--faceNet',          default=True, type=bool)
     parser.add_argument('--Use_euclidean',    default=False, type=bool)
