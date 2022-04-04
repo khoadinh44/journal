@@ -66,6 +66,15 @@ class FaceNetOneShotRecognitor(object):
         elif len(input_data) > 1:
             pd = self.__calc_embs(input_data)
         return np.array(pd)
+    
+    def loading(self, input_):
+        all_data = []
+        for i in input_:
+            if all_data == []:
+                all_data = i
+            else:
+                all_data = np.concatenate((all_data, i))
+        return all_data
       
     def train_or_load(self, cons=True):        
         for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
@@ -110,6 +119,7 @@ class FaceNetOneShotRecognitor(object):
         
         else:
           train_label = self.df_train['name']
+          train_label = self.loading(train_label)
           print(train_label)
           if opt.ML_method == 'SVM':
             model = SVC(kernel='rbf', probability=True)
