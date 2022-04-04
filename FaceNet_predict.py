@@ -87,7 +87,7 @@ class FaceNetOneShotRecognitor(object):
 
         return train_embs
       
-    def predict(self, test_data, train_embs, threshold=1.1):
+    def predict(self, test_data, train_embs, threshold=1.1, ML_method=None):
         test_embs = self.__calc_emb_test(test_data)
         test_embs = np.concatenate(test_embs)
         print('\n Test embs: ', test_embs.shape)
@@ -119,13 +119,13 @@ class FaceNetOneShotRecognitor(object):
           train_label = self.df_train['name']
           train_label = self.loading(train_label)
           # print(train_label)
-          if opt.ML_method == 'SVM':
+          if ML_method == 'SVM':
             model = SVC(kernel='rbf', probability=True)
-          elif opt.ML_method == 'RandomForestClassifier':
+          elif ML_method == 'RandomForestClassifier':
             model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-          elif opt.ML_method == 'LogisticRegression':     
+          elif ML_method == 'LogisticRegression':     
             model = LogisticRegression(random_state=1)
-          elif opt.ML_method == 'GaussianNB':
+          elif ML_method == 'GaussianNB':
             model = GaussianNB()
           model.fit(train_embs, train_label)
           list_label = model.predict(test_embs)
