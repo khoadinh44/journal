@@ -113,7 +113,7 @@ for i in range(5):
         y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=1, ML_method=i)
         acc = accuracy_score(y_test, y_pred)
         this_acc.append(acc)
-        print(f'\n--------------Test accuracy: {this_acc} in ML method----------------')
+        print(f'\n--------------Test accuracy: {acc} in {i}----------------')
     accuracy.append(max(this_acc))
     print(f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n')
     
