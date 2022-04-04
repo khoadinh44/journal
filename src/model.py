@@ -54,7 +54,8 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
               activity_regularizer=regularizers.l2(1e-5),
               name=conv_name_base + '2a')(input_tensor)
     x = BatchNormalization(name=bn_name_base + '2a')(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
+    x = tf.keras.activations.gelu(x)
 
     x = Conv1D(filters,
                kernel_size=kernel_size,
@@ -72,7 +73,8 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
         x = layers.add([x, input_tensor])
 
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
+    x = tf.keras.activations.gelu(x)
     return x
 
 def CNN_C(opt, input_):
@@ -88,7 +90,8 @@ def CNN_C(opt, input_):
                kernel_initializer='glorot_uniform',
                kernel_regularizer=regularizers.l2(l=0.0001),)(inputs)
     x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
+    x = tf.keras.activations.gelu(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     for i in range(3):
