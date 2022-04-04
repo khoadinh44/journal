@@ -98,15 +98,23 @@ for i in range(5):
     train_embs = model.train_or_load(cons=True)
     
     params = Params(opt.params_dir)
-    this_acc = []
-    for thres in opt.threshold:
-      print('\n Predict phase...')
+
+    if self.opt.Use_euclidean:
+      this_acc = []
+      for thres in opt.threshold:
+        print('\n Predict phase...')
+        y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=thres)
+        acc = accuracy_score(y_test, y_pred)
+        this_acc.append(acc)
+        print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
+      accuracy.append(max(this_acc))
+
+    else:
       y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=thres)
-      acc = accuracy_score(y_test, y_pred)
-      this_acc.append(acc)
-      print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
+      this_acc = accuracy_score(y_test, y_pred)
+      print(f'\n--------------Test accuracy: {this_acc} in ML method----------------')
+      accuracy.append(this_acc)
     
-    accuracy.append(max(this_acc))
     print(f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n')
   else:
     y_train = to_one_hot(y_train)
