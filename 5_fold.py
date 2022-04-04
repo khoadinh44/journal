@@ -99,7 +99,7 @@ for i in range(5):
     
     params = Params(opt.params_dir)
 
-    if self.opt.Use_euclidean:
+    if opt.Use_euclidean:
       this_acc = []
       for thres in opt.threshold:
         print('\n Predict phase...')
@@ -110,12 +110,13 @@ for i in range(5):
       accuracy.append(max(this_acc))
 
     else:
-      y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=thres)
+      y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=1)
       this_acc = accuracy_score(y_test, y_pred)
       print(f'\n--------------Test accuracy: {this_acc} in ML method----------------')
       accuracy.append(this_acc)
     
     print(f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n')
+    
   else:
     y_train = to_one_hot(y_train)
     y_test = to_one_hot(y_test)
