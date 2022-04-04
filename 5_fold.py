@@ -98,23 +98,23 @@ for i in range(5):
     train_embs = model.train_or_load(cons=True)
     
     params = Params(opt.params_dir)
+    this_acc = []
 
     if opt.Use_euclidean:
-      this_acc = []
       for thres in opt.threshold:
         print('\n Predict phase...')
         y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=thres)
         acc = accuracy_score(y_test, y_pred)
         this_acc.append(acc)
         print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
-      accuracy.append(max(this_acc))
 
     else:
-      y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=1)
-      this_acc = accuracy_score(y_test, y_pred)
-      print(f'\n--------------Test accuracy: {this_acc} in ML method----------------')
-      accuracy.append(this_acc)
-    
+      for i in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB']:
+        y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=1, ML_method=i)
+        acc = accuracy_score(y_test, y_pred)
+        this_acc.append(acc)
+        print(f'\n--------------Test accuracy: {this_acc} in ML method----------------')
+    accuracy.append(max(this_acc))
     print(f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n')
     
   else:
