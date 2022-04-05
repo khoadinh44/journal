@@ -184,7 +184,7 @@ class AMSoftmaxLinear(layers.Layer):
     
 #ArcFace was proposed by paper(https://arxiv.org/abs/1801.07698)
 class ArcFaceSoftmaxLinear(layers.Layer):
-    def __init__(self, units, input_dim, margin, feature_scale=64):
+    def __init__(self, units, input_dim, margin, feature_scale=64.):
         super(ArcFaceSoftmaxLinear, self).__init__()
         self.m = margin  # m
         self.s = feature_scale
@@ -204,16 +204,20 @@ class ArcFaceSoftmaxLinear(layers.Layer):
         
         indices_n = tf.expand_dims(labels, axis=1)
         
-        indices_m = tf.cast(indices_m,dtype = indices_n.dtype)
+        indices_m = tf.cast(indices_m, dtype = indices_n.dtype)
         
         indices = tf.concat([indices_m, indices_n], 1)
-        selected_logits = tf.gather_nd(logits, indices)
+
+        logits  = tf.cast(logits, dtype=tf.int32)
+        indices  = tf.cast(indices, dtype=tf.int32)
+        selected_logits = tf.cast(tf.gather_nd(logits, indices), dtype=tf.float32)
         cos_theta = selected_logits
         sin_theta = tf.math.sqrt((1.0-tf.math.square(cos_theta)))
         logit_target = self.s * (cos_theta*self.cos_m-sin_theta*self.sin_m)
         keep_val = self.s*(cos_theta - self.m*self.sin_m)
         logit_target_updated = tf.where(cos_theta > self.threshold, logit_target, keep_val)
-        logit_target_updated = self.s*(selected_logits-self.m)
+        logit_target_updated = tf.cast(self.s*(selected_logits-self.m), dtype=tf.int32)
+
         logits = tf.tensor_scatter_nd_update(logits, indices, logit_target_updated)
         return logits
 
