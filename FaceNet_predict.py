@@ -19,8 +19,9 @@ from sklearn.svm import SVC
 opt = parse_opt()
 
 class FaceNetOneShotRecognitor(object):
-    def __init__(self, opt):
+    def __init__(self, opt, X_train_all, y_train_all):
         self.opt         = opt
+        self.X_train_all, self.y_train_all = X_train_all, y_train_all
         self.df_train = pd.DataFrame(columns=['all_train_data', 'ID', 'name'])
 
     def __calc_embs(self, input_data):
@@ -50,6 +51,9 @@ class FaceNetOneShotRecognitor(object):
         print(' Train embs: ', train_embs.shape)
         list_label = {}
 
+        for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
+            self.df_train.loc[len(self.df_train)] = [train_data, ID, train_label]
+
         if self.opt.Use_euclidean:
           for i in range(test_embs.shape[0]):
               distances = []
@@ -74,7 +78,7 @@ class FaceNetOneShotRecognitor(object):
         else:
           train_label = self.df_train['name']
           train_label = self.loading(train_label)
-          # print(train_label)
+
           if ML_method == 'SVM':
             model = SVC(kernel='rbf', probability=True)
           elif ML_method == 'RandomForestClassifier':
