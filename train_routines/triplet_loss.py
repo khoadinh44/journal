@@ -2,8 +2,7 @@
 # Original implementation by KinWaiCheuk: https://github.com/KinWaiCheuk/Triplet-net-keras
 ######################################################
 
-
-
+from preprocessing.utils import to_one_hot
 from tensorflow.keras.layers import Input
 import tensorflow as tf
 from tensorflow.keras.models import Model
@@ -28,9 +27,9 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     model_input = Input(shape=(opt.input_shape, 1))
     softmax, pre_logits = network(opt, model_input)
     shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
-
-    X_train, Y_train = generate_triplet(x_train, y_train, ap_pairs=150, an_pairs=150)  #(anchors, positive, negative)
-    print('Test' + '*'*100)
+   
+    X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
+  
     anchor_input = Input((opt.input_shape, 1,), name='anchor_input')
     positive_input = Input((opt.input_shape, 1,), name='positive_input')
     negative_input = Input((opt.input_shape, 1,), name='negative_input')
@@ -43,21 +42,23 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     merged_soft = concatenate([soft_anchor, soft_pos, soft_neg], axis=-1, name='merged_soft')
     
     loss_weights = [1, 0.01]
+   
     model = Model(inputs=[anchor_input, positive_input, negative_input], outputs=[merged_soft, merged_pre])
     model.compile(loss=["categorical_crossentropy", triplet_loss],
                   optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"], loss_weights=loss_weights)
 
-
+    
     anchor = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
     positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
     negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
 
-    y_anchor = Y_train[:, 0]
-    y_positive = Y_train[:, 1]
-    y_negative = Y_train[:, 2]
+    y_anchor = to_one_hot(Y_train[:, 0])
+    print(Y_train[:, 0])
+    y_positive = to_one_hot(Y_train[:, 1])
+    y_negative = to_one_hot(Y_train[:, 2])
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
-
+   
     model.fit([anchor, positive, negative], y=[target, target],
               batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.2)
 
