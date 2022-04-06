@@ -48,9 +48,7 @@ class FaceNetOneShotRecognitor(object):
             all_data.append(i)
         return np.array(all_data)
       
-    def predict(self, test_data, train_embs, threshold=1.1, ML_method=None):
-        test_embs = self.__calc_emb_test(test_data)
-        test_embs = np.concatenate(test_embs)
+    def predict(self, test_embs, train_embs, threshold=1.1, ML_method=None):
         print('\n Test embs: ', test_embs.shape)
         print(' Train embs: ', train_embs.shape)
         list_label = {}
