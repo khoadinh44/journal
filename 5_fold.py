@@ -95,7 +95,7 @@ for i in range(5):
   if opt.faceNet:
     print('\n Train phase...')
     X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
-    X_train = np.expand_dims(X_train, axis=-1).astype(np.float32)
+    # X_train = np.expand_dims(X_train, axis=-1).astype(np.float32)
 
     test_embs, train_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
     
