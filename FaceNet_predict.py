@@ -1,9 +1,6 @@
-from src.data import get_dataset
 from scipy.spatial.distance import cosine, euclidean
 from load_cases import get_data
-from src.params import Params
-from faceNet import parse_opt
-from src.model  import face_model
+from train_routines.triplet_loss import parse_opt
 import angular_grad
 import tensorflow as tf
 import glob 
