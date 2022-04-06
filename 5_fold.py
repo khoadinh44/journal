@@ -45,7 +45,8 @@ Outer_ring_damage, Outer_ring_damage_label = shuffle(Outer_ring_damage, Outer_ri
 Inner_ring_damage, Inner_ring_damage_label = shuffle(Inner_ring_damage, Inner_ring_damage_label, random_state=0)
 
 print(color.GREEN + '\n\n\t *************START*************\n\n' + color.END)
-accuracy = []
+solf_accuracy = []
+emb_accuracy = []
 
 for i in range(5):
   distance_Healthy = int(0.6*len(Healthy))
@@ -97,7 +98,7 @@ for i in range(5):
     X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
     # X_train = np.expand_dims(X_train, axis=-1).astype(np.float32)
 
-    test_embs, train_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+    train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
     
     print('\n Saving embedding phase...')
     model = FaceNetOneShotRecognitor(opt, X_train, y_train)    
@@ -117,7 +118,7 @@ for i in range(5):
         acc = accuracy_score(y_test, y_pred)
         this_acc.append(acc)
         print(f'\n--------------Test accuracy: {acc} in {i}----------------')
-    accuracy.append(max(this_acc))
+    emb_accuracy.append(max(this_acc))
     print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
     
   else:
@@ -136,4 +137,4 @@ for i in range(5):
     accuracy.append(test_acc)
 
 print('\n FINISH!')
-print(color.CYAN + f'Test accuracy: {np.mean(accuracy)}' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy)}' + color.END)
