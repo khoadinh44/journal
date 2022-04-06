@@ -15,7 +15,6 @@ def generate_triplet(x, y,  ap_pairs=10, an_pairs=10):
     y_triplet_pairs = []
     #triplet_test_pairs = []
     for data_class in sorted(set(data_xy[1])):
-
         same_class_idx = np.where((data_xy[1] == data_class))[0]
         diff_class_idx = np.where(data_xy[1] != data_class)[0]
         A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=ap_pairs)  # Generating Anchor-Positive pairs
@@ -27,11 +26,14 @@ def generate_triplet(x, y,  ap_pairs=10, an_pairs=10):
         for ap in A_P_pairs[:int(A_P_len * trainsize)]:
             Anchor = data_xy[0][ap[0]]
             y_Anchor = data_xy[1][ap[0]]
+
             Positive = data_xy[0][ap[1]]
             y_Pos = data_xy[1][ap[1]]
+
             for n in Neg_idx:
                 Negative = data_xy[0][n]
                 y_Neg = data_xy[1][n]
+                
                 triplet_train_pairs.append([Anchor, Positive, Negative])
                 y_triplet_pairs.append([y_Anchor, y_Pos, y_Neg])
                 # test
