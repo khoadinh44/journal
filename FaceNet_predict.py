@@ -22,35 +22,9 @@ from sklearn.svm import SVC
 opt = parse_opt()
 
 class FaceNetOneShotRecognitor(object):
-    def __init__(self, opt, X_train_all, y_train_all):
-        self.X_train_all, self.y_train_all = X_train_all, y_train_all
-        self.path_weight = opt.ckpt_dir
+    def __init__(self, opt):
         self.opt         = opt
-        self.params      = Params(opt.params_dir)
-        
-        # INITIALIZE MODELS
-        self.model       = face_model(opt)
-        self.optimizer = angular_grad.AngularGrad()
-        # self.lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(self.params.learning_rate,
-        #                                                                   decay_steps=10000, decay_rate=0.96, staircase=True)
-        # self.optimizer   = tf.keras.optimizers.Adam(learning_rate=self.lr_schedule, beta_1=0.9, beta_2=0.999, epsilon=0.1)
-        self.checkpoint  = tf.train.Checkpoint(model=self.model, optimizer=self.optimizer, train_steps=tf.Variable(0, dtype=tf.int64),
-                                               valid_steps=tf.Variable(0, dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
-        self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, self.path_weight, 3)
-            
-        self.checkpoint.restore(self.ckptmanager.latest_checkpoint)
-        print(f'\nRestored from Checkpoint : {self.ckptmanager.latest_checkpoint}\n')
-
-        self.graph = tf.compat.v1.get_default_graph()
-        
-        if len(np.array(self.y_train_all).shape) > 1:
-            self.y_train_all = invert_one_hot(self.y_train_all)
-        self.train_dataset, self.train_samples = get_dataset(self.X_train_all, self.y_train_all, self.params, 'train')
         self.df_train = pd.DataFrame(columns=['all_train_data', 'ID', 'name'])
-        
-    def __l2_normalize(self, x, axis=-1, epsilon=1e-10):
-        output = x / np.sqrt(np.maximum(np.sum(np.square(x), axis=axis, keepdims=True), epsilon))
-        return output
 
     def __calc_embs(self, input_data):
         pd = []
@@ -73,19 +47,6 @@ class FaceNetOneShotRecognitor(object):
         for i in input_:
             all_data.append(i)
         return np.array(all_data)
-      
-    def train_or_load(self, cons=True):        
-        for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
-            self.df_train.loc[len(self.df_train)] = [train_data, ID, train_label]
-
-        if cons:
-            train_embs = self.__calc_embs(self.X_train_all)
-            np.save(opt.emb_dir, train_embs)
-        else:
-            train_embs = np.load(opt.emb_dir, allow_pickle=True)
-        train_embs = np.concatenate(train_embs)
-
-        return train_embs
       
     def predict(self, test_data, train_embs, threshold=1.1, ML_method=None):
         test_embs = self.__calc_emb_test(test_data)
