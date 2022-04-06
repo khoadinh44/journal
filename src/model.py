@@ -101,17 +101,7 @@ def CNN_C(opt, input_):
     x = GlobalAveragePooling1D()(x)
     
     x = TransformerLayer(x, c=48)
-    m = Model(inputs, x, name='resnet34')(input_)
-    return m
+    pre_logit = ReLU()(x)
+    softmax = Dense(10, activation='softmax')(x)
 
-class face_model(tf.keras.Model):
-  def __init__(self, opt):
-    super(face_model, self).__init__()
-    self.opt = opt
-    self.base_model = CNN_C
-    self.embedding_layer = tf.keras.layers.Dense(units=opt.num_classes)
-    
-  def call(self, data_input):
-    x = self.base_model(self.opt, data_input)
-    x = self.embedding_layer(x)
-    return x
+    return m
