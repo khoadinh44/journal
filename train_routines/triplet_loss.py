@@ -53,7 +53,6 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
 
     y_anchor = to_one_hot(Y_train[:, 0])
-    print(Y_train[:, 0])
     y_positive = to_one_hot(Y_train[:, 1])
     y_negative = to_one_hot(Y_train[:, 2])
 
