@@ -1,12 +1,9 @@
-from faceNet import Trainer, parse_opt
 from FaceNet_predict import FaceNetOneShotRecognitor
 from load_data import Healthy, Outer_ring_damage, Inner_ring_damage 
 from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot
-from src.params import Params
 from network.nn import CNN_C
-from src.data import get_dataset
+from src.model import CNN_C_trip
 from load_cases import get_data
-from src.params import Params
 from train_routines.triplet_loss import train, parse_opt
 
 from sklearn.utils import shuffle
