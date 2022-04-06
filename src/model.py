@@ -77,7 +77,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = tf.keras.activations.gelu(x)
     return x
 
-def CNN_C(opt, input_):
+def CNN_C_trip(opt, input_):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
