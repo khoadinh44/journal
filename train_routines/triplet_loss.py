@@ -21,7 +21,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     print("Training with Triplet Loss....")
     print("#" * 100)
 
-    outdir = outdir + "/triplet_loss/"
+    outdir = opt.outdir + "/triplet_loss/"
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
@@ -74,14 +74,8 @@ def train(opt, x_train, y_train, x_test, y_test, network):
 
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
-    
-    parser.add_argument('--epoch',      default=150, type=int, help="Number epochs to train the model for")
-    parser.add_argument('--params_dir', default='hyperparameters/batch_adaptive.json', help="Experiment directory containing params.json")
-    parser.add_argument('--validate',   default='1', help="Is there an validation dataset available")
-    parser.add_argument('--ckpt_dir',   default='/content/drive/Shareddrives/newpro112233/signal_machine/ckpt/', help="Directory containing the Checkpoints")
-    parser.add_argument('--log_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/log/', help="Directory containing the Logs")
-    parser.add_argument('--emb_dir',    default='/content/drive/Shareddrives/newpro112233/signal_machine/emb1.npy', help="Directory containing the Checkpoints")
-    parser.add_argument('--restore',    default='1', help="Restart the model from the previous Checkpoint")
+   
+    parser.add_argument('--outdir',   default='/content/drive/Shareddrives/newpro112233/signal_machine/runs/', help="Directory containing the Checkpoints")
     parser.add_argument('--threshold',  default=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9], type=str, help='num_mels')
     parser.add_argument('--faceNet',          default=True, type=bool)
     parser.add_argument('--Use_euclidean',    default=False, type=bool)
@@ -120,6 +114,7 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
+    parser.add_argument('--epoch',      default=150, type=int, help="Number epochs to train the model for")
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',     type=int,   default=512,          help='128 Number of classes in faceNet')
     parser.add_argument('--input_shape',     type=int,   default=255900,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
