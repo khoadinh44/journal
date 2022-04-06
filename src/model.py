@@ -54,8 +54,8 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
               activity_regularizer=regularizers.l2(1e-5),
               name=conv_name_base + '2a')(input_tensor)
     x = BatchNormalization(name=bn_name_base + '2a')(x)
-    # x = Activation('relu')(x)
-    x = tf.keras.activations.gelu(x)
+    x = Activation('relu')(x)
+    # x = tf.keras.activations.gelu(x)
 
     x = Conv1D(filters,
                kernel_size=kernel_size,
@@ -73,8 +73,8 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
         x = layers.add([x, input_tensor])
 
     x = BatchNormalization()(x)
-    # x = Activation('relu')(x)
-    x = tf.keras.activations.gelu(x)
+    x = Activation('relu')(x)
+    # x = tf.keras.activations.gelu(x)
     return x
 
 def CNN_C_trip(opt, input_):
@@ -82,16 +82,15 @@ def CNN_C_trip(opt, input_):
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
     '''
-    inputs = Input(shape=[opt.input_shape, 1])
     x = Conv1D(48,
                kernel_size=80,
                strides=4,
                padding='same',
                kernel_initializer='glorot_uniform',
-               kernel_regularizer=regularizers.l2(l=0.0001),)(inputs)
+               kernel_regularizer=regularizers.l2(l=0.0001),)(input_)
     x = BatchNormalization()(x)
-    # x = Activation('relu')(x)
-    x = tf.keras.activations.gelu(x)
+    x = Activation('relu')(x)
+    # x = tf.keras.activations.gelu(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     for i in range(3):
@@ -101,7 +100,9 @@ def CNN_C_trip(opt, input_):
     x = GlobalAveragePooling1D()(x)
     
     x = TransformerLayer(x, c=48)
-    pre_logit = ReLU()(x)
-    softmax = Dense(10, activation='softmax')(x)
+    x = Dense(opt.embedding_size)(x)
+    x = BatchNormalization()(x)
+    pre_logit = Activation('relu')(x)
+    softmax = Dense(opt.num_classes, activation='softmax')(x)
 
-    return m
+    return softmax, pre_logit
