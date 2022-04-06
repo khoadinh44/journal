@@ -100,13 +100,13 @@ for i in range(5):
 
     train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
     
-    print('\n Saving embedding phase...')
-    model = FaceNetOneShotRecognitor(opt, X_train, y_train)    
+    print('\n Saving embedding phase...')   
     this_acc = []
 
     if opt.Use_euclidean:
       for thres in opt.threshold:
         print('\n Predict phase...')
+        model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=thres)
         acc = accuracy_score(y_test, y_pred)
         this_acc.append(acc)
@@ -114,6 +114,7 @@ for i in range(5):
 
     else:
       for i in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB']:
+        model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=i)
         acc = accuracy_score(y_test, y_pred)
         this_acc.append(acc)
