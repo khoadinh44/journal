@@ -7,8 +7,6 @@
 from tensorflow.keras.layers import Input
 import tensorflow as tf
 from tensorflow.keras.models import Model
-from load_mnist import load_mnist
-from base_network import cnn
 from triplet import generate_triplet, triplet_loss
 from sklearn.preprocessing import LabelBinarizer
 from tensorflow.keras.layers import concatenate, Lambda, Embedding
@@ -18,7 +16,7 @@ from tensorflow.keras.callbacks import TensorBoard
 import os
 import argparse
 
-def train(opt, x_train, y_train, x_test, y_test):
+def train(opt, x_train, y_train, x_test, y_test, network):
     print("#" * 100)
     print("Training with Triplet Loss....")
     print("#" * 100)
@@ -29,7 +27,7 @@ def train(opt, x_train, y_train, x_test, y_test):
         os.makedirs(outdir)
 
     model_input = Input(shape=(opt.input_shape, 1))
-    softmax, pre_logits = cnn(model_input, opt.num_classes)
+    softmax, pre_logits = network(model_input, opt.num_classes)
     shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
 
     X_train, Y_train = generate_triplet(x_train, y_train, ap_pairs=150, an_pairs=150)  #(anchors, positive, negative)
