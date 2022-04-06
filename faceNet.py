@@ -9,6 +9,7 @@ from src.params import Params
 from src.model  import face_model
 from src.data   import get_dataset
 from src.triplet_loss import batch_all_triplet_loss, batch_hard_triplet_loss, adapted_triplet_loss
+from triplet import generate_triplet, triplet_loss
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -30,14 +31,7 @@ class Trainer():
                                                valid_steps=tf.Variable(0,dtype=tf.int64), epoch=tf.Variable(0, dtype=tf.int64))
         self.ckptmanager = tf.train.CheckpointManager(self.checkpoint, opt.ckpt_dir, 3)
         
-        if self.params.triplet_strategy == "batch_all":
-            self.loss = batch_all_triplet_loss
-            
-        elif self.params.triplet_strategy == "batch_hard":
-            self.loss = batch_hard_triplet_loss
-            
-        elif self.params.triplet_strategy == "batch_adaptive":
-            self.loss = adapted_triplet_loss
+        self.loss = triplet_loss
             
         current_time = datetime.datetime.now().strftime("%d-%m-%Y_%H%M%S")
         opt.log_dir += current_time + '/train/'
@@ -53,7 +47,9 @@ class Trainer():
         
         print(f'Shape of training data: {X_train_all.shape}\n')
         print(f'Shape of testing data: {X_test.shape}\n')
-       
+        
+        X_train_all, y_train_all = self.process_data(X_train_all, y_train_all)
+        
         self.train_dataset, self.train_samples = get_dataset(X_train_all, y_train_all, self.params, 'train')
         
         if self.valid:
@@ -66,7 +62,10 @@ class Trainer():
             if self.valid:
                 self.validate(i)
 
-        
+    def process_data(self, x, y):
+        X_train, Y_train = generate_triplet(x_train_flat, y_train, ap_pairs=150, an_pairs=150)
+        return X_train, Y_train
+    
     def train(self, epoch):
         widgets = [f'Train epoch {epoch} :', Percentage(), ' ', Bar('#'), ' ',Timer(), ' ', ETA(), ' ']
         pbar = ProgressBar(widgets=widgets, max_value=int((self.train_samples // self.params.batch_size) + 20)).start()
