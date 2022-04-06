@@ -7,8 +7,7 @@ from network.nn import CNN_C
 from src.data import get_dataset
 from load_cases import get_data
 from src.params import Params
-from faceNet import parse_opt
-from src.model  import face_model
+from train_routines.triplet_loss import train, parse_opt
 
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
@@ -101,21 +100,16 @@ for i in range(5):
     X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
     X_train = np.expand_dims(X_train, axis=-1).astype(np.float32)
 
-    trainer = Trainer(opt, X_train, X_test, y_train, y_test)
-    for iteration in range(opt.epoch):
-        trainer.train(iteration)
+    test_embs, train_embs = train(opt, X_train, y_train, X_test, y_test) 
     
     print('\n Saving embedding phase...')
-    model = FaceNetOneShotRecognitor(opt, X_train, y_train)
-    train_embs = model.train_or_load(cons=True)
-    
-    params = Params(opt.params_dir)
+    model = FaceNetOneShotRecognitor(opt)    
     this_acc = []
 
     if opt.Use_euclidean:
       for thres in opt.threshold:
         print('\n Predict phase...')
-        y_pred = model.predict(test_data=X_test, train_embs=train_embs, threshold=thres)
+        y_pred = model.predict(test_data=test_embs, train_embs=train_embs, threshold=thres)
         acc = accuracy_score(y_test, y_pred)
         this_acc.append(acc)
         print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
