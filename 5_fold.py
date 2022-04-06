@@ -106,7 +106,7 @@ for i in range(5):
     if opt.Use_euclidean:
       for thres in opt.threshold:
         print('\n Predict phase...')
-        y_pred = model.predict(test_data=test_embs, train_embs=train_embs, threshold=thres)
+        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=thres)
         acc = accuracy_score(y_test, y_pred)
         this_acc.append(acc)
         print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
