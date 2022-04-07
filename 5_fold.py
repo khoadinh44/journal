@@ -93,7 +93,7 @@ for i in range(5):
   print('\n'+ '-'*100)
 
   h = [a for a in range(len(Healthy)) if a not in range(start_Healthy, start_Healthy+distance_Healthy)]
-  print(h)
+  
   X_test_Healthy = Healthy[h]
   y_test_Healthy = Healthy_label[h]
   if opt.PU_data_table_10_case_1:
