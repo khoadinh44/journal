@@ -7,7 +7,7 @@ from load_cases import get_data
 from train_routines.triplet_loss import train, parse_opt
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
-from train_routines.train_xentropy import train_xentropy
+from train_routines.xentropy import train_xentropy
 
 
 from sklearn.utils import shuffle
