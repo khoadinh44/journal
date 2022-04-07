@@ -124,7 +124,7 @@ for i in range(5):
       elif each_ML == 'cosine':
         emb_accuracy_cosine.append(acc)
 
-      print(f'\n--------------Test accuracy: {acc} with the {i} method----------------')
+      print(f'\n--------------Test accuracy: {acc} with the {each_ML} method----------------')
   else:
     y_train = to_one_hot(y_train)
     y_test = to_one_hot(y_test)
