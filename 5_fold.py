@@ -96,7 +96,7 @@ for i in range(5):
   y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
   print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
   print('\n'+ '-'*100)
-  # print(i)
+  
   if opt.faceNet:
     print('\n Train phase...')
     X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
@@ -107,21 +107,21 @@ for i in range(5):
     print('\n Saving embedding phase...')   
     this_acc = []
 
-    for i in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
+    for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
       model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
-      y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=i)
+      y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=each_ML)
       acc = accuracy_score(y_test, y_pred)
-      if i == 'SVM':
+      if each_ML == 'SVM':
         emb_accuracy_SVM.append(acc)
-      elif i == 'RandomForestClassifier':
+      elif each_ML == 'RandomForestClassifier':
         emb_accuracy_RandomForestClassifier.append(acc)
-      elif i == 'LogisticRegression':
+      elif each_ML == 'LogisticRegression':
         emb_accuracy_LogisticRegression.append(acc)
-      elif i == 'GaussianNB':
+      elif each_ML == 'GaussianNB':
         emb_accuracy_GaussianNB.append(acc)
-      elif i == 'euclidean':
+      elif each_ML == 'euclidean':
         emb_accuracy_euclidean.append(acc)
-      elif i == 'cosine':
+      elif each_ML == 'cosine':
         emb_accuracy_cosine.append(acc)
 
       print(f'\n--------------Test accuracy: {acc} with the {i} method----------------')
@@ -139,8 +139,9 @@ for i in range(5):
                         validation_data=(X_test, y_test),)
     _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
     accuracy.append(test_acc)
+
   print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
-  
+
 print(color.CYAN + 'FINISH!\n' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM)} with SVM' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier)} with RandomForestClassifier' + color.END)
