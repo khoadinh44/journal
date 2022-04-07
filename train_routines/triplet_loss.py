@@ -43,6 +43,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     loss_weights = [1, 0.01]
    
     model = Model(inputs=[anchor_input, positive_input, negative_input], outputs=[merged_soft, merged_pre])
+    model.load_weights(outdir + "triplet_loss_model.h5")
     model.compile(loss=["categorical_crossentropy", triplet_loss],
                   optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
@@ -59,9 +60,9 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     model.load_weights(outdir + "triplet_loss_model.h5")
     model.fit(x=[anchor, positive, negative], y=[target, target],
               batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_data=(X_test, Y_test))
-
     model.save(outdir + "triplet_loss_model.h5")
 
+    # Embedding-------------------------------------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "triplet_loss_model.h5")
 
