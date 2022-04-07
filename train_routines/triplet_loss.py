@@ -74,7 +74,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     # Fit data-------------------------------------------------
     model.load_weights(outdir + "triplet_loss_model.h5")
     model.fit(x=[anchor, positive, negative], y=[target, target],
-              batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_data=(X_test, Y_test))
+              batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_data=(test_data, test_label))
     model.save(outdir + "triplet_loss_model.h5")
 
     # Embedding------------------------------------------------
