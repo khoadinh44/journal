@@ -27,6 +27,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
    
     X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
+    X_test, Y_test = generate_triplet(x_test, y_test)
   
     anchor_input = Input((opt.input_shape, 1,), name='anchor_input')
     positive_input = Input((opt.input_shape, 1,), name='positive_input')
@@ -56,8 +57,8 @@ def train(opt, x_train, y_train, x_test, y_test, network):
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
     model.load_weights(outdir + "triplet_loss_model.h5")
-    model.fit([anchor, positive, negative], y=[target, target],
-              batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.2)
+    model.fit(x=[anchor, positive, negative], y=[target, target],
+              batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_data=(X_test, Y_test))
 
     model.save(outdir + "triplet_loss_model.h5")
 
