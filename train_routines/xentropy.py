@@ -11,7 +11,7 @@ import os
 import argparse
 
 
-def train(opt, x_train, y_train, x_test, y_test, network):
+def train_xentropy(opt, x_train, y_train, x_test, y_test, network):
     print("#" * 100)
     print("Training with Categorical CrossEntropy Only Loss....")
     print("#" * 100)
