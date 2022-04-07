@@ -16,9 +16,7 @@ import argparse
 
 
 def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
-    print("#" * 100)
-    print("Training with Center Loss....")
-    print("#" * 100)
+    print("\n Training with Center Loss....")
 
     outdir = opt.outdir + "/center_loss/"
 
