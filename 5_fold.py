@@ -60,6 +60,7 @@ emb_accuracy_LogisticRegression = []
 emb_accuracy_GaussianNB = []
 emb_accuracy_euclidean = []
 emb_accuracy_cosine = []
+emb_accuracy_ensemble = []
 
 for i in range(5):
   distance_Healthy = int(0.6*len(Healthy))
@@ -172,6 +173,7 @@ for i in range(5):
   y_pred_all = y_pred_all.astype(np.float32) / l
   y_pred_all = np.argmax(y_pred_all, axis=1)
   acc_all = accuracy_score(y_test, y_pred)
+  emb_accuracy_ensemble.append(acc_all)
 
   print(f'\n --------------Ensemble: {acc_all}--------------')
   print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
@@ -183,3 +185,4 @@ print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression)} w
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB)} with GaussianNB' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_euclidean)} with euclidean' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_cosine)} with cosine' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_ensemble)} with ensemble' + color.END)
