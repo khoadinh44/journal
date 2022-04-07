@@ -20,7 +20,7 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("Training with Center Loss....")
     print("#" * 100)
 
-    outdir = outdir + "/center_loss/"
+    outdir = opt.outdir + "/center_loss/"
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
