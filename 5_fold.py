@@ -125,8 +125,6 @@ for i in range(5):
         emb_accuracy_cosine.append(acc)
 
       print(f'\n--------------Test accuracy: {acc} with the {i} method----------------')
-  print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
-    
   else:
     y_train = to_one_hot(y_train)
     y_test = to_one_hot(y_test)
@@ -141,8 +139,9 @@ for i in range(5):
                         validation_data=(X_test, y_test),)
     _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
     accuracy.append(test_acc)
-
-print('\n FINISH!')
+  print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
+  
+print(color.CYAN + 'FINISH!\n' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM)} with SVM' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier)} with RandomForestClassifier' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression)} with LogisticRegression' + color.END)
