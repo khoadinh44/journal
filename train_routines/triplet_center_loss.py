@@ -11,7 +11,7 @@ import os
 import argparse
 
 
-def train(opt, x_train, y_train, x_test, y_test, network):
+def triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("#" * 100)
     print("Training with Triplet Center Loss....")
     print("#" * 100)
