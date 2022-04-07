@@ -54,13 +54,15 @@ class FaceNetOneShotRecognitor(object):
         for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
             self.df_train.loc[len(self.df_train)] = [train_data, ID, train_label]
 
-        if self.opt.Use_euclidean:
+        if ML_method == 'euclidean' or ML_method == 'cosine':
           for i in range(test_embs.shape[0]):
               distances = []
               for j in range(self.train_samples):
                   # the min of clustering
-                  distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
-                  # distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
+                  if ML_method == 'euclidean':
+                    distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
+                  elif ML_method == 'cosine':
+                    distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
               if np.min(distances) > threshold:
                   list_label[i] = 100  # 100 is represented for unknown object
               else:
