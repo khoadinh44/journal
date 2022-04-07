@@ -133,7 +133,7 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--epoch',              type=int,   default=40, help="Number epochs to train the model for")
+    parser.add_argument('--epoch',              type=int,   default=50, help="Number epochs to train the model for")
     parser.add_argument('--save',               type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=512,        help='128 Number of embedding in faceNet')
