@@ -12,11 +12,9 @@ import argparse
 
 
 def train_xentropy(opt, x_train, y_train, x_test, y_test, network):
-    print("#" * 100)
-    print("Training with Categorical CrossEntropy Only Loss....")
-    print("#" * 100)
+    print("\n Training with Categorical CrossEntropy Only Loss....")
 
-    outdir = outdir + "/xentropy_only_loss/"
+    outdir = opt.outdir + "/xentropy_only_loss/"
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
