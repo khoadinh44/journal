@@ -48,21 +48,36 @@ def train(opt, x_train, y_train, x_test, y_test, network):
                   optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
-    anchor = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
+    # data-----------------------------------------------------
+    anchor   = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
     positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
     negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
 
-    y_anchor = to_one_hot(Y_train[:, 0])
+    anchor_t   = X_test[:, 0, :].reshape(-1, opt.input_shape, 1)
+    positive_t = X_test[:, 1, :].reshape(-1, opt.input_shape, 1)
+    negative_t = X_test[:, 2, :].reshape(-1, opt.input_shape, 1)
+
+    y_anchor   = to_one_hot(Y_train[:, 0])
     y_positive = to_one_hot(Y_train[:, 1])
     y_negative = to_one_hot(Y_train[:, 2])
 
+    y_anchor_t   = to_one_hot(Y_test[:, 0])
+    y_positive_t = to_one_hot(Y_test[:, 1])
+    y_negative_t = to_one_hot(Y_test[:, 2])
+
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
+    target_t = np.concatenate((y_anchor_t, y_positive_t, y_negative_t), -1)
+
+    test_data = [anchor_t, positive_t, negative_t]
+    test_label = [target_t, target_t]
+
+    # Fit data-------------------------------------------------
     model.load_weights(outdir + "triplet_loss_model.h5")
     model.fit(x=[anchor, positive, negative], y=[target, target],
               batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_data=(X_test, Y_test))
     model.save(outdir + "triplet_loss_model.h5")
 
-    # Embedding-------------------------------------------------------------------------------
+    # Embedding------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "triplet_loss_model.h5")
 
@@ -114,7 +129,7 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--epoch',              type=int,   default=200, help="Number epochs to train the model for")
+    parser.add_argument('--epoch',              type=int,   default=100, help="Number epochs to train the model for")
     parser.add_argument('--save',               type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=512,        help='128 Number of embedding in faceNet')
