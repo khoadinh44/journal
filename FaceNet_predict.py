@@ -57,7 +57,7 @@ class FaceNetOneShotRecognitor(object):
         if ML_method == 'euclidean' or ML_method == 'cosine':
           for i in range(test_embs.shape[0]):
               distances = []
-              for j in range(self.train_samples):
+              for j in range(train_embs.shape[0]):
                   # the min of clustering
                   if ML_method == 'euclidean':
                     distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
