@@ -5,6 +5,10 @@ from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
 from train_routines.triplet_loss import train, parse_opt
+from train_routines.center_loss import train_center_loss
+from train_routines.triplet_center_loss import train_triplet_center_loss
+from train_routines.train_xentropy import train_xentropy
+
 
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
@@ -102,7 +106,7 @@ for i in range(5):
     X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
     # X_train = np.expand_dims(X_train, axis=-1).astype(np.float32)
 
-    train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+    train_embs, test_embs = train_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
     
     print('\n Saving embedding phase...')   
     this_acc = []
