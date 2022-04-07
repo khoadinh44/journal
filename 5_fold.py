@@ -35,9 +35,13 @@ class color:
 
 
 print('\t\t\t Loading labels...')
-Healthy_label           = [0]*len(Healthy)
-Outer_ring_damage_label = [1]*len(Outer_ring_damage)
-Inner_ring_damage_label = [2]*len(Inner_ring_damage)
+Healthy_label           = np.array([0]*len(Healthy))
+Outer_ring_damage_label = np.array([1]*len(Outer_ring_damage))
+Inner_ring_damage_label = np.array([2]*len(Inner_ring_damage))
+
+Healthy           = np.array(Healthy)
+Outer_ring_damage = np.array(Outer_ring_damage)
+Inner_ring_damage = np.array(Inner_ring_damage)
 
 if opt.PU_data_table_10_case_0:
    Healthy, Healthy_label = load_table_10_spe(Healthy, Healthy_label)
@@ -89,6 +93,7 @@ for i in range(5):
   print('\n'+ '-'*100)
 
   h = [a for a in range(len(Healthy)) if a not in range(start_Healthy, start_Healthy+distance_Healthy)]
+  print(h)
   X_test_Healthy = Healthy[h]
   y_test_Healthy = Healthy_label[h]
   if opt.PU_data_table_10_case_1:
