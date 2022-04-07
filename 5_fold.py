@@ -75,7 +75,7 @@ for i in range(5):
   y_train = np.concatenate((y_train_Healthy, y_train_Outer_ring_damage, y_train_Inner_ring_damage))
   print(f'\n Shape of train data: {X_train.shape}, {y_train.shape}')
   
-  print('\n------------------------------------------------')
+  print('\n'+ '-'*100)
 
   h = [a for a in range(len(Healthy)) if a not in range(start_Healthy, start_Healthy+distance_Healthy)]
   X_test_Healthy = Healthy[h]
@@ -95,7 +95,7 @@ for i in range(5):
   X_test = np.concatenate((X_test_Healthy, X_test_Outer_ring_damage, X_test_Inner_ring_damage))
   y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
   print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
-  print('\n------------------------------------------------')
+  print('\n'+ '-'*100)
   # print(i)
   if opt.faceNet:
     print('\n Train phase...')
