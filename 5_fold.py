@@ -121,16 +121,24 @@ for i in range(5):
   
   if opt.faceNet:
     print('\n Train phase...')
-    X_test = np.expand_dims(X_test, axis=-1).astype(np.float32)
-
     train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
     
     print('\n Saving embedding phase...')   
     this_acc = []
 
+    y_pred_all = []
+    l = 0
     for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
       model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
       y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=each_ML)
+
+      y_pred_onehot = to_one_hot(y_pred)
+      if y_pred_all == []:
+        y_pred_all = y_pred_onehot
+      else:
+        y_pred_all += y_pred_onehot
+      l += 1
+
       acc = accuracy_score(y_test, y_pred)
       if each_ML == 'SVM':
         emb_accuracy_SVM.append(acc)
@@ -145,7 +153,7 @@ for i in range(5):
       elif each_ML == 'cosine':
         emb_accuracy_cosine.append(acc)
 
-      print(f'\n--------------Test accuracy: {acc} with the {each_ML} method----------------')
+      print(f'\n--------------Test accuracy: {acc} with the {each_ML} method--------------')
   else:
     y_train = to_one_hot(y_train)
     y_test = to_one_hot(y_test)
@@ -161,6 +169,11 @@ for i in range(5):
     _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
     accuracy.append(test_acc)
 
+  y_pred_all = y_pred_all.astype(np.float32) / l
+  y_pred_all = np.argmax(y_pred_all, axis=1)
+  acc_all = accuracy_score(y_test, y_pred)
+
+  print(f'\n --------------Ensemble: {acc_all}--------------')
   print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
 
 print(color.CYAN + 'FINISH!\n' + color.END)
