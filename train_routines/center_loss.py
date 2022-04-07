@@ -48,7 +48,7 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     model = Model(inputs=[x_input, target_input], outputs=[softmax, l2_loss, pre_logits])
     model.load_weights(outdir + "center_loss_model.h5")
 
-    _, X_train_embed = model.predict([x_train])
-    _, X_test_embed = model.predict([x_test])
+    _, X_train_embed = model.predict([x_train, y_train])
+    _, X_test_embed = model.predict([x_test, y_test])
 
     return X_train_embed, X_test_embed
