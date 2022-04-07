@@ -12,11 +12,9 @@ import argparse
 
 
 def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
-    print("#" * 100)
-    print("Training with Triplet Center Loss....")
-    print("#" * 100)
+    print("\n Training with Triplet Center Loss....")
 
-    outdir = outdir + "/triplet_center_loss/"
+    outdir = opt.outdir + "/triplet_center_loss/"
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
