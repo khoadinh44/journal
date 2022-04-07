@@ -46,7 +46,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     model = Model(inputs=[anchor_input, positive_input, negative_input], outputs=[merged_soft, merged_pre])
     model.compile(loss=["categorical_crossentropy", triplet_loss],
                   optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"], loss_weights=loss_weights)
-
+    # https://keras.io/api/losses/
     
     anchor = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
     positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
@@ -112,7 +112,7 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--epoch',      default=2, type=int, help="Number epochs to train the model for")
+    parser.add_argument('--epoch',      default=100, type=int, help="Number epochs to train the model for")
     parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=512,          help='128 Number of embedding in faceNet')
