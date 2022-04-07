@@ -125,7 +125,7 @@ for i in range(5):
         emb_accuracy_cosine.append(acc)
 
       print(f'\n--------------Test accuracy: {acc} with the {i} method----------------')
-    print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
+  print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
     
   else:
     y_train = to_one_hot(y_train)
