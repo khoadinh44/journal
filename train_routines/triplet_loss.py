@@ -55,7 +55,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     y_negative = to_one_hot(Y_train[:, 2])
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
-   
+    model.load_weights(outdir + "triplet_loss_model.h5")
     model.fit([anchor, positive, negative], y=[target, target],
               batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.2)
 
@@ -112,14 +112,14 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--epoch',      default=10, type=int, help="Number epochs to train the model for")
-    parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
+    parser.add_argument('--epoch',              type=int,   default=200, help="Number epochs to train the model for")
+    parser.add_argument('--save',               type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
-    parser.add_argument('--embedding_size',     type=int,   default=512,          help='128 Number of embedding in faceNet')
-    parser.add_argument('--input_shape',     type=int,   default=255900,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
-    parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
-    parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
-    parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
+    parser.add_argument('--embedding_size',     type=int,   default=512,        help='128 Number of embedding in faceNet')
+    parser.add_argument('--input_shape',        type=int,   default=255900,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
+    parser.add_argument('--batch_size',         type=int,   default=32,         help='Number of batch size for training')
+    parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
+    parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
 
     parser.add_argument('--use_SNRdb',                type=bool,    default=False)
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
