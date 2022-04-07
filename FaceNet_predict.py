@@ -63,17 +63,13 @@ class FaceNetOneShotRecognitor(object):
                     distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
                   elif ML_method == 'cosine':
                     distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
-              if np.min(distances) > threshold:
-                  list_label[i] = 100  # 100 is represented for unknown object
-              else:
-                  res = np.argsort(distances)[0]  # this ID
-                  list_label[i] = res
+              res = np.argsort(distances)[0]  # this ID
+              list_label[i] = res
 
           if len(list_label) > 0:
               for idx in list_label:
-                  if list_label[idx] != 100:
-                      name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
-                      list_label[idx] = name
+                  name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
+                  list_label[idx] = name
 
           list_label = list(list_label.values())
         
