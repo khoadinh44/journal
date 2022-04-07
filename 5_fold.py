@@ -45,8 +45,12 @@ Outer_ring_damage, Outer_ring_damage_label = shuffle(Outer_ring_damage, Outer_ri
 Inner_ring_damage, Inner_ring_damage_label = shuffle(Inner_ring_damage, Inner_ring_damage_label, random_state=0)
 
 print(color.GREEN + '\n\n\t *************START*************\n\n' + color.END)
-solf_accuracy = []
-emb_accuracy = []
+emb_accuracy_SVM = []
+emb_accuracy_RandomForestClassifier = []
+emb_accuracy_LogisticRegression = []
+emb_accuracy_GaussianNB = []
+emb_accuracy_euclidean = []
+emb_accuracy_cosine = []
 
 for i in range(5):
   distance_Healthy = int(0.6*len(Healthy))
@@ -103,23 +107,24 @@ for i in range(5):
     print('\n Saving embedding phase...')   
     this_acc = []
 
-    if opt.Use_euclidean:
-      for thres in opt.threshold:
-        print('\n Predict phase...')
-        model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
-        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=thres)
-        acc = accuracy_score(y_test, y_pred)
-        this_acc.append(acc)
-        print(f'\n--------------Test accuracy: {acc} in the threshold of {thres}----------------')
+    for i in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
+      model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
+      y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=i)
+      acc = accuracy_score(y_test, y_pred)
+      if i == 'SVM':
+        emb_accuracy_SVM.append(acc)
+      elif i == 'RandomForestClassifier':
+        emb_accuracy_RandomForestClassifier.append(acc)
+      elif i == 'LogisticRegression':
+        emb_accuracy_LogisticRegression.append(acc)
+      elif i == 'GaussianNB':
+        emb_accuracy_GaussianNB.append(acc)
+      elif i == 'euclidean':
+        emb_accuracy_euclidean.append(acc)
+      elif i == 'cosine':
+        emb_accuracy_cosine.append(acc)
 
-    else:
-      for i in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB']:
-        model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
-        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=i)
-        acc = accuracy_score(y_test, y_pred)
-        this_acc.append(acc)
-        print(f'\n--------------Test accuracy: {acc} in {i}----------------')
-    emb_accuracy.append(max(this_acc))
+      print(f'\n--------------Test accuracy: {acc} with the {i} method----------------')
     print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
     
   else:
@@ -138,4 +143,9 @@ for i in range(5):
     accuracy.append(test_acc)
 
 print('\n FINISH!')
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy)}' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM)} with SVM' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier)} with RandomForestClassifier' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression)} with LogisticRegression' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB)} with GaussianNB' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_euclidean)} with euclidean' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_cosine)} with cosine' + color.END)
