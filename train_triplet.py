@@ -58,20 +58,21 @@ def main(opt):
     if y_pred_all == []:
       y_pred_all = y_pred_onehot
     else:
-      y_pred_all += y_pred_onehot
+      y_pred_all = y_pred_all + y_pred_onehot
+    print(y_pred_all)
     l += 1
 
     if each_ML == 'SVM' or each_ML == 'RandomForestClassifier':
       if y_pred_SVM_Ran == []:
         y_pred_SVM_Ran = y_pred_onehot
       else:
-        y_pred_SVM_Ran += y_pred_onehot
+        y_pred_SVM_Ran = y_pred_SVM_Ran + y_pred_onehot
       
     if each_ML == 'LogisticRegression' or 'cosine':
       if y_pred_Lo_Co == []:
         y_pred_Lo_Co = y_pred_onehot
       else:
-        y_pred_Lo_Co += y_pred_onehot
+        y_pred_Lo_Co = y_pred_Lo_Co + y_pred_onehot
 
     acc = accuracy_score(y_test, y_pred)
     print(f'\n--------------Test accuracy: {acc} with the {each_ML} method--------------')
@@ -81,12 +82,12 @@ def main(opt):
   acc_all = accuracy_score(y_pred_all, y_pred)
   print(f'\n--------------Ensemble for all: {acc_all}--------------')
 
-  y_pred_Lo_Co = y_pred_Lo_Co.astype(np.float32) / l
+  y_pred_Lo_Co = y_pred_Lo_Co.astype(np.float32) / 2
   y_pred_Lo_Co = np.argmax(y_pred_Lo_Co, axis=1)
   acc_Lo_Co = accuracy_score(y_pred_Lo_Co, y_pred)
   print(f'\n--------------Ensemble for LogisticRegression and cosine: {acc_Lo_Co}--------------')
 
-  y_pred_SVM_Ran = y_pred_SVM_Ran.astype(np.float32) / l
+  y_pred_SVM_Ran = y_pred_SVM_Ran.astype(np.float32) / 2
   y_pred_SVM_Ran = np.argmax(y_pred_SVM_Ran, axis=1)
   acc_SVM_Ran = accuracy_score(y_pred_SVM_Ran, y_pred)
   print(f'\n--------------Ensemble for SVM and RandomForestClassifier: {acc_SVM_Ran}--------------')
