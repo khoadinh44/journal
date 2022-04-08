@@ -59,7 +59,7 @@ def main(opt):
       y_pred_all = y_pred_onehot
     else:
       y_pred_all = y_pred_all + y_pred_onehot
-    print(y_pred_all)
+
     l += 1
 
     if each_ML == 'SVM' or each_ML == 'RandomForestClassifier':
