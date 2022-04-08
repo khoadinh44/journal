@@ -5,7 +5,7 @@
 from preprocessing.utils import to_one_hot
 from tensorflow.keras.layers import Input
 import tensorflow as tf
-from tensorflow.keras.models import 
+from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_center_loss
 from tensorflow.keras.layers import concatenate, Lambda, Embedding
 import tensorflow.keras.backend as K
