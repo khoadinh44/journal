@@ -19,6 +19,8 @@ import pandas as pd
 from tqdm import tqdm
 import numpy as np
 from sklearn.metrics import accuracy_score
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 opt = parse_opt()
 class color:
