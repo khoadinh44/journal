@@ -172,7 +172,7 @@ for i in range(5):
 
   y_pred_all = y_pred_all.astype(np.float32) / l
   y_pred_all = np.argmax(y_pred_all, axis=1)
-  acc_all = accuracy_score(y_test, y_pred)
+  acc_all = accuracy_score(y_test, y_pred_all)
   emb_accuracy_ensemble.append(acc_all)
 
   print(f'\n --------------Ensemble: {acc_all}--------------')
