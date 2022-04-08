@@ -9,7 +9,6 @@ from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
 
-
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
 import angular_grad
@@ -18,10 +17,13 @@ import glob
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
+import os
 from sklearn.metrics import accuracy_score
 import warnings
-warnings.filterwarnings("ignore", category=FutureWarning)
 
+warnings.filterwarnings("ignore", category=FutureWarning)
+np.seterr(all="ignore")
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 opt = parse_opt()
 class color:
    PURPLE = '\033[95m'
