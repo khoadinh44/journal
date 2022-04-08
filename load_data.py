@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import pandas as pd
 import scipy.io
 import tensorflow as tf
@@ -16,7 +17,7 @@ from sklearn.preprocessing import PowerTransformer
 from train_routines.triplet_loss import parse_opt
 
 opt = parse_opt()
-
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 scaler = None
 '''
 For all files, the following item in the variable name indicates:
