@@ -25,7 +25,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     model_input = Input(shape=(opt.input_shape, 1))
     softmax, pre_logits = network(opt, model_input)
     shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
-    shared_model.summary()
+    # shared_model.summary()
    
     X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
     X_test, Y_test = generate_triplet(x_test, y_test)
@@ -122,9 +122,9 @@ def parse_opt(known=False):
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
     
-    parser.add_argument('--PU_data_table_10',            default=True, type=bool)
+    parser.add_argument('--PU_data_table_10',            default=False, type=bool)
     parser.add_argument('--PU_data_table_10_case_0',     default=False, type=bool)
-    parser.add_argument('--PU_data_table_10_case_1',     default=True, type=bool)
+    parser.add_argument('--PU_data_table_10_case_1',     default=False, type=bool)
     parser.add_argument('--PU_data_table_8',      default=True, type=bool)
     parser.add_argument('--MFPT_data',            default=False, type=bool)
     parser.add_argument('--data_normal',          default=False, type=bool)
@@ -137,7 +137,7 @@ def parse_opt(known=False):
     parser.add_argument('--save',               type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=512,        help='128 Number of embedding in faceNet')
-    parser.add_argument('--input_shape',        type=int,   default=255900,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
+    parser.add_argument('--input_shape',        type=int,   default=250604,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
     parser.add_argument('--batch_size',         type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
