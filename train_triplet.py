@@ -64,9 +64,9 @@ def main(opt):
     
   y_pred_all = y_pred_all.astype(np.float32) / l
   y_pred_all = np.argmax(y_pred_all, axis=1)
-  acc_all = accuracy_score(y_test, y_pred)
+  acc_all = accuracy_score(y_pred_all, y_pred)
 
-  print(f'\n --------------Ensemble: {acc_all}--------------')
+  print(f'\n--------------Ensemble: {acc_all}--------------')
 
 if __name__ == '__main__':
   opt = parse_opt()
