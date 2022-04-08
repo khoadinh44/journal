@@ -125,7 +125,7 @@ def parse_opt(known=False):
     parser.add_argument('--PU_data_table_10',            default=True, type=bool)
     parser.add_argument('--PU_data_table_10_case_0',     default=False, type=bool)
     parser.add_argument('--PU_data_table_10_case_1',     default=True, type=bool)
-    parser.add_argument('--PU_data_table_8',      default=False, type=bool)
+    parser.add_argument('--PU_data_table_8',      default=True, type=bool)
     parser.add_argument('--MFPT_data',            default=False, type=bool)
     parser.add_argument('--data_normal',          default=False, type=bool)
     parser.add_argument('--data_12k',             default=False, type=bool)
