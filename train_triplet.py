@@ -34,8 +34,13 @@ class color:
 def main(opt):
   print(color.GREEN + '\n\n\t *************START*************\n\n' + color.END)
   
-  print('\n Train phase...')
+  print('\n loading data...')
   X_train, X_test, y_train, y_test = get_data(opt)
+  y_train = invert_one_hot(y_train)
+  y_test = invert_one_hot(y_test)
+  print(f' Training data shape: {X_train.shape}  Training label shape: {y_train.shape}')
+  print(f' Testing data shape: {X_test.shape}  Testing label shape: {y_test.shape}')
+
   train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
 
   print('\n Saving embedding phase...')   
