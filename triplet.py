@@ -56,24 +56,37 @@ def triplet_loss(y_true, y_pred, alpha=0.4):
     print('y_pred.shape = ', y_pred)
 
     total_lenght = y_pred.shape.as_list()[-1]
-    #     print('total_lenght=',  total_lenght)
-    #     total_lenght =12
+
 
     anchor = y_pred[:, 0:int(total_lenght * 1 / 3)]
     positive = y_pred[:, int(total_lenght * 1 / 3):int(total_lenght * 2 / 3)]
     negative = y_pred[:, int(total_lenght * 2 / 3):int(total_lenght * 3 / 3)]
 
+    mean_anchor = tf.math.reduce_mean(anchor, axis=1)
+    mean_positive = tf.math.reduce_mean(positive, axis=1)
+    mean_negative = tf.math.reduce_mean(negative, axis=1)
+
+    variance_anchor = K.square(anchor - mean_anchor)/tf.cast(anchor.shape.as_list()[0]*anchor.shape.as_list()[1], tf.float32)
+    variance_positive = K.square(positive - mean_positive)/tf.cast(positive.shape.as_list()[0]*positive.shape.as_list()[1], tf.float32)
+    variance_negative = K.square(negative - mean_negative)/tf.cast(negative.shape.as_list()[0]*negative.shape.as_list()[1], tf.float32)
+
     # distance between the anchor and the positive
     pos_dist = K.sum(K.square(anchor - positive), axis=1)
+    mean_pos_dist = K.sum(K.square(mean_anchor - mean_positive))
+    variance_pos_dist = K.sum(K.square(variance_anchor - variance_positive), axis=1)
 
     # distance between the anchor and the negative
     neg_dist = K.sum(K.square(anchor - negative), axis=1)
+    mean_neg_dist = K.sum(K.square(mean_anchor - mean_negative))
+    variance_neg_dist = K.sum(K.square(variance_anchor - variance_negative), axis=1)
 
     # compute loss
     basic_loss = pos_dist - neg_dist + alpha
     loss = K.maximum(basic_loss, 0.0)
 
-    return loss
+    mean_loss = K.maxinum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
+    variance_loss = K.maxinum(variance_neg_dist - variance_pos_dist + alpha, 0.0)
+    return mean_loss + variance_loss
 
 
 def triplet_center_loss(y_true, y_pred, n_classes= 10, alpha=0.4):
@@ -91,9 +104,7 @@ def triplet_center_loss(y_true, y_pred, n_classes= 10, alpha=0.4):
     print('y_pred.shape = ', y_pred)
 
     total_lenght = y_pred.shape.as_list()[-1]
-    #     print('total_lenght=',  total_lenght)
-    #     total_lenght =12
-
+    
     # repeat y_true for n_classes and == np.arange(n_classes)
     # repeat also y_pred and apply mask
     # obtain min for each column min vector for each class
