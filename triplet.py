@@ -59,30 +59,41 @@ def triplet_loss(y_true, y_pred, alpha=0.4):
     positive = y_pred[:, int(total_lenght * 1 / 3):int(total_lenght * 2 / 3)]
     negative = y_pred[:, int(total_lenght * 2 / 3):int(total_lenght * 3 / 3)]
 
-    mean_anchor = tf.math.reduce_mean(anchor, axis=1)
-    mean_positive = tf.math.reduce_mean(positive, axis=1)
-    mean_negative = tf.math.reduce_mean(negative, axis=1)
+    # mean ---------------------------------
+    mean_anchor     = tf.expand_dims(tf.math.reduce_mean(anchor, axis=1), axis=1)
+    multiple_anchor = tf.constant([1, anchor.shape.as_list()[1]])
+    mean_anchor     = tf.tile(mean_anchor, multiple_anchor)
 
-    variance_anchor = K.square(anchor - mean_anchor)/tf.cast(anchor.shape.as_list()[1], tf.float32)
+    mean_positive     = tf.expand_dims(tf.math.reduce_mean(positive, axis=1), axis=1)
+    multiple_positive = tf.constant([1, positive.shape.as_list()[1]])
+    mean_positive     = tf.tile(mean_positive, multiple_positive)
+
+    mean_negative     = tf.expand_dims(tf.math.reduce_mean(negative, axis=1), axis=1)
+    multiple_negative = tf.constant([1, negative.shape.as_list()[1]])
+    mean_negative     = tf.tile(mean_negative, multiple_negative)
+
+    # variance ------------------------------
+    variance_anchor   = K.square(anchor - mean_anchor)/tf.cast(anchor.shape.as_list()[1], tf.float32)
     variance_positive = K.square(positive - mean_positive)/tf.cast(positive.shape.as_list()[1], tf.float32)
     variance_negative = K.square(negative - mean_negative)/tf.cast(negative.shape.as_list()[1], tf.float32)
 
     # distance between the anchor and the positive
-    pos_dist = K.sum(K.square(anchor - positive), axis=1)
-    mean_pos_dist = K.sum(K.square(mean_anchor - mean_positive))
+    pos_dist          = K.sum(K.square(anchor - positive), axis=1)
+    mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
     variance_pos_dist = K.sum(K.square(variance_anchor - variance_positive), axis=1)
 
     # distance between the anchor and the negative
-    neg_dist = K.sum(K.square(anchor - negative), axis=1)
-    mean_neg_dist = K.sum(K.square(mean_anchor - mean_negative))
+    neg_dist          = K.sum(K.square(anchor - negative), axis=1)
+    mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
     variance_neg_dist = K.sum(K.square(variance_anchor - variance_negative), axis=1)
 
     # compute loss
     basic_loss = pos_dist - neg_dist + alpha
-    loss = K.maximum(basic_loss, 0.0)
+    loss       = K.maximum(basic_loss, 0.0)
 
-    mean_loss = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
+    mean_loss     = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
     variance_loss = K.maximum(variance_neg_dist - variance_pos_dist + alpha, 0.0)
+    
     return mean_loss + variance_loss
 
 
