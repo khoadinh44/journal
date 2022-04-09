@@ -6,7 +6,7 @@ import tensorflow as tf
 
 import numpy as np
 
-def generate_triplet(x, y,  ap_pairs=10, an_pairs=10):
+def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
     data_xy = tuple([x, y])
 
     trainsize = 1
