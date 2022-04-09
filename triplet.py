@@ -80,21 +80,21 @@ def triplet_loss(y_true, y_pred, alpha=0.4):
     # distance between the anchor and the positive
     pos_dist          = K.sum(K.square(anchor - positive), axis=1)
     mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
-    variance_pos_dist = K.sum(K.square(variance_anchor - variance_positive), axis=1)
+    # variance_pos_dist = K.sum(K.square(variance_anchor - variance_positive), axis=1)
 
     # distance between the anchor and the negative
     neg_dist          = K.sum(K.square(anchor - negative), axis=1)
     mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
-    variance_neg_dist = K.sum(K.square(variance_anchor - variance_negative), axis=1)
+    # variance_neg_dist = K.sum(K.square(variance_anchor - variance_negative), axis=1)
 
     # compute loss
     basic_loss = pos_dist - neg_dist + alpha
     loss       = K.maximum(basic_loss, 0.0)
 
     mean_loss     = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
-    variance_loss = K.maximum(variance_neg_dist - variance_pos_dist + alpha, 0.0)
-    
-    return mean_loss + variance_loss
+    # variance_loss = K.maximum(variance_neg_dist - variance_pos_dist + alpha, 0.0)
+
+    return mean_loss + variance_negative
 
 
 def triplet_center_loss(y_true, y_pred, n_classes= 10, alpha=0.4):
