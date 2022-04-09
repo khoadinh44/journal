@@ -41,7 +41,7 @@ def generate_triplet(x, y,  ap_pairs=10, an_pairs=10):
     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
 
-def triplet_loss(y_true, y_pred, alpha=0.4):
+def triplet_loss(y_true, y_pred, alpha=0.999):
     """
     Implementation of the triplet loss function
     Arguments:
@@ -55,9 +55,12 @@ def triplet_loss(y_true, y_pred, alpha=0.4):
     """
     total_lenght = y_pred.shape.as_list()[-1]
 
-    anchor = y_pred[:, 0:int(total_lenght * 1 / 3)]
+    anchor   = y_pred[:, 0:int(total_lenght * 1 / 3)]
+    anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
     positive = y_pred[:, int(total_lenght * 1 / 3):int(total_lenght * 2 / 3)]
+    positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
     negative = y_pred[:, int(total_lenght * 2 / 3):int(total_lenght * 3 / 3)]
+    negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
 
     # mean ---------------------------------
     mean_anchor     = tf.expand_dims(tf.math.reduce_mean(anchor, axis=1), axis=1)
@@ -73,28 +76,25 @@ def triplet_loss(y_true, y_pred, alpha=0.4):
     mean_negative     = tf.tile(mean_negative, multiple_negative)
 
     # variance ------------------------------
-    variance_anchor   = K.square(anchor - mean_anchor)/tf.cast(anchor.shape.as_list()[1], tf.float32)
-    variance_positive = K.square(positive - mean_positive)/tf.cast(positive.shape.as_list()[1], tf.float32)
-    variance_negative = K.square(negative - mean_negative)/tf.cast(negative.shape.as_list()[1], tf.float32)
+    variance_anchor   = K.sum(K.square(anchor - mean_anchor), axis=1)/tf.cast(anchor.shape.as_list()[1], tf.float32)
+    variance_positive = K.sum(K.square(positive - mean_positive), axis=1)/tf.cast(positive.shape.as_list()[1], tf.float32)
+    variance_negative = K.sum(K.square(negative - mean_negative), axis=1)/tf.cast(negative.shape.as_list()[1], tf.float32)
 
     # distance between the anchor and the positive
     pos_dist          = K.sum(K.square(anchor - positive), axis=1)
     mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
-    # variance_pos_dist = K.sum(K.square(variance_anchor - variance_positive), axis=1)
 
     # distance between the anchor and the negative
     neg_dist          = K.sum(K.square(anchor - negative), axis=1)
     mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
-    # variance_neg_dist = K.sum(K.square(variance_anchor - variance_negative), axis=1)
 
     # compute loss
     basic_loss = pos_dist - neg_dist + alpha
     loss       = K.maximum(basic_loss, 0.0)
 
     mean_loss     = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
-    # variance_loss = K.maximum(variance_neg_dist - variance_pos_dist + alpha, 0.0)
 
-    return mean_loss + variance_negative
+    return loss + mean_loss
 
 
 def triplet_center_loss(y_true, y_pred, n_classes= 10, alpha=0.4):
