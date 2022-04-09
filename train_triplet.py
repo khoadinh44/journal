@@ -108,12 +108,12 @@ def main(opt):
 
   y_pred_Lo_Co = y_pred_Lo_Co.astype(np.float32) / 2
   y_pred_Lo_Co = np.argmax(y_pred_Lo_Co, axis=1)
-  acc_Lo_Co = accuracy_score(y_pred_Lo_Co, y_pred)
+  acc_Lo_Co = accuracy_score(y_pred_Lo_Co, y_test)
   print(f'\n--------------Ensemble for LogisticRegression and cosine: {acc_Lo_Co}--------------')
 
   y_pred_SVM_Ran = y_pred_SVM_Ran.astype(np.float32) / 2
   y_pred_SVM_Ran = np.argmax(y_pred_SVM_Ran, axis=1)
-  acc_SVM_Ran = accuracy_score(y_pred_SVM_Ran, y_pred)
+  acc_SVM_Ran = accuracy_score(y_pred_SVM_Ran, y_test)
   print(f'\n--------------Ensemble for SVM and RandomForestClassifier: {acc_SVM_Ran}--------------')
 
 if __name__ == '__main__':
