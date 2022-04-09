@@ -74,13 +74,13 @@ def main(opt):
       else:
         y_pred_Lo_Co = y_pred_Lo_Co + y_pred_onehot
 
-    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/{each_ML}.npy', 'wb') as f:
-      np.save(f, y_pred)
-    f = open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/{each_ML}.txt', 'a') 
-    for i in list(y_pred):
-      i = str(i)
-      f.write(f"{i}, ")
-    f.close()
+    # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/{each_ML}.npy', 'wb') as f:
+    #   np.save(f, y_pred)
+    # f = open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/{each_ML}.txt', 'a') 
+    # for i in list(y_pred):
+    #   i = str(i)
+    #   f.write(f"{i}, ")
+    # f.close()
 
     acc = accuracy_score(y_test, y_pred)
     print(f'\n--------------Test accuracy: {acc} with the {each_ML} method--------------')
@@ -90,21 +90,21 @@ def main(opt):
   acc_all = accuracy_score(y_test, y_pred_all)
   print(f'\n--------------Ensemble for all: {acc_all}--------------')
 
-  with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/ensemble.npy', 'wb') as f:
-    np.save(f, y_pred_all)
-  f = open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/ensemble.txt', 'a') 
-  for i in list(y_pred_all):
-    i = str(i)
-    f.write(f"{i}, ")
-  f.close()
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/ensemble.npy', 'wb') as f:
+  #   np.save(f, y_pred_all)
+  # f = open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/ensemble.txt', 'a') 
+  # for i in list(y_pred_all):
+  #   i = str(i)
+  #   f.write(f"{i}, ")
+  # f.close()
 
-  with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/true_label.npy', 'wb') as f:
-    np.save(f, y_test)
-  f = open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/true_label.txt', 'a') 
-  for i in list(y_test):
-    i = str(i)
-    f.write(f"{i}, ")
-  f.close()
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/true_label.npy', 'wb') as f:
+  #   np.save(f, y_test)
+  # f = open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/true_label.txt', 'a') 
+  # for i in list(y_test):
+  #   i = str(i)
+  #   f.write(f"{i}, ")
+  # f.close()
 
   y_pred_Lo_Co = y_pred_Lo_Co.astype(np.float32) / 2
   y_pred_Lo_Co = np.argmax(y_pred_Lo_Co, axis=1)
