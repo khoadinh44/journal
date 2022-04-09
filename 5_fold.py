@@ -178,7 +178,7 @@ if opt.PU_data_table_10_case_1:
   comb = combinations([0, 1, 2, 3, 4], 3)
  
   # Print the obtained combinations
-  for i in list(comb):
+  for idx, i in enumerate(list(comb)):
     X_train_Healthy = Healthy[list(i)]
     y_train_Healthy = Healthy_label[list(i)]
     X_train_Healthy, y_train_Healthy = load_table_10_spe(X_train_Healthy, y_train_Healthy)
@@ -278,7 +278,7 @@ if opt.PU_data_table_10_case_1:
     emb_accuracy_ensemble.append(acc_all)
 
     print(f'\n --------------Ensemble: {acc_all}--------------')
-    print(color.GREEN + f'\n\t\t********* FINISHING ROUND {i} *********\n\n\n' + color.END)
+    print(color.GREEN + f'\n\t\t********* FINISHING ROUND {idx} *********\n\n\n' + color.END)
 
 
 print(color.CYAN + 'FINISH!\n' + color.END)
