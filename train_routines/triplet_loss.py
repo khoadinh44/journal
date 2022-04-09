@@ -13,6 +13,7 @@ import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
 import os
 import argparse
+from angular_grad import AngularGrad
 
 def train(opt, x_train, y_train, x_test, y_test, network):
     print("\n Training with Triplet Loss....")
@@ -50,7 +51,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
     else:
       print('\n No weight file.')
     model.compile(loss=["categorical_crossentropy", triplet_loss],
-                  optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"], loss_weights=loss_weights)
+                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
