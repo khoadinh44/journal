@@ -81,8 +81,8 @@ def triplet_loss(y_true, y_pred, alpha=0.4):
     basic_loss = pos_dist - neg_dist + alpha
     loss = K.maximum(basic_loss, 0.0)
 
-    mean_loss = K.maxinum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
-    variance_loss = K.maxinum(variance_neg_dist - variance_pos_dist + alpha, 0.0)
+    mean_loss = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
+    variance_loss = K.maximum(variance_neg_dist - variance_pos_dist + alpha, 0.0)
     return mean_loss + variance_loss
 
 
