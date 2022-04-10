@@ -255,19 +255,19 @@ if opt.PU_data_table_10_case_1:
 
         if each_ML == 'SVM':
           emb_accuracy_SVM.append(acc)
-        elif each_ML == 'RandomForestClassifier':
+        if each_ML == 'RandomForestClassifier':
           emb_accuracy_RandomForestClassifier.append(acc)
-        elif each_ML == 'LogisticRegression':
+        if each_ML == 'LogisticRegression':
           emb_accuracy_LogisticRegression.append(acc)
-        elif each_ML == 'GaussianNB':
+        if each_ML == 'GaussianNB':
           emb_accuracy_GaussianNB.append(acc)
-        elif each_ML == 'KNN':
+        if each_ML == 'KNN':
           emb_accuracy_KNN.append(acc)
-        elif each_ML == 'BT':
+        if each_ML == 'BT':
           emb_accuracy_BT.append(acc)
-        elif each_ML == 'euclidean':
+        if each_ML == 'euclidean':
           emb_accuracy_euclidean.append(acc)
-        elif each_ML == 'cosine':
+        if each_ML == 'cosine':
           emb_accuracy_cosine.append(acc)
 
         print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
@@ -282,18 +282,17 @@ if opt.PU_data_table_10_case_1:
 
         if each_ML == 'SVM':
           emb_accuracy_SVM_no_emb.append(acc)
-        elif each_ML == 'RandomForestClassifier':
+        if each_ML == 'RandomForestClassifier':
           emb_accuracy_RandomForestClassifier_no_emb.append(acc)
-        elif each_ML == 'LogisticRegression':
+        if each_ML == 'LogisticRegression':
           emb_accuracy_LogisticRegression_no_emb.append(acc)
-        elif each_ML == 'GaussianNB':
+        if each_ML == 'GaussianNB':
           emb_accuracy_GaussianNB_no_emb.append(acc)
-        elif each_ML == 'KNN':
+        if each_ML == 'KNN':
           emb_accuracy_KNN_no_emb.append(acc)
-        elif each_ML == 'BT':
-          emb_accuracy_BT_no_emb.append(acc)
+        # elif each_ML == 'BT':
+        #   emb_accuracy_BT_no_emb.append(acc)
         
-
         print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
     else:
       y_train = to_one_hot(y_train)
