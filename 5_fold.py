@@ -241,8 +241,8 @@ if opt.PU_data_table_10_case_1:
 
       y_pred_all = []
       count = 0
+      model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine', 'KNN', 'BT']:
-        model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
 
         y_pred_onehot = to_one_hot(y_pred)
@@ -271,6 +271,7 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_cosine.append(acc)
 
         print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
+        
         y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
         y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
         if y_pred_all == []:
