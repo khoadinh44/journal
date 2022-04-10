@@ -63,9 +63,17 @@ emb_accuracy_SVM = []
 emb_accuracy_RandomForestClassifier = []
 emb_accuracy_LogisticRegression = []
 emb_accuracy_GaussianNB = []
-emb_accuracy_euclidean = []
 emb_accuracy_KNN = []
 emb_accuracy_BT = []
+
+emb_accuracy_SVM_no_emb = []
+emb_accuracy_RandomForestClassifier_no_emb = []
+emb_accuracy_LogisticRegression_no_emb = []
+emb_accuracy_GaussianNB_no_emb = []
+emb_accuracy_KNN_no_emb = []
+emb_accuracy_BT_no_emb = []
+
+emb_accuracy_euclidean = []
 emb_accuracy_cosine = []
 emb_accuracy_ensemble = []
 
@@ -234,8 +242,8 @@ if opt.PU_data_table_10_case_1:
       y_pred_all = []
       count = 0
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine', 'KNN', 'BT']:
-        model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
-        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=each_ML)
+        model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
+        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
 
         y_pred_onehot = to_one_hot(y_pred)
         if y_pred_all == []:
@@ -243,8 +251,8 @@ if opt.PU_data_table_10_case_1:
         else:
           y_pred_all += y_pred_onehot
         count += 1
-
         acc = accuracy_score(y_test, y_pred)
+
         if each_ML == 'SVM':
           emb_accuracy_SVM.append(acc)
         elif each_ML == 'RandomForestClassifier':
@@ -261,6 +269,29 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_euclidean.append(acc)
         elif each_ML == 'cosine':
           emb_accuracy_cosine.append(acc)
+
+        y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
+        y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
+        if y_pred_all == []:
+          y_pred_all = y_pred_onehot_no_emb
+        else:
+          y_pred_all += y_pred_onehot_no_emb
+        count += 1
+        acc = accuracy_score(y_test, y_pred_no_emb)
+
+        if each_ML == 'SVM':
+          emb_accuracy_SVM_no_emb.append(acc)
+        elif each_ML == 'RandomForestClassifier':
+          emb_accuracy_RandomForestClassifier_no_emb.append(acc)
+        elif each_ML == 'LogisticRegression':
+          emb_accuracy_LogisticRegression_no_emb.append(acc)
+        elif each_ML == 'GaussianNB':
+          emb_accuracy_GaussianNB_no_emb.append(acc)
+        elif each_ML == 'KNN':
+          emb_accuracy_KNN_no_emb.append(acc)
+        elif each_ML == 'BT':
+          emb_accuracy_BT_no_emb.append(acc)
+        
 
         print(f'\n--------------Test accuracy: {acc} with the {each_ML} method--------------')
     else:
@@ -292,9 +323,17 @@ print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM)} with SVM' + colo
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier)} with RandomForestClassifier' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression)} with LogisticRegression' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB)} with GaussianNB' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_euclidean)} with euclidean' + color.END)
-
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_KNN)} with KNN' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_BT)} with BT' + color.END)
+
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM_no_emb)} with no embedding  SVM' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier_no_emb)} with no embedding RandomForestClassifier' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression_no_emb)} with no embedding LogisticRegression' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB_no_emb)} with no embedding GaussianNB' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_KNN_no_emb)} with no embedding KNN' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_BT_no_emb)} withno embedding  BT' + color.END)
+
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_euclidean)} with euclidean' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_cosine)} with cosine' + color.END)
+
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_ensemble)} with ensemble' + color.END)
