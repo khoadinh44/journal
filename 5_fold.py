@@ -290,29 +290,10 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_GaussianNB_no_emb.append(acc)
         if each_ML == 'KNN':
           emb_accuracy_KNN_no_emb.append(acc)
-        # elif each_ML == 'BT':
-        #   emb_accuracy_BT_no_emb.append(acc)
+        elif each_ML == 'BT':
+          emb_accuracy_BT_no_emb.append(acc)
         
         print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
-    else:
-      y_train = to_one_hot(y_train)
-      y_test = to_one_hot(y_test)
-      print('\n\t\t\t Load model...')
-      model = CNN_C(opt)
-      model.compile(optimizer="Adam", loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
-
-      model.summary()
-      history = model.fit(X_train, y_train,
-                          epochs     = opt.epoch,
-                          batch_size = opt.batch_size,
-                          validation_data=(X_test, y_test),)
-      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
-      accuracy.append(test_acc)
-
-    y_pred_all = y_pred_all.astype(np.float32) / count
-    y_pred_all = np.argmax(y_pred_all, axis=1)
-    acc_all = accuracy_score(y_test, y_pred_all)
-    emb_accuracy_ensemble.append(acc_all)
 
     print(f'\n --------------Ensemble: {acc_all}--------------')
     print(color.GREEN + f'\n\t\t********* FINISHING ROUND {idx} *********\n\n\n' + color.END)
