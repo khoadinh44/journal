@@ -233,7 +233,7 @@ if opt.PU_data_table_10_case_1:
 
       y_pred_all = []
       count = 0
-      for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
+      for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine', 'KNN', 'BT']:
         model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=each_ML)
 
