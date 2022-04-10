@@ -270,6 +270,7 @@ if opt.PU_data_table_10_case_1:
         elif each_ML == 'cosine':
           emb_accuracy_cosine.append(acc)
 
+        print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
         y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
         y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
         if y_pred_all == []:
@@ -293,7 +294,7 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_BT_no_emb.append(acc)
         
 
-        print(f'\n--------------Test accuracy: {acc} with the {each_ML} method--------------')
+        print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
     else:
       y_train = to_one_hot(y_train)
       y_test = to_one_hot(y_test)
