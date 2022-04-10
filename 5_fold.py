@@ -263,8 +263,8 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_GaussianNB.append(acc)
         if each_ML == 'KNN':
           emb_accuracy_KNN.append(acc)
-        if each_ML == 'BT':
-          emb_accuracy_BT.append(acc)
+        # if each_ML == 'BT':
+        #   emb_accuracy_BT.append(acc)
         if each_ML == 'euclidean':
           emb_accuracy_euclidean.append(acc)
         if each_ML == 'cosine':
