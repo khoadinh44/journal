@@ -15,6 +15,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
 from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 
 opt = parse_opt()
 
@@ -85,6 +87,10 @@ class FaceNetOneShotRecognitor(object):
             model = LogisticRegression(random_state=1)
           elif ML_method == 'GaussianNB':
             model = GaussianNB()
+          elif ML_method == 'KNN':     
+            model = KNeighborsClassifier(n_neighbors=3)
+          elif ML_method == 'BT':
+            model = GradientBoostingClassifier()
           model.fit(train_embs, train_label)
           list_label = model.predict(test_embs)
           
