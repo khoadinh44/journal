@@ -290,8 +290,8 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_GaussianNB_no_emb.append(acc)
         if each_ML == 'KNN':
           emb_accuracy_KNN_no_emb.append(acc)
-        elif each_ML == 'BT':
-          emb_accuracy_BT_no_emb.append(acc)
+        # if each_ML == 'BT':
+        #   emb_accuracy_BT_no_emb.append(acc)
         
         print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
 
