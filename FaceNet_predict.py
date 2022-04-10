@@ -21,9 +21,11 @@ from sklearn.ensemble import GradientBoostingClassifier
 opt = parse_opt()
 
 class FaceNetOneShotRecognitor(object):
-    def __init__(self, opt, X_train_all, y_train_all):
+    def __init__(self, opt, X_train_all, y_train_all, X_test, y_test):
         self.opt         = opt
         self.X_train_all, self.y_train_all = X_train_all, y_train_all
+        self.X_test, self.y_test = X_test, y_test
+
         self.df_train = pd.DataFrame(columns=['all_train_data', 'ID', 'name'])
 
     def __calc_embs(self, input_data):
@@ -48,7 +50,7 @@ class FaceNetOneShotRecognitor(object):
             all_data.append(i)
         return np.array(all_data)
       
-    def predict(self, test_embs, train_embs, threshold=1.1, ML_method=None):
+    def predict(self, test_embs, train_embs, ML_method=None, emb=True):
         print('\n Test embs: ', test_embs.shape)
         print(' Train embs: ', train_embs.shape)
         list_label = {}
@@ -79,20 +81,36 @@ class FaceNetOneShotRecognitor(object):
           train_label = self.df_train['name']
           train_label = self.loading(train_label)
 
-          if ML_method == 'SVM':
-            model = SVC(kernel='rbf', probability=True)
-          elif ML_method == 'RandomForestClassifier':
-            model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-          elif ML_method == 'LogisticRegression':     
-            model = LogisticRegression(random_state=1)
-          elif ML_method == 'GaussianNB':
-            model = GaussianNB()
-          elif ML_method == 'KNN':     
-            model = KNeighborsClassifier(n_neighbors=3)
-          elif ML_method == 'BT':
-            model = GradientBoostingClassifier()
-          model.fit(train_embs, train_label)
-          list_label = model.predict(test_embs)
+          if emb:
+            if ML_method == 'SVM':
+              model = SVC(kernel='rbf', probability=True)
+            elif ML_method == 'RandomForestClassifier':
+              model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+            elif ML_method == 'LogisticRegression':     
+              model = LogisticRegression(random_state=1)
+            elif ML_method == 'GaussianNB':
+              model = GaussianNB()
+            elif ML_method == 'KNN':     
+              model = KNeighborsClassifier(n_neighbors=3)
+            elif ML_method == 'BT':
+              model = GradientBoostingClassifier()
+            model.fit(train_embs, train_label)
+            list_label = model.predict(test_embs)
+          else:
+            if ML_method == 'SVM':
+              model = SVC(kernel='rbf', probability=True)
+            elif ML_method == 'RandomForestClassifier':
+              model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+            elif ML_method == 'LogisticRegression':     
+              model = LogisticRegression(random_state=1)
+            elif ML_method == 'GaussianNB':
+              model = GaussianNB()
+            elif ML_method == 'KNN':     
+              model = KNeighborsClassifier(n_neighbors=3)
+            elif ML_method == 'BT':
+              model = GradientBoostingClassifier()
+            model.fit(self.X_train_all, self.y_train_all)
+            list_label = model.predict(self.X_test)
           
         return list_label
 
