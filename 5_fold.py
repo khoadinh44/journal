@@ -64,6 +64,8 @@ emb_accuracy_RandomForestClassifier = []
 emb_accuracy_LogisticRegression = []
 emb_accuracy_GaussianNB = []
 emb_accuracy_euclidean = []
+emb_accuracy_KNN = []
+emb_accuracy_BT = []
 emb_accuracy_cosine = []
 emb_accuracy_ensemble = []
 
@@ -251,6 +253,10 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_LogisticRegression.append(acc)
         elif each_ML == 'GaussianNB':
           emb_accuracy_GaussianNB.append(acc)
+        elif each_ML == 'KNN':
+          emb_accuracy_KNN.append(acc)
+        elif each_ML == 'BT':
+          emb_accuracy_BT.append(acc)
         elif each_ML == 'euclidean':
           emb_accuracy_euclidean.append(acc)
         elif each_ML == 'cosine':
@@ -287,5 +293,8 @@ print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression)} with LogisticRegression' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB)} with GaussianNB' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_euclidean)} with euclidean' + color.END)
+
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_KNN)} with KNN' + color.END)
+print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_BT)} with BT' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_cosine)} with cosine' + color.END)
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_ensemble)} with ensemble' + color.END)
