@@ -299,7 +299,11 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_BT_no_emb.append(acc)
         
         print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
-
+        
+    y_pred_all = y_pred_all.astype(np.float32) / l
+    y_pred_all = np.argmax(y_pred_all, axis=1)
+    acc_all = accuracy_score(y_test, y_pred_all)
+    emb_accuracy_ensemble.append(acc_all)
     print(f'\n --------------Ensemble: {acc_all}--------------')
     print(color.GREEN + f'\n\t\t********* FINISHING ROUND {idx} *********\n\n\n' + color.END)
 
