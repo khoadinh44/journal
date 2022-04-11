@@ -15,14 +15,14 @@ import os
 import argparse
 from angular_grad import AngularGrad
 
-def train(opt, x_train, y_train, x_test, y_test, network, i):
+def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     print("\n Training with Triplet Loss....")
 
     outdir = opt.outdir + "/triplet_loss/"
     if i==0:
       epoch = 50 # 30
     else:
-      epoch = 5 # 10
+      epoch = opt.epoch # 10
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
@@ -50,7 +50,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i):
     merged_pre = concatenate([pre_logits_anchor, pre_logits_pos, pre_logits_neg], axis=-1, name='merged_pre')
     merged_soft = concatenate([soft_anchor, soft_pos, soft_neg], axis=-1, name='merged_soft')
     
-    loss_weights = [1, 0.01]
+    loss_weights = [1, 1]
 
     tf.keras.backend.clear_session()
     tf.compat.v1.reset_default_graph()
@@ -98,8 +98,8 @@ def train(opt, x_train, y_train, x_test, y_test, network, i):
     model.load_weights(outdir + "triplet_loss_model.h5")
 
     _, X_train_embed = model.predict([x_train])
-    _, X_test_embed = model.predict([x_test])
-    return X_train_embed, X_test_embed
+    y_test_soft, X_test_embed = model.predict([x_test])
+    return X_train_embed, X_test_embed, y_test_soft
 
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
@@ -134,10 +134,10 @@ def parse_opt(known=False):
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
     
-    parser.add_argument('--PU_data_table_10',            default=True, type=bool)
+    parser.add_argument('--PU_data_table_10',            default=False, type=bool)
     parser.add_argument('--PU_data_table_10_case_0',     default=False, type=bool)
-    parser.add_argument('--PU_data_table_10_case_1',     default=True, type=bool)
-    parser.add_argument('--PU_data_table_8',      default=False, type=bool)
+    parser.add_argument('--PU_data_table_10_case_1',     default=False, type=bool)
+    parser.add_argument('--PU_data_table_8',      default=True, type=bool)
     parser.add_argument('--MFPT_data',            default=False, type=bool)
     parser.add_argument('--data_normal',          default=False, type=bool)
     parser.add_argument('--data_12k',             default=False, type=bool)
@@ -145,11 +145,11 @@ def parse_opt(known=False):
     parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--epoch',              type=int,   default=10, help="Number epochs to train the model for")
+    parser.add_argument('--epoch',              type=int,   default=1, help="Number epochs to train the model for")
     parser.add_argument('--save',               type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=512,        help='128 Number of embedding in faceNet')
-    parser.add_argument('--input_shape',        type=int,   default=255900,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
+    parser.add_argument('--input_shape',        type=int,   default=250604,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
     parser.add_argument('--batch_size',         type=int,   default=16,         help='Number of batch size for training')
     parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
