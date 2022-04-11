@@ -1,6 +1,6 @@
 from scipy.spatial.distance import cosine, euclidean
 from load_cases import get_data
-from train_routines.triplet_loss import parse_opt
+from train import parse_opt
 import angular_grad
 import tensorflow as tf
 import glob 
