@@ -92,7 +92,7 @@ def triplet_loss(y_true, y_pred, alpha=0.999):
     basic_loss = pos_dist - neg_dist + alpha
     loss       = K.maximum(basic_loss, 0.0)
 
-    mean_loss     = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
+    mean_loss     = K.maximum(mean_pos_dist - mean_neg_dist + 0.5, 0.0)
 
     return loss + mean_loss
 
