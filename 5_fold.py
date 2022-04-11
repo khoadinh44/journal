@@ -234,15 +234,15 @@ if opt.PU_data_table_10_case_1:
     
     if opt.faceNet:
       print('\n Train phase...')
-      train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip, i) 
+      train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip, idx) 
       
       print('\n Saving embedding phase...')   
       this_acc = []
 
       y_pred_all = []
       count = 0
-      model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine', 'KNN', 'BT']:
+        model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
 
         y_pred_onehot = to_one_hot(y_pred)
