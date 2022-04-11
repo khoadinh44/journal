@@ -20,9 +20,9 @@ def train(opt, x_train, y_train, x_test, y_test, network, i):
 
     outdir = opt.outdir + "/triplet_loss/"
     if i==0:
-      epoch = 50
+      epoch = 30 # 30
     else:
-      epoch = 10
+      epoch = 5 # 10
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
