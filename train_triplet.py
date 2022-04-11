@@ -8,6 +8,7 @@ from train_routines.triplet_loss import train, parse_opt
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
+from preprocessing.utils import handcrafted_features
 
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
@@ -17,6 +18,7 @@ import glob
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
+import os
 from sklearn.metrics import accuracy_score
 
 class color:
@@ -41,51 +43,45 @@ def main(opt):
   print(f' Training data shape: {X_train.shape}  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test.shape}  Testing label shape: {y_test.shape}')
 
-  train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+  train_embs, test_embs, y_test_solf = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
 
   print('\n Saving embedding phase...')   
   this_acc = []
-  y_pred_all = []
   y_pred_Lo_Co = []
   y_pred_SVM_Ran = []
-  
-  l = 0
-  for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
-    model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
-    y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=each_ML)
+
+  y_test_solf = np.argmax(y_test_solf, axis=1)
+  solf_acc = accuracy_score(y_test, y_test_solf)
+  print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
+
+  y_pred_all = solf_acc
+
+  count = 0
+  for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'KNN', 'BT', 'euclidean', 'cosine']:
+    model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
+    y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
 
     y_pred_onehot = to_one_hot(y_pred)
-    if y_pred_all == []:
-      y_pred_all = y_pred_onehot
-    else:
-      y_pred_all = y_pred_all + y_pred_onehot
-
-    l += 1
-
-    if each_ML == 'SVM' or each_ML == 'RandomForestClassifier':
-      if y_pred_SVM_Ran == []:
-        y_pred_SVM_Ran = y_pred_onehot
-      else:
-        y_pred_SVM_Ran = y_pred_SVM_Ran + y_pred_onehot
-      
-    if each_ML == 'LogisticRegression' or 'cosine':
-      if y_pred_Lo_Co == []:
-        y_pred_Lo_Co = y_pred_onehot
-      else:
-        y_pred_Lo_Co = y_pred_Lo_Co + y_pred_onehot
-
-    # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/{each_ML}.npy', 'wb') as f:
-    #   np.save(f, y_pred)
-    # f = open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/{each_ML}.txt', 'a') 
-    # for i in list(y_pred):
-    #   i = str(i)
-    #   f.write(f"{i}, ")
-    # f.close()
-
-    acc = accuracy_score(y_test, y_pred)
-    print(f'\n--------------Test accuracy: {acc} with the {each_ML} method--------------')
+    y_pred_all += y_pred_onehot
     
-  y_pred_all = y_pred_all.astype(np.float32) / l
+    count += 1
+    acc = accuracy_score(y_test, y_pred)
+
+    print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
+    
+    X_train_hand = handcrafted_features(X_train)
+    X_test_hand  = handcrafted_features(X_test)
+    model = FaceNetOneShotRecognitor(opt, X_train_hand, y_train, X_test_hand, y_test) 
+    y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
+    y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
+    
+    y_pred_all += y_pred_onehot_no_emb
+    count += 1
+    acc = accuracy_score(y_test, y_pred_no_emb)
+
+    print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
+    
+  y_pred_all = y_pred_all.astype(np.float32) / count
   y_pred_all = np.argmax(y_pred_all, axis=1)
   acc_all = accuracy_score(y_test, y_pred_all)
   print(f'\n--------------Ensemble for all: {acc_all}--------------')
@@ -116,6 +112,10 @@ def main(opt):
   acc_SVM_Ran = accuracy_score(y_pred_SVM_Ran, y_test)
   print(f'\n--------------Ensemble for SVM and RandomForestClassifier: {acc_SVM_Ran}--------------')
 
+  
+
 if __name__ == '__main__':
   opt = parse_opt()
+  if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
+    os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
   main(opt)
