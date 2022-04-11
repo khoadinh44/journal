@@ -4,7 +4,7 @@ from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, pre
 from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
-from train_routines.triplet_loss import train, parse_opt
+from train import parse_opt
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
@@ -63,7 +63,7 @@ def main(opt):
 
     y_pred_onehot = to_one_hot(y_pred)
     y_pred_all += y_pred_onehot
-    
+
     count += 1
     acc = accuracy_score(y_test, y_pred)
 
@@ -94,28 +94,8 @@ def main(opt):
   #   f.write(f"{i}, ")
   # f.close()
 
-  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/true_label.npy', 'wb') as f:
-  #   np.save(f, y_test)
-  # f = open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/true_label.txt', 'a') 
-  # for i in list(y_test):
-  #   i = str(i)
-  #   f.write(f"{i}, ")
-  # f.close()
-
-  y_pred_Lo_Co = y_pred_Lo_Co.astype(np.float32) / 2
-  y_pred_Lo_Co = np.argmax(y_pred_Lo_Co, axis=1)
-  acc_Lo_Co = accuracy_score(y_pred_Lo_Co, y_test)
-  print(f'\n--------------Ensemble for LogisticRegression and cosine: {acc_Lo_Co}--------------')
-
-  y_pred_SVM_Ran = y_pred_SVM_Ran.astype(np.float32) / 2
-  y_pred_SVM_Ran = np.argmax(y_pred_SVM_Ran, axis=1)
-  acc_SVM_Ran = accuracy_score(y_pred_SVM_Ran, y_test)
-  print(f'\n--------------Ensemble for SVM and RandomForestClassifier: {acc_SVM_Ran}--------------')
-
-  
-
 if __name__ == '__main__':
   opt = parse_opt()
-  if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
-    os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
+  # if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
+  #   os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
   main(opt)
