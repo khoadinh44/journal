@@ -234,7 +234,7 @@ if opt.PU_data_table_10_case_1:
     
     if opt.faceNet:
       print('\n Train phase...')
-      train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+      train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip, i) 
       
       print('\n Saving embedding phase...')   
       this_acc = []
