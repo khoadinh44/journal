@@ -4,7 +4,7 @@ from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, pre
 from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
-from train_routines.triplet_loss import train, parse_opt
+from train import parse_opt
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
