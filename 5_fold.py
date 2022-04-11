@@ -134,7 +134,7 @@ if opt.PU_data_table_10_case_0:
       this_acc = []
 
       y_pred_all = []
-      count = 0
+      l = 0
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
         model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=each_ML)
@@ -144,7 +144,7 @@ if opt.PU_data_table_10_case_0:
           y_pred_all = y_pred_onehot
         else:
           y_pred_all += y_pred_onehot
-        count += 1
+        l += 1
 
         acc = accuracy_score(y_test, y_pred)
         if each_ML == 'SVM':
@@ -176,7 +176,7 @@ if opt.PU_data_table_10_case_0:
       _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
       accuracy.append(test_acc)
 
-    y_pred_all = y_pred_all.astype(np.float32) / count
+    y_pred_all = y_pred_all.astype(np.float32) / l
     y_pred_all = np.argmax(y_pred_all, axis=1)
     acc_all = accuracy_score(y_test, y_pred_all)
     emb_accuracy_ensemble.append(acc_all)
@@ -186,6 +186,9 @@ if opt.PU_data_table_10_case_0:
 
 #------------------------------------------Case 1: no shuffle------------------------------------------------
 if opt.PU_data_table_10_case_1:
+  if os.path.exists(outdir + "triplet_loss_model.h5"):
+        os.remove(outdir + "triplet_loss_model.h5")
+        
   comb = combinations([0, 1, 2, 3, 4], 3)
  
   # Print the obtained combinations
