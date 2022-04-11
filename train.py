@@ -227,9 +227,14 @@ def main(opt):
   
 def parse_opt(known=False):
     parser = argparse.ArgumentParser()
-    
+   
+    parser.add_argument('--outdir',   default='/content/drive/Shareddrives/newpro112233/signal_machine/runs/', help="Directory containing the Checkpoints")
+    parser.add_argument('--threshold',  default=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9], type=str, help='num_mels')
+    parser.add_argument('--faceNet',          default=True, type=bool)
+    parser.add_argument('--Use_euclidean',    default=False, type=bool)
+
     # Models and denoising methods--------------------------
-    parser.add_argument('--ML_method',   default=None, type=str)
+    parser.add_argument('--ML_method',   default='RandomForestClassifier', type=str)
     parser.add_argument('--use_DNN_A',   default=False, type=bool)
     parser.add_argument('--use_DNN_B',   default=False, type=bool)
     parser.add_argument('--use_CNN_A',   default=False, type=bool)
@@ -253,22 +258,25 @@ def parse_opt(known=False):
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
     
-    parser.add_argument('--PU_data_table_8',      default=False, type=bool)
-    parser.add_argument('--PU_data_table_10',     default=True, type=bool)
-    parser.add_argument('--MFPT_data',   default=False, type=bool)
-    parser.add_argument('--data_normal', default=False, type=bool)
-    parser.add_argument('--data_12k',    default=False, type=bool)
-    parser.add_argument('--data_48k',    default=False, type=bool)
-    parser.add_argument('--multi_head',  default=False, type=bool)
+    parser.add_argument('--PU_data_table_10',            default=False, type=bool)
+    parser.add_argument('--PU_data_table_10_case_0',     default=False, type=bool)
+    parser.add_argument('--PU_data_table_10_case_1',     default=False, type=bool)
+    parser.add_argument('--PU_data_table_8',      default=True, type=bool)
+    parser.add_argument('--MFPT_data',            default=False, type=bool)
+    parser.add_argument('--data_normal',          default=False, type=bool)
+    parser.add_argument('--data_12k',             default=False, type=bool)
+    parser.add_argument('--data_48k',             default=False, type=bool)
+    parser.add_argument('--multi_head',           default=False, type=bool)
 
     # Parameters---------------------------------------------
-    parser.add_argument('--save',            type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
-    parser.add_argument('--epochs',          type=int,   default=100,        help='Number of iterations for training')
-    parser.add_argument('--num_classes',     type=int,   default=64,         help='Number of classes')
-    parser.add_argument('--input_shape',     type=int,   default=502,        help='shape of 1-D input data')
-    parser.add_argument('--batch_size',      type=int,   default=32,         help='Number of batch size for training')
-    parser.add_argument('--test_rate',       type=float, default=0.2,        help='rate of split data for testing')
-    parser.add_argument('--learning_rate',   type=float, default=0.001,      help='learning rate')
+    parser.add_argument('--epoch',              type=int,   default=50, help="Number epochs to train the model for")
+    parser.add_argument('--save',               type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
+    parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
+    parser.add_argument('--embedding_size',     type=int,   default=512,        help='128 Number of embedding in faceNet')
+    parser.add_argument('--input_shape',        type=int,   default=250604,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
+    parser.add_argument('--batch_size',         type=int,   default=16,         help='Number of batch size for training')
+    parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
+    parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
 
     parser.add_argument('--use_SNRdb',                type=bool,    default=False)
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
