@@ -8,6 +8,7 @@ from train_routines.triplet_loss import train, parse_opt
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
+from preprocessing.utils import handcrafted_features
 
 from itertools import combinations
 from sklearn.utils import shuffle
@@ -263,8 +264,8 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_GaussianNB.append(acc)
         if each_ML == 'KNN':
           emb_accuracy_KNN.append(acc)
-        # if each_ML == 'BT':
-        #   emb_accuracy_BT.append(acc)
+        if each_ML == 'BT':
+          emb_accuracy_BT.append(acc)
         if each_ML == 'euclidean':
           emb_accuracy_euclidean.append(acc)
         if each_ML == 'cosine':
@@ -272,6 +273,9 @@ if opt.PU_data_table_10_case_1:
 
         print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
         
+        X_train_hand = handcrafted_features(X_train)
+        X_test_hand  = handcrafted_features(X_test)
+        model = FaceNetOneShotRecognitor(opt, X_train_hand, y_train, X_test_hand, y_test) 
         y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
         y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
         if y_pred_all == []:
@@ -291,8 +295,8 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_GaussianNB_no_emb.append(acc)
         if each_ML == 'KNN':
           emb_accuracy_KNN_no_emb.append(acc)
-        # if each_ML == 'BT':
-        #   emb_accuracy_BT_no_emb.append(acc)
+        if each_ML == 'BT':
+          emb_accuracy_BT_no_emb.append(acc)
         
         print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
 
