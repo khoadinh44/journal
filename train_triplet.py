@@ -97,6 +97,6 @@ def main(opt):
 
 if __name__ == '__main__':
   opt = parse_opt()
-  # if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
-  #   os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
+  if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
+    os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
   main(opt)
