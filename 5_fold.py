@@ -186,8 +186,8 @@ if opt.PU_data_table_10_case_0:
 
 #------------------------------------------Case 1: no shuffle------------------------------------------------
 if opt.PU_data_table_10_case_1:
-  if os.path.exists(opt.outdir + "triplet_loss_model.h5"):
-        os.remove(opt.outdir + "triplet_loss_model.h5")
+  if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
+        os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
 
   comb = combinations([0, 1, 2, 3, 4], 3)
  
