@@ -15,10 +15,14 @@ import os
 import argparse
 from angular_grad import AngularGrad
 
-def train(opt, x_train, y_train, x_test, y_test, network):
+def train(opt, x_train, y_train, x_test, y_test, network, i):
     print("\n Training with Triplet Loss....")
 
     outdir = opt.outdir + "/triplet_loss/"
+    if i==0:
+      epoch = 100
+    else:
+      epoch = 30
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
@@ -86,7 +90,7 @@ def train(opt, x_train, y_train, x_test, y_test, network):
 
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative], y=[target, target],
-              batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)])
+              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)])
     model.save(outdir + "triplet_loss_model.h5")
 
     # Embedding------------------------------------------------
