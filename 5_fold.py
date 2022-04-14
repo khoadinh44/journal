@@ -311,7 +311,6 @@ if opt.PU_data_table_10_case_1:
       acc_all = accuracy_score(y_test, y_pred_all)
       emb_accuracy_ensemble.append(acc_all)
       print(f'\n --------------Ensemble: {acc_all}--------------')
-      print(color.GREEN + f'\n\t\t********* FINISHING ROUND {idx} *********\n\n\n' + color.END)
     
     else:
       y_train = to_one_hot(y_train)
@@ -328,7 +327,8 @@ if opt.PU_data_table_10_case_1:
                           validation_data = (X_test, y_test),)
       _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
       emb_accuracy_ensemble.append(test_acc)
-    
+      
+    print(color.GREEN + f'\n\t\t********* FINISHING ROUND {idx} *********\n\n\n' + color.END)
 
 if opt.faceNet:
   print(color.CYAN + 'FINISH!\n' + color.END)
