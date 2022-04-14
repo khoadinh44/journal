@@ -5,6 +5,8 @@ from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
 from train import parse_opt
+
+from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
@@ -238,6 +240,9 @@ if opt.PU_data_table_10_case_1:
     
     if opt.faceNet:
       print('\n Train phase...')
+      X_train = handcrafted_features(X_train)
+      X_test  = handcrafted_features(X_test)
+      print(f'\n Length the handcrafted feature vector: {X_train.shape}')
       train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip, idx) 
       
       print('\n Saving embedding phase...')   
@@ -276,9 +281,8 @@ if opt.PU_data_table_10_case_1:
 
         print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
         
-        X_train_hand = handcrafted_features(X_train)
-        X_test_hand  = handcrafted_features(X_test)
-        model = FaceNetOneShotRecognitor(opt, X_train_hand, y_train, X_test_hand, y_test) 
+        
+        model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
         y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
         y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
         if y_pred_all == []:
