@@ -41,6 +41,7 @@ class color:
    UNDERLINE = '\033[4m'
    END = '\033[0m'
 
+callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=2)
 
 print('\t\t\t Loading labels...')
 Healthy_label           = np.array([0]*len(Healthy))
@@ -305,7 +306,7 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_BT_no_emb.append(acc)
         
         print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
-    else:
+    if opt.faceNet == False:
       y_train = to_one_hot(y_train)
       y_test = to_one_hot(y_test)
       print('\n\t\t\t Load model...')
@@ -315,10 +316,11 @@ if opt.PU_data_table_10_case_1:
       model.summary()
       history = model.fit(X_train, y_train,
                           epochs     = opt.epoch,
-                          batch_size = opt.batch_size,
-                          validation_data=(X_test, y_test),)
+                          batch_size = opt.batch_size, 
+                          callbacks  = [callback],
+                          validation_data = (X_test, y_test),)
       _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
-      accuracy.append(test_acc)
+      emb_accuracy_ensemble.append(test_acc)
 
     y_pred_all = y_pred_all.astype(np.float32) / count
     y_pred_all = np.argmax(y_pred_all, axis=1)
@@ -327,23 +329,23 @@ if opt.PU_data_table_10_case_1:
     print(f'\n --------------Ensemble: {acc_all}--------------')
     print(color.GREEN + f'\n\t\t********* FINISHING ROUND {idx} *********\n\n\n' + color.END)
 
+if opt.faceNet:
+  print(color.CYAN + 'FINISH!\n' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM)} with SVM' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier)} with RandomForestClassifier' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression)} with LogisticRegression' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB)} with GaussianNB' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_KNN)} with KNN' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_BT)} with BT' + color.END)
 
-print(color.CYAN + 'FINISH!\n' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM)} with SVM' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier)} with RandomForestClassifier' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression)} with LogisticRegression' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB)} with GaussianNB' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_KNN)} with KNN' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_BT)} with BT' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM_no_emb)} with no embedding  SVM' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier_no_emb)} with no embedding RandomForestClassifier' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression_no_emb)} with no embedding LogisticRegression' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB_no_emb)} with no embedding GaussianNB' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_KNN_no_emb)} with no embedding KNN' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_BT_no_emb)} withno embedding  BT' + color.END)
 
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_SVM_no_emb)} with no embedding  SVM' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_RandomForestClassifier_no_emb)} with no embedding RandomForestClassifier' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_LogisticRegression_no_emb)} with no embedding LogisticRegression' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_GaussianNB_no_emb)} with no embedding GaussianNB' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_KNN_no_emb)} with no embedding KNN' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_BT_no_emb)} withno embedding  BT' + color.END)
-
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_euclidean)} with euclidean' + color.END)
-print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_cosine)} with cosine' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_euclidean)} with euclidean' + color.END)
+  print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_cosine)} with cosine' + color.END)
 
 print(color.CYAN + f'Test accuracy: {np.mean(emb_accuracy_ensemble)} with ensemble' + color.END)
