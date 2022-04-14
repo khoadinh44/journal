@@ -15,7 +15,7 @@ from preprocessing.utils import handcrafted_features
 from itertools import combinations
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
-import angular_grad
+from angular_grad import AngularGrad
 import tensorflow as tf
 import glob 
 import pandas as pd
@@ -281,7 +281,6 @@ if opt.PU_data_table_10_case_1:
 
         print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
         
-        
         model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
         y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
         y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
@@ -306,6 +305,20 @@ if opt.PU_data_table_10_case_1:
           emb_accuracy_BT_no_emb.append(acc)
         
         print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
+    else:
+      y_train = to_one_hot(y_train)
+      y_test = to_one_hot(y_test)
+      print('\n\t\t\t Load model...')
+      model = CNN_C(opt)
+      model.compile(optimizer=AngularGrad(), loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
+
+      model.summary()
+      history = model.fit(X_train, y_train,
+                          epochs     = opt.epoch,
+                          batch_size = opt.batch_size,
+                          validation_data=(X_test, y_test),)
+      _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
+      accuracy.append(test_acc)
 
     y_pred_all = y_pred_all.astype(np.float32) / count
     y_pred_all = np.argmax(y_pred_all, axis=1)
