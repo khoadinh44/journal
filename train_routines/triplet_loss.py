@@ -50,7 +50,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     merged_pre = concatenate([pre_logits_anchor, pre_logits_pos, pre_logits_neg], axis=-1, name='merged_pre')
     merged_soft = concatenate([soft_anchor, soft_pos, soft_neg], axis=-1, name='merged_soft')
     
-    loss_weights = [1, 1]
+    loss_weights = [1, 0.01]
 
     tf.keras.backend.clear_session()
     tf.compat.v1.reset_default_graph()
@@ -61,7 +61,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
       print(f'\n Load weight: {outdir}triplet_loss_model.h5')
     else:
       print('\n No weight file.')
-    model.compile(loss=["categorical_crossentropy", triplet_loss(lambda_=opt.lambda_)],
+    model.compile(loss=["categorical_crossentropy", triplet_loss],
                   optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
