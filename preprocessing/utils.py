@@ -15,6 +15,28 @@ from sklearn.model_selection import train_test_split
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
+def choosing_features(x, maintain_rate=0.8):
+  scaler = MinMaxScaler()
+  scaler.fit(x)
+  data = scaler.transform(x)
+  mean_jc = np.mean(data, axis=1)
+  d_j = []
+  N_c = len(data)
+  for k in range(N_c):
+    others_idx = [i for i in range(N_c) if i != k]
+    x_k = data[k]
+    d_k_others = []
+    for c in others_idx:
+      m_jc = np.mean(data[c])
+      d_k_others.append( np.sum((x_k-m_jc)**2)/float(x_k.shape[0]) )
+    d_j.append(np.sum(d_k_others)/float(N_c**2))
+  d_j = np.array(d_j)
+  d_j_normalize = d_j/np.max(d_j)
+  d_j_sort = np.sort(d_j_normalize)
+  main_tain_point = d_j_sort[int(len(d_j_sort)*maintain_rate)]
+  main_tain_data = data[d_j_normalize<main_tain_point]
+  return main_tain_data
+
 def scale_data(signal, scale):
   all_data = []
   for each_signal in signal:
