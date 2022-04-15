@@ -40,6 +40,7 @@ def main(opt):
   print('\n loading data...')
   X_train, X_test, y_train, y_test = get_data(opt)
 
+  print('\n Converting data...')
   y_train = invert_one_hot(y_train)
   y_test = invert_one_hot(y_test)
   X_train = handcrafted_features(X_train)
