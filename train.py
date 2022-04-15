@@ -279,6 +279,7 @@ def parse_opt(known=False):
     parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
 
     parser.add_argument('--use_SNRdb',                type=bool,    default=False)
+    parser.add_argument('--lambda_',                  type=float,   default=1.,         help='lambda_')
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=80,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
