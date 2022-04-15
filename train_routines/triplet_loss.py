@@ -61,7 +61,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
       print(f'\n Load weight: {outdir}triplet_loss_model.h5')
     else:
       print('\n No weight file.')
-    model.compile(loss=["categorical_crossentropy", triplet_loss],
+    model.compile(loss=["categorical_crossentropy", triplet_loss(lambda_=opt.lambda_)],
                   optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
