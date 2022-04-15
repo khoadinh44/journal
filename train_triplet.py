@@ -9,7 +9,7 @@ from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
-from preprocessing.utils import handcrafted_features, choosing_features
+from preprocessing.utils import handcrafted_features
 
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
@@ -42,7 +42,6 @@ def main(opt):
 
   y_train = invert_one_hot(y_train)
   y_test = invert_one_hot(y_test)
-  X_train = choosing_features(X_train, maintain_rate=0.8)
   X_train = handcrafted_features(X_train)
   X_test  = handcrafted_features(X_test)
   print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
