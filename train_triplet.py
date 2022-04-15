@@ -46,6 +46,8 @@ def main(opt):
     y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
   else:
     X_train, X_test, y_train, y_test = get_data(opt)
+    X_train, y_train = shuffle(X_train, y_train)
+    X_test, y_test = shuffle(X_test, y_test)
 
     print('\n Converting data...')
     y_train = invert_one_hot(y_train)
@@ -101,8 +103,8 @@ def main(opt):
     y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
     y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
     
-    y_pred_all += y_pred_onehot_no_emb
-    count += 1
+#     y_pred_all += y_pred_onehot_no_emb
+#     count += 1
     acc = accuracy_score(y_test, y_pred_no_emb)
 
     print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
