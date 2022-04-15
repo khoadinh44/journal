@@ -46,8 +46,6 @@ def main(opt):
     y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
   else:
     X_train, X_test, y_train, y_test = get_data(opt)
-    X_train, y_train = shuffle(X_train, y_train)
-    X_test, y_test = shuffle(X_test, y_test)
 
     print('\n Converting data...')
     y_train = invert_one_hot(y_train)
@@ -65,7 +63,8 @@ def main(opt):
     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
       np.save(f, X_test)
 
-
+  X_train, y_train = shuffle(X_train, y_train)
+  X_test, y_test = shuffle(X_test, y_test)
   print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
 
