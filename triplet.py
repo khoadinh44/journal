@@ -3,9 +3,9 @@ import tensorflow.keras.backend as K
 from itertools import permutations
 import random
 import tensorflow as tf
-
 import numpy as np
-
+from train import parse_opt
+opt = parse_opt()
 def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
     data_xy = tuple([x, y])
 
@@ -41,7 +41,7 @@ def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
 
-def triplet_loss(y_true, y_pred, alpha=0.999, lambda_=1):
+def triplet_loss(y_true, y_pred, alpha=0.999, lambda_=opt.lambda_):
     """
     Implementation of the triplet loss function
     Arguments:
