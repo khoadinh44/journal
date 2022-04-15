@@ -42,7 +42,7 @@ def main(opt):
 
   y_train = invert_one_hot(y_train)
   y_test = invert_one_hot(y_test)
-  X_train = choosing_features(X_train)
+  X_train = choosing_features(X_train, maintain_rate=0.8)
   X_train = handcrafted_features(X_train)
   X_test  = handcrafted_features(X_test)
   print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
