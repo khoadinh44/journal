@@ -79,7 +79,7 @@ def main(opt):
   solf_acc = accuracy_score(y_test, y_test_solf)
   print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
 
-  y_pred_all = solf_acc
+  y_pred_all = []
 
   count = 0
   for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'KNN', 'BT', 'euclidean', 'cosine']:
@@ -87,7 +87,10 @@ def main(opt):
     y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
 
     y_pred_onehot = to_one_hot(y_pred)
-    y_pred_all += y_pred_onehot
+    if y_pred_all == []:
+      y_pred_all = y_pred_onehot
+    else:
+      y_pred_all += y_pred_onehot
 
     count += 1
     acc = accuracy_score(y_test, y_pred)
