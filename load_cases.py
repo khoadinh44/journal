@@ -1,5 +1,5 @@
 from sklearn.model_selection import train_test_split
-from preprocessing.utils import convert_one_hot
+from preprocessing.utils import convert_one_hot, choosing_features
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -404,7 +404,7 @@ def get_data(opt):
     OR_Damage_test_label = convert_one_hot(OR_Damage_test_label) * OR_Damage_test.shape[0]
     IR_Damage_test_label = convert_one_hot(IR_Damage_test_label) * IR_Damage_test.shape[0]
 
-    X_train = np.concatenate((Healthy_train, OR_Damage_train, IR_Damage_train))
+    X_train = np.concatenate((choosing_features(Healthy_train), choosing_features(OR_Damage_train), choosing_features(IR_Damage_train)))
     y_train = np.concatenate((Healthy_train_label, OR_Damage_train_label, IR_Damage_train_label))
     X_test = np.concatenate((Healthy_test, OR_Damage_test, IR_Damage_test))
     y_test = np.concatenate((Healthy_test_label, OR_Damage_test_label, IR_Damage_test_label))
