@@ -9,7 +9,7 @@ from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.xentropy import train_xentropy
-from preprocessing.utils import handcrafted_features
+from preprocessing.utils import handcrafted_features, choosing_features
 
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
@@ -56,6 +56,9 @@ def main(opt):
   print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
 
   y_pred_all = solf_acc
+  X_train = choosing_features(X_train)
+  X_train = handcrafted_features(X_train)
+  X_test  = handcrafted_features(X_test)
 
   count = 0
   for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'KNN', 'BT', 'euclidean', 'cosine']:
