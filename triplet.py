@@ -94,7 +94,7 @@ def triplet_loss(y_true, y_pred, alpha=0.999, lambda_=opt.lambda_):
 
     mean_loss     = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
 
-    return loss + lambda_*mean_loss
+    return (1.-lambda_)*loss + lambda_*mean_loss
 
 
 def triplet_center_loss(y_true, y_pred, n_classes= 10, alpha=0.4):
