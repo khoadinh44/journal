@@ -30,8 +30,7 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
         os.makedirs(outdir)
     loss_weights = [1, 0.1]
 
-    x_input_1 = Input(shape=(opt.input_shape, 1), name='x_input 1')
-    x_input_2 = Input(shape=(opt.input_shape, 1), name='x_input 2')
+    x_input = Input(shape=(opt.input_shape, 1), name='x_input')
     y_train_onehot = to_one_hot(y_train)
 
     x_train = x_train.astype(np.float32)
@@ -39,21 +38,20 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_train = y_train.astype(np.float32)
     y_test  = y_test.astype(np.float32)
 
-    softmax, pre_logits = network(opt, x_input_1)
-    shared_model = tf.keras.models.Model(inputs=[x_input_1], outputs=[softmax, pre_logits])
-    softmax, pre_logits = shared_model([x_input_2])
+    softmax, pre_logits = network(opt, x_input)
+    shared_model = tf.keras.models.Model(inputs=[x_input], outputs=[softmax, pre_logits])
+    softmax, pre_logits = shared_model([x_input])
 
-    target_input_1 = Input((1,), name='target_input 1')
-    target_input_2 = Input((1,), name='target_input 2')
-    # center = Embedding(10, opt.embedding_size)(target_input_1)
+    target_input = Input((1,), name='target_input')
+    center = Dense(opt.embedding_size)(target_input)
+    # center = tf.keras.layers.Embedding(10, 512)(target_input)
     # center = tf.keras.layers.Reshape((512, ))(center)
-    center = Dense(opt.embedding_size)(target_input_1)
-    shared_model = tf.keras.models.Model(inputs=[target_input_1], outputs=[center])
-    center = shared_model([target_input_2])
+    shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
+    center = shared_model([target_input])
 
     merged_pre = concatenate([pre_logits, center], axis=-1, name='merged_pre')
 
-    model = tf.keras.models.Model(inputs=[x_input_2, target_input_2], outputs=[softmax, merged_pre])
+    model = tf.keras.models.Model(inputs=[x_input, target_input], outputs=[softmax, merged_pre])
 
     model.compile(loss=["categorical_crossentropy", l2_loss],
                   optimizer=AngularGrad(), metrics=["accuracy"],
