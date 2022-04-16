@@ -96,6 +96,6 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     y_test_soft, X_test_embed = model.predict([x_test])
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, "center_loss", X_train_embed, X_test_embed, y_train, y_test)
+    tsne_plot(outdir, "new_triplet_loss_model", X_train_embed, X_test_embed, y_train, y_test)
     
     return X_train_embed, X_test_embed, y_test_soft
