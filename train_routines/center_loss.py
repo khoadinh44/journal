@@ -58,12 +58,15 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
               batch_size=opt.batch_size, epochs=opt.epoch, validation_split=0.2)
 
-    model.save(outdir + "center_loss_model.h5")
+    model.save(outdir + "center_loss_model")
 
     # model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
     # model.load_weights(outdir + "center_loss_model.h5")
 
     _,           X_train_embed  = model.predict([x_train, y_train])
     y_test_soft, X_test_embed   = model.predict([x_test, y_test])
+    
+    from TSNE_plot import tsne_plot
+    tsne_plot(outdir, "center_loss_model", X_train_embed, X_test_embed, y_train, y_test)
 
     return X_train_embed[:, :512], X_test_embed[:, :512], y_test_soft
