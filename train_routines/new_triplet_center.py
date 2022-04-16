@@ -61,7 +61,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     tf.compat.v1.reset_default_graph()
 
     model = Model(inputs=[anchor_input, positive_input, negative_input, target_input], outputs=[merged_soft, merged_pre])
-    if os.path.isfile(outdir + "triplet_loss_model.h5"):
+    if os.path.isdir(outdir + "triplet_loss_model.h5"):
       model.load_weights(outdir + "triplet_loss_model.h5")
       print(f'\n Load weight: {outdir}triplet_loss_model.h5')
     else:
