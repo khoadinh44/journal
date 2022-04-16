@@ -44,8 +44,6 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     target_input = Input((1,), name='target_input')
     center = Dense(opt.embedding_size)(target_input)
-    # center = tf.keras.layers.Embedding(10, 512)(target_input)
-    # center = tf.keras.layers.Reshape((512, ))(center)
     shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = shared_model([target_input])
 
@@ -62,10 +60,10 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     model.save(outdir + "center_loss_model.h5")
 
-    model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
-    model.load_weights(outdir + "center_loss_model.h5")
+    # model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
+    # model.load_weights(outdir + "center_loss_model.h5")
 
     _,           X_train_embed  = model.predict([x_train, y_train])
     y_test_soft, X_test_embed   = model.predict([x_test, y_test])
 
-    return X_train_embed, X_test_embed, y_test_soft
+    return X_train_embed[:, :512], X_test_embed[:, :512], y_test_soft
