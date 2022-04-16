@@ -13,6 +13,7 @@ from tensorflow.keras.callbacks import TensorBoard
 from angular_grad import AngularGrad
 import os
 import argparse
+from keras.layers import Activation, BatchNormalization, Conv1D, Dense
 
 def l2_loss(y_true, y_pred):
   pre_logits, center = y_pred[:, :512], y_pred[:, 512:]
@@ -44,8 +45,9 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     target_input_1 = Input((1,), name='target_input 1')
     target_input_2 = Input((1,), name='target_input 2')
-    center = Embedding(10, opt.embedding_size)(target_input_1)
-    center = tf.keras.layers.Reshape((512, ))(center)
+    # center = Embedding(10, opt.embedding_size)(target_input_1)
+    # center = tf.keras.layers.Reshape((512, ))(center)
+    center = Dense(opt.embedding_size)(target_input_1)
     shared_model = tf.keras.models.Model(inputs=[target_input_1], outputs=[center])
     center = shared_model([target_input_2])
 
