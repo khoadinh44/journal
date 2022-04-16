@@ -3,11 +3,10 @@
 ######################################################
 
 from preprocessing.utils import to_one_hot
-from tensorflow.keras.layers import Input
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_loss
-from tensorflow.keras.layers import concatenate, Lambda, Embedding
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input
 import tensorflow.keras.backend as K
 import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
