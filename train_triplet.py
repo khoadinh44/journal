@@ -8,7 +8,7 @@ from train import parse_opt
 from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
-from train_routines.xentropy import train_xentropy
+from train_routines.new_triplet_center import new_triplet_center_train
 from preprocessing.utils import handcrafted_features
 
 from sklearn.utils import shuffle
@@ -75,6 +75,8 @@ def main(opt):
     train_embs, test_embs, y_test_solf = train_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
   if opt.embedding_model == 'triplet_center':
     train_embs, test_embs, y_test_solf = train_triplet_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+  if opt.embedding_model == 'new_triplet_center':
+    train_embs, test_embs, y_test_solf = train_new_triplet_center(opt, X_train, y_train, X_test, y_test, CNN_C_trip)
     
 
   print('\n Saving embedding phase...')   
