@@ -80,11 +80,6 @@ def new_triplet_loss(y_true, y_pred, alpha=0.999, lambda_=opt.lambda_):
     multiple_negative = tf.constant([1, negative.shape.as_list()[1]])
     mean_negative     = tf.tile(mean_negative, multiple_negative)
 
-    # variance ------------------------------
-    variance_anchor   = K.sum(K.square(anchor - mean_anchor), axis=1)/tf.cast(anchor.shape.as_list()[1], tf.float32)
-    variance_positive = K.sum(K.square(positive - mean_positive), axis=1)/tf.cast(positive.shape.as_list()[1], tf.float32)
-    variance_negative = K.sum(K.square(negative - mean_negative), axis=1)/tf.cast(negative.shape.as_list()[1], tf.float32)
-
     # distance between the anchor and the positive
     pos_dist          = K.sum(K.square(anchor - positive), axis=1)
     mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
