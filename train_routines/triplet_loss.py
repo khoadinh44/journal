@@ -61,7 +61,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     else:
       print('\n No weight file.')
     model.compile(loss=["categorical_crossentropy", triplet_loss],
-                  optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"], loss_weights=loss_weights)
+                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
@@ -69,27 +69,15 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
     negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
 
-    # anchor_t   = X_test[:, 0, :].reshape(-1, opt.input_shape, 1)
-    # positive_t = X_test[:, 1, :].reshape(-1, opt.input_shape, 1)
-    # negative_t = X_test[:, 2, :].reshape(-1, opt.input_shape, 1)
-
     y_anchor   = to_one_hot(Y_train[:, 0])
     y_positive = to_one_hot(Y_train[:, 1])
     y_negative = to_one_hot(Y_train[:, 2])
 
-    # y_anchor_t   = to_one_hot(Y_test[:, 0])
-    # y_positive_t = to_one_hot(Y_test[:, 1])
-    # y_negative_t = to_one_hot(Y_test[:, 2])
-
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
-    # target_t = np.concatenate((y_anchor_t, y_positive_t, y_negative_t), -1)
-
-    # test_data = [anchor_t, positive_t, negative_t]
-    # test_label = [target_t, target_t]
 
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative], y=[target, target],
-              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)])
+              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.1)
     model.save(outdir + "triplet_loss_model")
 
     # Embedding------------------------------------------------
