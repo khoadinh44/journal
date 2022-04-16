@@ -1,9 +1,8 @@
 from preprocessing.utils import to_one_hot
-from tensorflow.keras.layers import Input
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_center_loss
-from tensorflow.keras.layers import concatenate, Lambda, Embedding
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input
 import tensorflow.keras.backend as K
 import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
@@ -20,9 +19,9 @@ def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
         os.makedirs(outdir)
 
     x_input = Input(shape=(opt.input_shape, 1))
-    softmax, pre_logits = network(opt, model_input)
+    softmax, pre_logits = network(opt, x_input)
+    
     target_input = Input((1,), name='target_input')
-
     center = Embedding(10, embedding_size)(target_input)
     l2_loss = Lambda(lambda x: K.sum(K.square(x[0] - x[1][:, 0]), 1, keepdims=True), name='l2_loss')([pre_logits, center])
 
@@ -41,6 +40,6 @@ def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
     model.load_weights(outdir + "triplet_center_loss_model.h5")
 
     _, _, X_train_embed = model.predict([x_train, y_train])
-    _, _, X_test_embed = model.predict([x_test, y_test])
+    y_test_soft, _, X_test_embed = model.predict([x_test, y_test])
 
-    return X_train_embed, X_test_embed
+    return X_train_embed, X_test_embed, y_test_soft
