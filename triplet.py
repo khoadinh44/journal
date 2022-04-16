@@ -123,11 +123,9 @@ def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
 
     # distance between the anchor and the positive
     pos_dist          = K.sum(K.square(anchor - positive), axis=1)
-    mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
 
     # distance between the anchor and the negative
     neg_dist          = K.sum(K.square(anchor - negative), axis=1)
-    mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
 
     # compute loss
     basic_loss = pos_dist - neg_dist + alpha
