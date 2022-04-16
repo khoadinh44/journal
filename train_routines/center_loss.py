@@ -56,7 +56,7 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
                   loss_weights=loss_weights)
 
     model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
-              batch_size=opt.batch_size, epochs=opt.epoch, validation_split=0.2)
+              batch_size=opt.batch_size, epochs=opt.epoch, validation_split=0.1)
 
     model.save(outdir + "center_loss_model")
 
