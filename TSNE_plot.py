@@ -9,7 +9,6 @@ import matplotlib.patheffects as PathEffects
 import seaborn as sns
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow.contrib.tensorboard.plugins import projector
 
 
 def scatter(outdir, x, labels, subtitle=None):
