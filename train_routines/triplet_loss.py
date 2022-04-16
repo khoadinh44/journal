@@ -55,11 +55,12 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     tf.compat.v1.reset_default_graph()
 
     model = Model(inputs=[anchor_input, positive_input, negative_input], outputs=[merged_soft, merged_pre])
-    if os.path.isfile(outdir + "triplet_loss_model"):
-      model.load_weights(outdir + "triplet_loss_model")
-      print(f'\n Load weight: {outdir}triplet_loss_model')
-    else:
-      print('\n No weight file.')
+    # if os.path.isdir(outdir + "triplet_loss_model"):
+    #   model.load_weights(outdir + "triplet_loss_model")
+    #   print(f'\n Load weight: {outdir}triplet_loss_model')
+    # else:
+    #   print('\n No weight file.')
+
     model.compile(loss=["categorical_crossentropy", triplet_loss],
                   optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
@@ -78,11 +79,11 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative], y=[target, target],
               batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.1)
-    model.save(outdir + "triplet_loss_model")
+    tf.saved_model.save(model, outdir + 'triplet_loss_model')
 
     # Embedding------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
-    model.load_weights(outdir + "triplet_loss_model.h5")
+    model.load_weights(outdir + "triplet_loss_model")
 
     _, X_train_embed = model.predict([x_train])
     y_test_soft, X_test_embed = model.predict([x_test])
