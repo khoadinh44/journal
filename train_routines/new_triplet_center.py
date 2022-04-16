@@ -15,7 +15,7 @@ import argparse
 from angular_grad import AngularGrad
 from keras.layers import Dense
 
-def train(opt, x_train, y_train, x_test, y_test, network, i=100):
+def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=100):
     print("\n Training with Triplet Loss....")
 
     outdir = opt.outdir + "/triplet_loss/"
