@@ -3,11 +3,10 @@
 ##########################################################################
 
 from preprocessing.utils import to_one_hot
-from tensorflow.keras.layers import Input
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_center_loss
-from tensorflow.keras.layers import concatenate, Lambda, Embedding
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input
 import tensorflow.keras.backend as K
 import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
@@ -46,7 +45,7 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     model = Model(inputs=[x_input, target_input], outputs=[softmax, l2_loss, pre_logits])
     model.load_weights(outdir + "center_loss_model.h5")
 
-    _, X_train_embed = model.predict([x_train, y_train])
-    _, X_test_embed = model.predict([x_test, y_test])
+    _, X_train_embed          = model.predict([x_train, y_train])
+    y_test_soft, X_test_embed = model.predict([x_test, y_test])
 
-    return X_train_embed, X_test_embed
+    return X_train_embed, X_test_embed, y_test_soft
