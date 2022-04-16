@@ -1,179 +1,411 @@
-# triplet loss
-import tensorflow.keras.backend as K
-from itertools import permutations
-import random
-import tensorflow as tf
+from sklearn.model_selection import train_test_split
+from preprocessing.utils import convert_one_hot, choosing_features
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import VotingClassifier
+from sklearn.svm import SVC
+
+from sklearn.metrics import accuracy_score
+import argparse
 import numpy as np
-from train import parse_opt
-opt = parse_opt()
 
+def get_data(opt):
+  if opt.data_normal:
+    from load_data import Normal_0_train, Normal_0_test, Normal_1_train, Normal_1_test, Normal_2_train, Normal_2_test, Normal_3_train, Normal_3_test,\
+                          Normal_0_label, Normal_1_label, Normal_2_label, Normal_3_label
+  if opt.data_12k:
+    from load_data import B007_0_train, B007_0_test, B007_0_label, B007_1_train, B007_1_test, B007_1_label, B007_2_train, B007_2_test, B007_2_label, B007_3_train, B007_3_test, B007_3_label,\
+                          B014_0_train, B014_0_test, B014_0_label, B014_1_train, B014_1_test, B014_1_label, B014_2_train, B014_2_test, B014_2_label, B014_3_train, B014_3_test, B014_3_label,\
+                          B021_0_train, B021_0_test, B021_0_label, B021_1_train, B021_1_test, B021_1_label, B021_2_train, B021_2_test, B021_2_label, B021_3_train, B021_3_test, B021_3_label,\
+                          B028_0_train, B028_0_test, B028_0_label, B028_1_train, B028_1_test, B028_1_label, B028_2_train, B028_2_test, B028_2_label, B028_3_train, B028_3_test, B028_3_label,\
+                          IR007_0_train, IR007_0_test, IR007_0_label, IR007_1_train, IR007_1_test, IR007_1_label, IR007_2_train, IR007_2_test, IR007_2_label, IR007_3_train, IR007_3_test, IR007_3_label,\
+                          IR014_0_train, IR014_0_test, IR014_0_label, IR014_1_train, IR014_1_test, IR014_1_label, IR014_2_train, IR014_2_test, IR014_2_label, IR014_3_train, IR014_3_test, IR014_3_label,\
+                          IR021_0_train, IR021_0_test, IR021_0_label, IR021_1_train, IR021_1_test, IR021_1_label, IR021_2_train, IR021_2_test, IR021_2_label, IR021_3_train, IR021_3_test, IR021_3_label,\
+                          IR028_0_train, IR028_0_test, IR028_0_label, IR028_1_train, IR028_1_test, IR028_1_label, IR028_2_train, IR028_2_test, IR028_2_label, IR028_3_train, IR028_3_test, IR028_3_label,\
+                          OR007_12_0_train, OR007_12_0_test, OR007_12_0_label, OR007_12_1_train, OR007_12_1_test, OR007_12_1_label, OR007_12_2_train, OR007_12_2_test, OR007_12_2_label, OR007_12_3_train, OR007_12_3_test, OR007_12_3_label,\
+                          OR007_3_0_train, OR007_3_0_test, OR007_3_0_label, OR007_3_1_train, OR007_3_1_test, OR007_3_1_label, OR007_3_2_train, OR007_3_2_test, OR007_3_2_label, OR007_3_3_train, OR007_3_3_test, OR007_3_3_label,\
+                          OR007_6_0_train, OR007_6_0_test, OR007_6_0_label, OR007_6_1_train, OR007_6_1_test, OR007_6_1_label, OR007_6_2_train, OR007_6_2_test, OR007_6_2_label, OR007_6_3_train, OR007_6_3_test, OR007_6_3_label,\
+                          OR014_6_0_train, OR014_6_0_test, OR014_6_0_label, OR014_6_1_train, OR014_6_1_test, OR014_6_1_label, OR014_6_2_train, OR014_6_2_test, OR014_6_2_label, OR014_6_3_train, OR014_6_3_test, OR014_6_3_label,\
+                          OR021_6_0_train, OR021_6_0_test, OR021_6_0_label, OR021_6_1_train, OR021_6_1_test, OR021_6_1_label, OR021_6_2_train, OR021_6_2_test, OR021_6_2_label, OR021_6_3_train, OR021_6_3_test, OR021_6_3_label,\
+                          OR021_3_0_train, OR021_3_0_test, OR021_3_0_label, OR021_3_1_train, OR021_3_1_test, OR021_3_1_label, OR021_3_2_train, OR021_3_2_test, OR021_3_2_label, OR021_3_3_train, OR021_3_3_test, OR021_3_3_label,\
+                          OR021_12_0_train, OR021_12_0_test, OR021_12_0_label, OR021_12_1_train, OR021_12_1_test, OR021_12_1_label, OR021_12_2_train, OR021_12_2_test, OR021_12_2_label, OR021_12_3_train, OR021_12_3_test, OR021_12_3_label
+  
+  if opt.data_48k:
+    from load_data import B007_0_train, B007_0_test, B007_0_label, B007_1_train, B007_1_test, B007_1_label, B007_2_train, B007_2_test, B007_2_label, B007_3_train, B007_3_test, B007_3_label,\
+                          IR007_0_train, IR007_0_test, IR007_0_label, IR007_1_train, IR007_1_test, IR007_1_label, IR007_2_train, IR007_2_test, IR007_2_label, IR007_3_train, IR007_3_test, IR007_3_label,\
+                          OR007_12_0_train, OR007_12_0_test, OR007_12_0_label, OR007_12_1_train, OR007_12_1_test, OR007_12_1_label, OR007_12_2_train, OR007_12_2_test, OR007_12_2_label, OR007_12_3_train, OR007_12_3_test, OR007_12_3_label,\
+                          OR007_3_0_train, OR007_3_0_test, OR007_3_0_label, OR007_3_1_train, OR007_3_1_test, OR007_3_1_label, OR007_3_2_train, OR007_3_2_test, OR007_3_2_label, OR007_3_3_train, OR007_3_3_test, OR007_3_3_label,\
+                          OR007_6_0_train, OR007_6_0_test, OR007_6_0_label, OR007_6_1_train, OR007_6_1_test, OR007_6_1_label, OR007_6_2_train, OR007_6_2_test, OR007_6_2_label, OR007_6_3_train, OR007_6_3_test, OR007_6_3_label
 
-def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
-    data_xy = tuple([x, y])
+  if opt.case_0_6:
+    all_data_0_train = np.concatenate((Normal_0_train, IR007_0_train, B007_0_train, OR007_6_0_train, OR007_3_0_train, OR007_12_0_train))
+    all_data_0_test = np.concatenate((Normal_0_test, IR007_0_test, B007_0_test, OR007_6_0_test, OR007_3_0_test, OR007_12_0_test))
+    
+    Normal_0_label_all_train = convert_one_hot(Normal_0_label) * Normal_0_train.shape[0]
+    IR007_0_label_all_train = convert_one_hot(IR007_0_label) * IR007_0_train.shape[0]
+    B007_0_label_all_train = convert_one_hot(B007_0_label) * B007_0_train.shape[0]
+    OR007_6_0_label_all_train = convert_one_hot(OR007_6_0_label) * OR007_6_0_train.shape[0]
+    OR007_3_0_label_all_train = convert_one_hot(OR007_3_0_label) * OR007_3_0_train.shape[0]
+    OR007_12_0_label_all_train = convert_one_hot(OR007_12_0_label) * OR007_12_0_train.shape[0]
+    all_labels_0_train = np.concatenate((Normal_0_label_all_train, IR007_0_label_all_train, B007_0_label_all_train, OR007_6_0_label_all_train, OR007_3_0_label_all_train, OR007_12_0_label_all_train))
+    
+    Normal_0_label_all_test = convert_one_hot(Normal_0_label) * Normal_0_test.shape[0] 
+    IR007_0_label_all_test = convert_one_hot(IR007_0_label) * IR007_0_test.shape[0]
+    B007_0_label_all_test = convert_one_hot(B007_0_label) * B007_0_test.shape[0]
+    OR007_6_0_label_all_test = convert_one_hot(OR007_6_0_label) * OR007_6_0_test.shape[0]
+    OR007_3_0_label_all_test = convert_one_hot(OR007_3_0_label) * OR007_3_0_test.shape[0]
+    OR007_12_0_label_all_test = convert_one_hot(OR007_12_0_label) * OR007_12_0_test.shape[0]
+    all_labels_0_test = np.concatenate((Normal_0_label_all_test, IR007_0_label_all_test, B007_0_label_all_test, OR007_6_0_label_all_test, OR007_3_0_label_all_test, OR007_12_0_label_all_test))
 
-    trainsize = 1
+    X_train, X_test, y_train, y_test = all_data_0_train, all_data_0_test, all_labels_0_train, all_labels_0_test
 
-    triplet_train_pairs = []
-    y_triplet_pairs = []
-    #triplet_test_pairs = []
-    for data_class in sorted(set(data_xy[1])):
-        same_class_idx = np.where((data_xy[1] == data_class))[0]
-        diff_class_idx = np.where(data_xy[1] != data_class)[0]
-        A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=ap_pairs)  # Generating Anchor-Positive pairs
-        Neg_idx = random.sample(list(diff_class_idx), k=an_pairs)
+  if opt.case_1_7:
+    all_data_1_train = np.concatenate((Normal_1_train, IR007_1_train, B007_1_train, OR007_6_1_train, OR007_3_1_train, OR007_12_1_train))
+    Normal_1_label_all_train = convert_one_hot(Normal_1_label) * Normal_1_train.shape[0]
+    IR007_1_label_all_train = convert_one_hot(IR007_1_label) * IR007_1_train.shape[0]
+    B007_1_label_all_train = convert_one_hot(B007_1_label) * B007_1_train.shape[0]
+    OR007_6_1_label_all_train = convert_one_hot(OR007_6_1_label) * OR007_6_1_train.shape[0]
+    OR007_3_1_label_all_train = convert_one_hot(OR007_3_1_label) * OR007_3_1_train.shape[0]
+    OR007_12_1_label_all_train = convert_one_hot(OR007_12_1_label) * OR007_12_1_train.shape[0]
+    all_labels_1_train = np.concatenate((Normal_1_label_all_train, IR007_1_label_all_train, B007_1_label_all_train, OR007_6_1_label_all_train, OR007_3_1_label_all_train, OR007_12_1_label_all_train))
+  
+    all_data_1_test = np.concatenate((Normal_1_test, IR007_1_test, B007_1_test, OR007_6_1_test, OR007_3_1_test, OR007_12_1_test))
+    Normal_1_label_all_test = convert_one_hot(Normal_1_label) * Normal_1_test.shape[0]
+    IR007_1_label_all_test = convert_one_hot(IR007_1_label) * IR007_1_test.shape[0]
+    B007_1_label_all_test = convert_one_hot(B007_1_label) * B007_1_test.shape[0]
+    OR007_6_1_label_all_test = convert_one_hot(OR007_6_1_label) * OR007_6_1_test.shape[0]
+    OR007_3_1_label_all_test = convert_one_hot(OR007_3_1_label) * OR007_3_1_test.shape[0]
+    OR007_12_1_label_all_test = convert_one_hot(OR007_12_1_label) * OR007_12_1_test.shape[0]
+    all_labels_1_test = np.concatenate((Normal_1_label_all_test, IR007_1_label_all_test, B007_1_label_all_test, OR007_6_1_label_all_test, OR007_3_1_label_all_test, OR007_12_1_label_all_test))
+    
+    X_train, X_test, y_train, y_test = all_data_1_train, all_data_1_test, all_labels_1_train, all_labels_1_test
+    
+  if opt.case_2_8:
+    all_data_2_train = np.concatenate((Normal_2_train, IR007_2_train, B007_2_train, OR007_6_2_train, OR007_3_2_train, OR007_12_2_train))
+    Normal_2_label_all_train = convert_one_hot(Normal_2_label) * Normal_2_train.shape[0]
+    IR007_2_label_all_train = convert_one_hot(IR007_2_label) * IR007_2_train.shape[0]
+    B007_2_label_all_train = convert_one_hot(B007_2_label) * B007_2_train.shape[0]
+    OR007_6_2_label_all_train = convert_one_hot(OR007_6_2_label) * OR007_6_2_train.shape[0]
+    OR007_3_2_label_all_train = convert_one_hot(OR007_3_2_label) * OR007_3_2_train.shape[0]
+    OR007_12_2_label_all_train = convert_one_hot(OR007_12_2_label) * OR007_12_2_train.shape[0]
+    all_labels_2_train = np.concatenate((Normal_2_label_all_train, IR007_2_label_all_train, B007_2_label_all_train, OR007_6_2_label_all_train, OR007_3_2_label_all_train, OR007_12_2_label_all_train))
+    
+    all_data_2_test = np.concatenate((Normal_2_test, IR007_2_test, B007_2_test, OR007_6_2_test, OR007_3_2_test, OR007_12_2_test))
+    Normal_2_label_all_test = convert_one_hot(Normal_2_label) * Normal_2_test.shape[0]
+    IR007_2_label_all_test = convert_one_hot(IR007_2_label) * IR007_2_test.shape[0]
+    B007_2_label_all_test = convert_one_hot(B007_2_label) * B007_2_test.shape[0]
+    OR007_6_2_label_all_test = convert_one_hot(OR007_6_2_label) * OR007_6_2_test.shape[0]
+    OR007_3_2_label_all_test = convert_one_hot(OR007_3_2_label) * OR007_3_2_test.shape[0]
+    OR007_12_2_label_all_test = convert_one_hot(OR007_12_2_label) * OR007_12_2_test.shape[0]
+    all_labels_2_test = np.concatenate((Normal_2_label_all_test, IR007_2_label_all_test, B007_2_label_all_test, OR007_6_2_label_all_test, OR007_3_2_label_all_test, OR007_12_2_label_all_test))
+    
+    X_train, X_test, y_train, y_test = all_data_2_train, all_data_2_test, all_labels_2_train, all_labels_2_test
 
-        # train
-        A_P_len = len(A_P_pairs)
-        #Neg_len = len(Neg_idx)
-        for ap in A_P_pairs[:int(A_P_len * trainsize)]:
-            Anchor = data_xy[0][ap[0]]
-            y_Anchor = data_xy[1][ap[0]]
+  if opt.case_3_9:
+    all_data_3_train = np.concatenate((Normal_3_train, IR007_3_train, B007_3_train, OR007_6_3_train, OR007_3_3_train, OR007_12_3_train))
+    Normal_3_label_all_train = convert_one_hot(Normal_3_label) * Normal_3_train.shape[0]
+    IR007_3_label_all_train = convert_one_hot(IR007_3_label) * IR007_3_train.shape[0]
+    B007_3_label_all_train = convert_one_hot(B007_3_label) * B007_3_train.shape[0]
+    OR007_6_3_label_all_train = convert_one_hot(OR007_6_3_label) * OR007_6_3_train.shape[0]
+    OR007_3_3_label_all_train = convert_one_hot(OR007_3_3_label) * OR007_3_3_train.shape[0]
+    OR007_12_3_label_all_train = convert_one_hot(OR007_12_3_label) * OR007_12_3_train.shape[0]
+    all_labels_3_train = np.concatenate((Normal_3_label_all_train, IR007_3_label_all_train, B007_3_label_all_train, OR007_6_3_label_all_train, OR007_3_3_label_all_train, OR007_12_3_label_all_train))
+    
+    all_data_3_test = np.concatenate((Normal_3_test, IR007_3_test, B007_3_test, OR007_6_3_test, OR007_3_3_test, OR007_12_3_test))
+    Normal_3_label_all_test = convert_one_hot(Normal_3_label) * Normal_3_test.shape[0]
+    IR007_3_label_all_test = convert_one_hot(IR007_3_label) * IR007_3_test.shape[0]
+    B007_3_label_all_test = convert_one_hot(B007_3_label) * B007_3_test.shape[0]
+    OR007_6_3_label_all_test = convert_one_hot(OR007_6_3_label) * OR007_6_3_test.shape[0]
+    OR007_3_3_label_all_test = convert_one_hot(OR007_3_3_label) * OR007_3_3_test.shape[0]
+    OR007_12_3_label_all_test = convert_one_hot(OR007_12_3_label) * OR007_12_3_test.shape[0]
+    all_labels_3_test = np.concatenate((Normal_3_label_all_test, IR007_3_label_all_test, B007_3_label_all_test, OR007_6_3_label_all_test, OR007_3_3_label_all_test, OR007_12_3_label_all_test))
+    
+    X_train, X_test, y_train, y_test = all_data_3_train, all_data_3_test, all_labels_3_train, all_labels_3_test
 
-            Positive = data_xy[0][ap[1]]
-            y_Pos = data_xy[1][ap[1]]
+  if opt.case_4_10:
+    all_data_4_train = np.concatenate((all_data_0_train, all_data_1_train, all_data_2_train, all_data_3_train))
+    all_labels_4_train = np.concatenate((all_labels_0_train, all_labels_1_train, all_labels_2_train, all_labels_3_train))
+    
+    all_data_4_test = np.concatenate((all_data_0_test, all_data_1_test, all_data_2_test, all_data_3_test))
+    all_labels_4_test = np.concatenate((all_labels_0_test, all_labels_1_test, all_labels_2_test, all_labels_3_test))
+    
+    X_train, X_test, y_train, y_test = all_data_4_train, all_data_4_test, all_labels_4_train, all_labels_4_test
 
-            for n in Neg_idx:
-                Negative = data_xy[0][n]
-                y_Neg = data_xy[1][n]
-                
-                triplet_train_pairs.append([Anchor, Positive, Negative])
-                y_triplet_pairs.append([y_Anchor, y_Pos, y_Neg])
-                # test
+  if opt.case_5_11:
+    Normal_5_train = np.concatenate((Normal_0_train, Normal_1_train, Normal_2_train, Normal_3_train))
+    IR007_5_train = np.concatenate((IR007_0_train, IR007_1_train, IR007_2_train, IR007_3_train))
+    B007_5_train = np.concatenate((B007_0_train, B007_1_train, B007_2_train, B007_3_train))
+    OR007_6_5_train = np.concatenate((OR007_6_0_train, OR007_6_1_train, OR007_6_2_train, OR007_6_3_train))
+    OR007_3_5_train = np.concatenate((OR007_3_0_train, OR007_3_1_train, OR007_3_2_train, OR007_3_3_train))
+    OR007_12_5_train = np.concatenate((OR007_12_0_train, OR007_12_1_train, OR007_12_2_train, OR007_12_3_train))
 
-    return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
+    all_data_5_train = np.concatenate((Normal_5_train, IR007_5_train, B007_5_train, OR007_6_5_train, OR007_3_5_train, OR007_12_5_train))
 
-def new_triplet_loss(y_true, y_pred, alpha=0.5, lambda_=opt.lambda_):
-    """
-    Implementation of the triplet loss function
-    Arguments:
-    y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
-    y_pred -- python list containing three objects:
-            anchor -- the encodings for the anchor data
-            positive -- the encodings for the positive data (similar to anchor)
-            negative -- the encodings for the negative data (different from anchor)
-    Returns:
-    loss -- real number, value of the loss
-    """
-    total_lenght = y_pred.shape.as_list()[-1]
+    Normal_5_label_all_train = convert_one_hot(Normal_0_label) * Normal_5_train.shape[0]
+    IR007_5_label_all_train = convert_one_hot(IR007_0_label) * IR007_5_train.shape[0]
+    B007_5_label_all_train = convert_one_hot(B007_0_label) * B007_5_train.shape[0]
+    OR007_6_5_label_all_train = convert_one_hot(OR007_6_0_label) * OR007_6_5_train.shape[0]
+    OR007_3_5_label_all_train = convert_one_hot(OR007_3_0_label) * OR007_3_5_train.shape[0]
+    OR007_12_5_label_all_train = convert_one_hot(OR007_12_0_label) * OR007_12_5_train.shape[0]
+    all_labels_5_train = np.concatenate((Normal_5_label_all_train, IR007_5_label_all_train, B007_5_label_all_train, OR007_6_5_label_all_train, OR007_3_5_label_all_train, OR007_12_5_label_all_train))
 
-    anchor   = y_pred[:, 0:int(total_lenght * 1 / 4)]
-    anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
-    positive = y_pred[:, int(total_lenght * 1 / 4):int(total_lenght * 2 / 4)]
-    positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
-    negative = y_pred[:, int(total_lenght * 2 / 4):int(total_lenght * 3 / 4)]
-    negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
-    y_center = y_pred[:, int(total_lenght * 3 / 4):int(total_lenght * 4 / 4)]
-    y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
+    
+    Normal_5_test = np.concatenate((Normal_0_test, Normal_1_test, Normal_2_test, Normal_3_test))
+    IR007_5_test = np.concatenate((IR007_0_test, IR007_1_test, IR007_2_test, IR007_3_test))
+    B007_5_test = np.concatenate((B007_0_test, B007_1_test, B007_2_test, B007_3_test))
+    OR007_6_5_test = np.concatenate((OR007_6_0_test, OR007_6_1_test, OR007_6_2_test, OR007_6_3_test))
+    OR007_3_5_test = np.concatenate((OR007_3_0_test, OR007_3_1_test, OR007_3_2_test, OR007_3_3_test))
+    OR007_12_5_test = np.concatenate((OR007_12_0_test, OR007_12_1_test, OR007_12_2_test, OR007_12_3_test))
 
-    out_l2 = K.sum(K.square(anchor - y_center)) + K.sum(K.square(positive - y_center)) 
+    all_data_5_test = np.concatenate((Normal_5_test, IR007_5_test, B007_5_test, OR007_6_5_test, OR007_3_5_test, OR007_12_5_test))
 
-    # mean ---------------------------------
-    mean_anchor     = tf.expand_dims(tf.math.reduce_mean(anchor, axis=1), axis=1)
-    multiple_anchor = tf.constant([1, anchor.shape.as_list()[1]])
-    mean_anchor     = tf.tile(mean_anchor, multiple_anchor)
+    Normal_5_label_all_test = convert_one_hot(Normal_0_label) * Normal_5_test.shape[0]
+    IR007_5_label_all_test = convert_one_hot(IR007_0_label) * IR007_5_test.shape[0]
+    B007_5_label_all_test = convert_one_hot(B007_0_label) * B007_5_test.shape[0]
+    OR007_6_5_label_all_test = convert_one_hot(OR007_6_0_label) * OR007_6_5_test.shape[0]
+    OR007_3_5_label_all_test = convert_one_hot(OR007_3_0_label) * OR007_3_5_test.shape[0]
+    OR007_12_5_label_all_test = convert_one_hot(OR007_12_0_label) * OR007_12_5_test.shape[0]
+    all_labels_5_test = np.concatenate((Normal_5_label_all_test, IR007_5_label_all_test, B007_5_label_all_test, OR007_6_5_label_all_test, OR007_3_5_label_all_test, OR007_12_5_label_all_test))
+    
+    X_train, X_test, y_train, y_test = all_data_5_train, all_data_5_test, all_labels_5_train, all_labels_5_test
+  
+  if opt.case_12:
+    all_data_12_train = np.concatenate((all_data_4_train, IR021_0_train, B021_0_train, OR021_6_0_train, OR021_3_0_train, OR021_12_0_train,
+                                  IR021_1_train, B021_1_train, OR021_6_1_train, OR021_3_1_train, OR021_12_1_train,
+                                  IR021_2_train, B021_2_train, OR021_6_2_train, OR021_3_2_train, OR021_12_2_train,
+                                  IR021_3_train, B021_3_train, OR021_6_3_train, OR021_3_3_train, OR021_12_3_train))
+    
+    IR021_0_label_all_train = convert_one_hot(IR021_0_label) * IR021_0_train.shape[0]
+    B021_0_label_all_train = convert_one_hot(B021_0_label) * B021_0_train.shape[0]
+    OR021_6_0_label_all_train = convert_one_hot(OR021_6_0_label) * OR021_6_0_train.shape[0]
+    OR021_3_0_label_all_train = convert_one_hot(OR021_3_0_label) * OR021_3_0_train.shape[0]
+    OR021_12_0_label_all_train = convert_one_hot(OR021_12_0_label) * OR021_12_0_train.shape[0]
+    
+    IR021_1_label_all_train = convert_one_hot(IR021_1_label) * IR021_1_train.shape[0]
+    B021_1_label_all_train = convert_one_hot(B021_1_label) * B021_1_train.shape[0]
+    OR021_6_1_label_all_train = convert_one_hot(OR021_6_1_label) * OR021_6_1_train.shape[0]
+    OR021_3_1_label_all_train = convert_one_hot(OR021_3_1_label) * OR021_3_1_train.shape[0]
+    OR021_12_1_label_all_train = convert_one_hot(OR021_12_1_label) * OR021_12_1_train.shape[0]
+    
+    IR021_2_label_all_train = convert_one_hot(IR021_2_label) * IR021_2_train.shape[0]
+    B021_2_label_all_train = convert_one_hot(B021_2_label) * B021_2_train.shape[0]
+    OR021_6_2_label_all_train = convert_one_hot(OR021_6_2_label) * OR021_6_2_train.shape[0]
+    OR021_3_2_label_all_train = convert_one_hot(OR021_3_2_label) * OR021_3_2_train.shape[0]
+    OR021_12_2_label_all_train = convert_one_hot(OR021_12_2_label) * OR021_12_2_train.shape[0]
+    
+    IR021_3_label_all_train = convert_one_hot(IR021_3_label) * IR021_3_train.shape[0]
+    B021_3_label_all_train = convert_one_hot(B021_3_label) * B021_3_train.shape[0]
+    OR021_6_3_label_all_train = convert_one_hot(OR021_6_3_label) * OR021_6_3_train.shape[0]
+    OR021_3_3_label_all_train = convert_one_hot(OR021_3_3_label) * OR021_3_3_train.shape[0]
+    OR021_12_3_label_all_train = convert_one_hot(OR021_12_3_label) * OR021_12_3_train.shape[0]
+    
+    all_labels_12_train = np.concatenate((all_labels_4_train, IR021_0_label_all_train, B021_0_label_all_train, OR021_6_0_label_all_train, OR021_3_0_label_all_train, OR021_12_0_label_all_train,
+                                    IR021_1_label_all_train, B021_1_label_all_train, OR021_6_1_label_all_train, OR021_3_1_label_all_train, OR021_12_1_label_all_train,
+                                    IR021_2_label_all_train, B021_2_label_all_train, OR021_6_2_label_all_train, OR021_3_2_label_all_train, OR021_12_2_label_all_train,
+                                    IR021_3_label_all_train, B021_3_label_all_train, OR021_6_3_label_all_train, OR021_3_3_label_all_train, OR021_12_3_label_all_train))
+    
+    
+    all_data_12_test = np.concatenate((all_data_4_test, IR021_0_test, B021_0_test, OR021_6_0_test, OR021_3_0_test, OR021_12_0_test,
+                                  IR021_1_test, B021_1_test, OR021_6_1_test, OR021_3_1_test, OR021_12_1_test,
+                                  IR021_2_test, B021_2_test, OR021_6_2_test, OR021_3_2_test, OR021_12_2_test,
+                                  IR021_3_test, B021_3_test, OR021_6_3_test, OR021_3_3_test, OR021_12_3_test))
+    
+    IR021_0_label_all_test = convert_one_hot(IR021_0_label) * IR021_0_test.shape[0]
+    B021_0_label_all_test = convert_one_hot(B021_0_label) * B021_0_test.shape[0]
+    OR021_6_0_label_all_test = convert_one_hot(OR021_6_0_label) * OR021_6_0_test.shape[0]
+    OR021_3_0_label_all_test = convert_one_hot(OR021_3_0_label) * OR021_3_0_test.shape[0]
+    OR021_12_0_label_all_test = convert_one_hot(OR021_12_0_label) * OR021_12_0_test.shape[0]
+    
+    IR021_1_label_all_test = convert_one_hot(IR021_1_label) * IR021_1_test.shape[0]
+    B021_1_label_all_test = convert_one_hot(B021_1_label) * B021_1_test.shape[0]
+    OR021_6_1_label_all_test = convert_one_hot(OR021_6_1_label) * OR021_6_1_test.shape[0]
+    OR021_3_1_label_all_test = convert_one_hot(OR021_3_1_label) * OR021_3_1_test.shape[0]
+    OR021_12_1_label_all_test = convert_one_hot(OR021_12_1_label) * OR021_12_1_test.shape[0]
+    
+    IR021_2_label_all_test = convert_one_hot(IR021_2_label) * IR021_2_test.shape[0]
+    B021_2_label_all_test = convert_one_hot(B021_2_label) * B021_2_test.shape[0]
+    OR021_6_2_label_all_test = convert_one_hot(OR021_6_2_label) * OR021_6_2_test.shape[0]
+    OR021_3_2_label_all_test = convert_one_hot(OR021_3_2_label) * OR021_3_2_test.shape[0]
+    OR021_12_2_label_all_test = convert_one_hot(OR021_12_2_label) * OR021_12_2_test.shape[0]
+    
+    IR021_3_label_all_test = convert_one_hot(IR021_3_label) * IR021_3_test.shape[0]
+    B021_3_label_all_test = convert_one_hot(B021_3_label) * B021_3_test.shape[0]
+    OR021_6_3_label_all_test = convert_one_hot(OR021_6_3_label) * OR021_6_3_test.shape[0]
+    OR021_3_3_label_all_test = convert_one_hot(OR021_3_3_label) * OR021_3_3_test.shape[0]
+    OR021_12_3_label_all_test = convert_one_hot(OR021_12_3_label) * OR021_12_3_test.shape[0]
+    
+    all_labels_12_test = np.concatenate((all_labels_4_test, IR021_0_label_all_test, B021_0_label_all_test, OR021_6_0_label_all_test, OR021_3_0_label_all_test, OR021_12_0_label_all_test,
+                                    IR021_1_label_all_test, B021_1_label_all_test, OR021_6_1_label_all_test, OR021_3_1_label_all_test, OR021_12_1_label_all_test,
+                                    IR021_2_label_all_test, B021_2_label_all_test, OR021_6_2_label_all_test, OR021_3_2_label_all_test, OR021_12_2_label_all_test,
+                                    IR021_3_label_all_test, B021_3_label_all_test, OR021_6_3_label_all_test, OR021_3_3_label_all_test, OR021_12_3_label_all_test))
+    
+    X_train, X_test, y_train, y_test = all_data_12_train, all_data_12_test, all_labels_12_train, all_labels_12_test
+    
+  if opt.case_13:
+    IR021_13_train    = np.concatenate((IR007_5_train, IR021_0_train, IR021_1_train, IR021_2_train, IR021_3_train))
+    B021_13_train     = np.concatenate((B007_5_train, B021_0_train, B007_1_train, B021_2_train, B021_3_train))
+    OR021_6_13_train  = np.concatenate((OR007_6_5_train, OR021_6_0_train, OR021_6_1_train, OR021_6_2_train, OR021_6_3_train))
+    OR021_3_13_train  = np.concatenate((OR007_3_5_train, OR021_3_0_train, OR021_3_1_train, OR021_3_2_train, OR021_3_3_train))
+    OR021_12_13_train = np.concatenate((OR007_12_5_train, OR021_12_0_train, OR021_12_1_train, OR021_12_2_train, OR021_12_3_train))
 
-    mean_positive     = tf.expand_dims(tf.math.reduce_mean(positive, axis=1), axis=1)
-    multiple_positive = tf.constant([1, positive.shape.as_list()[1]])
-    mean_positive     = tf.tile(mean_positive, multiple_positive)
+    all_data_13_train = np.concatenate((Normal_5_train, IR021_13_train, B021_13_train, OR021_6_13_train, OR021_3_13_train, OR021_12_13_train))
+    
+    IR021_13_label_all_train = convert_one_hot(IR007_0_label) * IR021_13_train.shape[0]
+    B021_13_label_all_train = convert_one_hot(B007_0_label) * B021_13_train.shape[0]
+    OR021_6_13_label_all_train = convert_one_hot(OR007_6_0_label) * OR021_6_13_train.shape[0]
+    OR021_3_13_label_all_train = convert_one_hot(OR007_3_0_label) * OR021_3_13_train.shape[0]
+    OR021_12_13_label_all_train = convert_one_hot(OR007_12_0_label) * OR021_12_13_train.shape[0]
+    all_labels_13_train = np.concatenate((Normal_5_label_all_train, IR021_13_label_all_train, B021_13_label_all_train, OR021_6_13_label_all_train, OR021_3_13_label_all_train, OR021_12_13_label_all_train))
 
-    mean_negative     = tf.expand_dims(tf.math.reduce_mean(negative, axis=1), axis=1)
-    multiple_negative = tf.constant([1, negative.shape.as_list()[1]])
-    mean_negative     = tf.tile(mean_negative, multiple_negative)
+    
+    IR021_13_test    = np.concatenate((IR007_5_test, IR021_0_test, IR021_1_test, IR021_2_test, IR021_3_test))
+    B021_13_test     = np.concatenate((B007_5_test, B021_0_test, B007_1_test, B021_2_test, B021_3_test))
+    OR021_6_13_test  = np.concatenate((OR007_6_5_test, OR021_6_0_test, OR021_6_1_test, OR021_6_2_test, OR021_6_3_test))
+    OR021_3_13_test  = np.concatenate((OR007_3_5_test, OR021_3_0_test, OR021_3_1_test, OR021_3_2_test, OR021_3_3_test))
+    OR021_12_13_test = np.concatenate((OR007_12_5_test, OR021_12_0_test, OR021_12_1_test, OR021_12_2_test, OR021_12_3_test))
 
-    # variance ------------------------------
-    variance_anchor   = K.sum(K.square(anchor - mean_anchor), axis=1)/tf.cast(anchor.shape.as_list()[1], tf.float32)
-    variance_positive = K.sum(K.square(positive - mean_positive), axis=1)/tf.cast(positive.shape.as_list()[1], tf.float32)
-    variance_negative = K.sum(K.square(negative - mean_negative), axis=1)/tf.cast(negative.shape.as_list()[1], tf.float32)
+    all_data_13_test = np.concatenate((Normal_5_test, IR021_13_test, B021_13_test, OR021_6_13_test, OR021_3_13_test, OR021_12_13_test))
+    
+    IR021_13_label_all_test = convert_one_hot(IR007_0_label) * IR021_13_test.shape[0]
+    B021_13_label_all_test = convert_one_hot(B007_0_label) * B021_13_test.shape[0]
+    OR021_6_13_label_all_test = convert_one_hot(OR007_6_0_label) * OR021_6_13_test.shape[0]
+    OR021_3_13_label_all_test = convert_one_hot(OR007_3_0_label) * OR021_3_13_test.shape[0]
+    OR021_12_13_label_all_test = convert_one_hot(OR007_12_0_label) * OR021_12_13_test.shape[0]
+    all_labels_13_test = np.concatenate((Normal_5_label_all_test, IR021_13_label_all_test, B021_13_label_all_test, OR021_6_13_label_all_test, OR021_3_13_label_all_test, OR021_12_13_label_all_test))
 
-    # distance between the anchor and the positive
-    pos_dist          = K.sum(K.square(anchor - positive), axis=1)
-    mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
+    X_train, X_test, y_train, y_test = all_data_13_train, all_data_13_test, all_labels_13_train, all_labels_13_test
+  
+  if opt.case_14:
+    all_data_14_train = np.concatenate((all_data_12_train, IR014_0_train, IR014_1_train, IR014_2_train, IR014_3_train,
+                                  B014_0_train, B014_1_train, B014_2_train, B014_3_train,
+                                  OR014_6_0_train, OR014_6_1_train, OR014_6_2_train, OR014_6_3_train,
+                                  IR028_0_train, 	IR028_1_train, 	IR028_2_train, 	IR028_3_train,
+                                  B028_0_train, B028_1_train, B028_2_train, B028_3_train))
+    
+    IR014_0_label_all_train = convert_one_hot(IR014_0_label) * IR014_0_train.shape[0]
+    IR014_1_label_all_train = convert_one_hot(IR014_1_label) * IR014_1_train.shape[0]
+    IR014_2_label_all_train = convert_one_hot(IR014_2_label) * IR014_2_train.shape[0]
+    IR014_3_label_all_train = convert_one_hot(IR014_3_label) * IR014_3_train.shape[0]
 
-    # distance between the anchor and the negative
-    neg_dist          = K.sum(K.square(anchor - negative), axis=1)
-    mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
+    B014_0_label_all_train = convert_one_hot(B014_0_label) * B014_0_train.shape[0]
+    B014_1_label_all_train = convert_one_hot(B014_1_label) * B014_1_train.shape[0]
+    B014_2_label_all_train = convert_one_hot(B014_2_label) * B014_2_train.shape[0]
+    B014_3_label_all_train = convert_one_hot(B014_3_label) * B014_3_train.shape[0]
 
-    # compute loss
-    loss       = K.maximum(alpha - neg_dist, 0.0)
-    mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
+    OR014_6_0_label_all_train = convert_one_hot(OR014_6_0_label) * OR014_6_0_train.shape[0]
+    OR014_6_1_label_all_train = convert_one_hot(OR014_6_1_label) * OR014_6_1_train.shape[0]
+    OR014_6_2_label_all_train = convert_one_hot(OR014_6_2_label) * OR014_6_2_train.shape[0]
+    OR014_6_3_label_all_train = convert_one_hot(OR014_6_3_label) * OR014_6_3_train.shape[0]
 
-    return loss + out_l2
-    # return lambda_*loss + (1-lambda_)*mean_loss + out_l2
+    IR028_0_label_all_train = convert_one_hot(IR028_0_label) * IR028_0_train.shape[0]
+    IR028_1_label_all_train = convert_one_hot(IR028_1_label) * IR028_1_train.shape[0]
+    IR028_2_label_all_train = convert_one_hot(IR028_2_label) * IR028_2_train.shape[0]
+    IR028_3_label_all_train = convert_one_hot(IR028_3_label) * IR028_3_train.shape[0]
 
-def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
-    """
-    Implementation of the triplet loss function
-    Arguments:
-    y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
-    y_pred -- python list containing three objects:
-            anchor -- the encodings for the anchor data
-            positive -- the encodings for the positive data (similar to anchor)
-            negative -- the encodings for the negative data (different from anchor)
-    Returns:
-    loss -- real number, value of the loss
-    """
-    total_lenght = y_pred.shape.as_list()[-1]
+    B028_0_label_all_train = convert_one_hot(B028_0_label) * B028_0_train.shape[0]
+    B028_1_label_all_train = convert_one_hot(B028_1_label) * B028_1_train.shape[0]
+    B028_2_label_all_train = convert_one_hot(B028_2_label) * B028_2_train.shape[0]
+    B028_3_label_all_train = convert_one_hot(B028_3_label) * B028_3_train.shape[0]
+    
+    all_labels_14_train = np.concatenate((all_labels_12_train, IR014_0_label_all_train, IR014_1_label_all_train,  IR014_2_label_all_train, IR014_3_label_all_train,
+                                          B014_0_label_all_train,    B014_1_label_all_train,    B014_2_label_all_train,    B014_3_label_all_train,
+                                          OR014_6_0_label_all_train, OR014_6_1_label_all_train, OR014_6_2_label_all_train, OR014_6_3_label_all_train,
+                                          IR028_0_label_all_train,   IR028_1_label_all_train,   IR028_2_label_all_train,   IR028_3_label_all_train,
+                                          B028_0_label_all_train,    B028_1_label_all_train,    B028_2_label_all_train,    B028_3_label_all_train))
+ 
+  
+    all_data_14_test = np.concatenate((all_data_12_test, IR014_0_test, IR014_1_test, IR014_2_test, IR014_3_test,
+                                  B014_0_test, B014_1_test, B014_2_test, B014_3_test,
+                                  OR014_6_0_test, OR014_6_1_test, OR014_6_2_test, OR014_6_3_test,
+                                  IR028_0_test, 	IR028_1_test, 	IR028_2_test, 	IR028_3_test,
+                                  B028_0_test, B028_1_test, B028_2_test, B028_3_test))
+    
+    IR014_0_label_all_test = convert_one_hot(IR014_0_label) * IR014_0_test.shape[0]
+    IR014_1_label_all_test = convert_one_hot(IR014_1_label) * IR014_1_test.shape[0]
+    IR014_2_label_all_test = convert_one_hot(IR014_2_label) * IR014_2_test.shape[0]
+    IR014_3_label_all_test = convert_one_hot(IR014_3_label) * IR014_3_test.shape[0]
 
-    anchor   = y_pred[:, 0:int(total_lenght * 1 / 3)]
-    anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
-    positive = y_pred[:, int(total_lenght * 1 / 3):int(total_lenght * 2 / 3)]
-    positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
-    negative = y_pred[:, int(total_lenght * 2 / 3):int(total_lenght * 3 / 3)]
-    negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
+    B014_0_label_all_test = convert_one_hot(B014_0_label) * B014_0_test.shape[0]
+    B014_1_label_all_test = convert_one_hot(B014_1_label) * B014_1_test.shape[0]
+    B014_2_label_all_test = convert_one_hot(B014_2_label) * B014_2_test.shape[0]
+    B014_3_label_all_test = convert_one_hot(B014_3_label) * B014_3_test.shape[0]
 
-    # distance between the anchor and the positive
-    pos_dist          = K.sum(K.square(anchor - positive), axis=1)
+    OR014_6_0_label_all_test = convert_one_hot(OR014_6_0_label) * OR014_6_0_test.shape[0]
+    OR014_6_1_label_all_test = convert_one_hot(OR014_6_1_label) * OR014_6_1_test.shape[0]
+    OR014_6_2_label_all_test = convert_one_hot(OR014_6_2_label) * OR014_6_2_test.shape[0]
+    OR014_6_3_label_all_test = convert_one_hot(OR014_6_3_label) * OR014_6_3_test.shape[0]
 
-    # distance between the anchor and the negative
-    neg_dist          = K.sum(K.square(anchor - negative), axis=1)
+    IR028_0_label_all_test = convert_one_hot(IR028_0_label) * IR028_0_test.shape[0]
+    IR028_1_label_all_test = convert_one_hot(IR028_1_label) * IR028_1_test.shape[0]
+    IR028_2_label_all_test = convert_one_hot(IR028_2_label) * IR028_2_test.shape[0]
+    IR028_3_label_all_test = convert_one_hot(IR028_3_label) * IR028_3_test.shape[0]
 
-    # compute loss
-    basic_loss = pos_dist - neg_dist + alpha
-    loss       = K.maximum(basic_loss, 0.0)
+    B028_0_label_all_test = convert_one_hot(B028_0_label) * B028_0_test.shape[0]
+    B028_1_label_all_test = convert_one_hot(B028_1_label) * B028_1_test.shape[0]
+    B028_2_label_all_test = convert_one_hot(B028_2_label) * B028_2_test.shape[0]
+    B028_3_label_all_test = convert_one_hot(B028_3_label) * B028_3_test.shape[0]
+    
+    all_labels_14_test = np.concatenate((all_labels_12_test,       IR014_0_label_all_test,   IR014_1_label_all_test,  IR014_2_label_all_test, IR014_3_label_all_test,
+                                    B014_0_label_all_test,    B014_1_label_all_test,    B014_2_label_all_test,    B014_3_label_all_test,
+                                    OR014_6_0_label_all_test, OR014_6_1_label_all_test, OR014_6_2_label_all_test, OR014_6_3_label_all_test,
+                                    IR028_0_label_all_test,   IR028_1_label_all_test,   IR028_2_label_all_test,   IR028_3_label_all_test,
+                                    B028_0_label_all_test,    B028_1_label_all_test,    B028_2_label_all_test,    B028_3_label_all_test))
+    
+    X_train, X_test, y_train, y_test = all_data_14_train, all_data_14_test, all_labels_14_train, all_labels_14_test
+    
+  if opt.MFPT_data:
+    from load_data import baseline_1, baseline_2, baseline_3, baseline_1_label, baseline_2_label, baseline_3_label,\
+                          OuterRaceFault_1, OuterRaceFault_2, OuterRaceFault_3, OuterRaceFault_1_label, OuterRaceFault_2_label, OuterRaceFault_3_label,\
+                          OuterRaceFault_vload_1, OuterRaceFault_vload_2, OuterRaceFault_vload_3, OuterRaceFault_vload_4, OuterRaceFault_vload_5, OuterRaceFault_vload_6, OuterRaceFault_vload_7,\
+                          OuterRaceFault_vload_1_label, OuterRaceFault_vload_2_label, OuterRaceFault_vload_3_label, OuterRaceFault_vload_4_label, OuterRaceFault_vload_5_label, OuterRaceFault_vload_6_label, OuterRaceFault_vload_7_label,\
+                          InnerRaceFault_vload_1, InnerRaceFault_vload_2, InnerRaceFault_vload_3, InnerRaceFault_vload_4, InnerRaceFault_vload_5, InnerRaceFault_vload_6, InnerRaceFault_vload_7,\
+                          InnerRaceFault_vload_1_label, InnerRaceFault_vload_2_label, InnerRaceFault_vload_3_label, InnerRaceFault_vload_4_label, InnerRaceFault_vload_5_label, InnerRaceFault_vload_6_label, InnerRaceFault_vload_7_label
+    
+    baseline_1_label = convert_one_hot(baseline_1_label) * baseline_1.shape[0]
+    baseline_2_label = convert_one_hot(baseline_2_label) * baseline_2.shape[0]
+    baseline_3_label = convert_one_hot(baseline_3_label) * baseline_3.shape[0]
 
-    return loss
+    OuterRaceFault_1_label = convert_one_hot(OuterRaceFault_1_label) * OuterRaceFault_1.shape[0]
+    OuterRaceFault_2_label = convert_one_hot(OuterRaceFault_2_label) * OuterRaceFault_2.shape[0]
+    OuterRaceFault_3_label = convert_one_hot(OuterRaceFault_3_label) * OuterRaceFault_3.shape[0]
 
+    OuterRaceFault_vload_1_label = convert_one_hot(OuterRaceFault_vload_1_label) * OuterRaceFault_vload_1.shape[0]
+    OuterRaceFault_vload_2_label = convert_one_hot(OuterRaceFault_vload_2_label) * OuterRaceFault_vload_2.shape[0]
+    OuterRaceFault_vload_3_label = convert_one_hot(OuterRaceFault_vload_3_label) * OuterRaceFault_vload_3.shape[0]
+    OuterRaceFault_vload_4_label = convert_one_hot(OuterRaceFault_vload_4_label) * OuterRaceFault_vload_4.shape[0]
+    OuterRaceFault_vload_5_label = convert_one_hot(OuterRaceFault_vload_5_label) * OuterRaceFault_vload_5.shape[0]
+    OuterRaceFault_vload_6_label = convert_one_hot(OuterRaceFault_vload_6_label) * OuterRaceFault_vload_6.shape[0]
+    OuterRaceFault_vload_7_label = convert_one_hot(OuterRaceFault_vload_7_label) * OuterRaceFault_vload_7.shape[0]
 
-def triplet_center_loss(y_true, y_pred, n_classes= 3, alpha=0.4):
-    """
-    Implementation of the triplet loss function
-    Arguments:
-    y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
-    y_pred -- python list containing three objects:
-            anchor -- the encodings for the anchor data
-            positive -- the encodings for the positive data (similar to anchor)
-            negative -- the encodings for the negative data (different from anchor)
-    Returns:
-    loss -- real number, value of the loss
-    """
-    pre_logits, center = y_pred[:, :512], y_pred[:, 512:]
-    y_pred = K.sum(K.square(pre_logits - center), axis=1)
+    InnerRaceFault_vload_1_label = convert_one_hot(InnerRaceFault_vload_1_label) * InnerRaceFault_vload_1.shape[0]
+    InnerRaceFault_vload_2_label = convert_one_hot(InnerRaceFault_vload_2_label) * InnerRaceFault_vload_2.shape[0]
+    InnerRaceFault_vload_3_label = convert_one_hot(InnerRaceFault_vload_3_label) * InnerRaceFault_vload_3.shape[0]
+    InnerRaceFault_vload_4_label = convert_one_hot(InnerRaceFault_vload_4_label) * InnerRaceFault_vload_4.shape[0]
+    InnerRaceFault_vload_5_label = convert_one_hot(InnerRaceFault_vload_5_label) * InnerRaceFault_vload_5.shape[0]
+    InnerRaceFault_vload_6_label = convert_one_hot(InnerRaceFault_vload_6_label) * InnerRaceFault_vload_6.shape[0]
+    InnerRaceFault_vload_7_label = convert_one_hot(InnerRaceFault_vload_7_label) * InnerRaceFault_vload_7.shape[0]
 
-    # repeat y_true for n_classes and == np.arange(n_classes)
-    # repeat also y_pred and apply mask
-    # obtain min for each column min vector for each class
+    X_train = np.concatenate((baseline_1, baseline_2, OuterRaceFault_1, OuterRaceFault_2, OuterRaceFault_vload_1, OuterRaceFault_vload_2, OuterRaceFault_vload_4, OuterRaceFault_vload_5, OuterRaceFault_vload_7, InnerRaceFault_vload_1, InnerRaceFault_vload_2, InnerRaceFault_vload_4, InnerRaceFault_vload_5, InnerRaceFault_vload_7))
+    y_train = np.concatenate((baseline_1_label, baseline_2_label, OuterRaceFault_1_label, OuterRaceFault_2_label, OuterRaceFault_vload_1_label, OuterRaceFault_vload_2_label, OuterRaceFault_vload_4_label, OuterRaceFault_vload_5_label, OuterRaceFault_vload_7_label, InnerRaceFault_vload_1_label, InnerRaceFault_vload_2_label, InnerRaceFault_vload_4_label, InnerRaceFault_vload_5_label, InnerRaceFault_vload_7_label))
+    X_test = np.concatenate((baseline_3, baseline_2, OuterRaceFault_3, OuterRaceFault_vload_3, OuterRaceFault_vload_6, InnerRaceFault_vload_3, InnerRaceFault_vload_6))
+    y_test = np.concatenate((baseline_3_label, baseline_2_label, OuterRaceFault_3_label, OuterRaceFault_vload_3_label, OuterRaceFault_vload_6_label, InnerRaceFault_vload_3_label, InnerRaceFault_vload_6_label))
+  
+  if opt.PU_data_table_8:
+    from load_data import Healthy_train, Healthy_train_label, OR_Damage_train, OR_Damage_train_label, IR_Damage_train, IR_Damage_train_label,\
+                          Healthy_test, Healthy_test_label, OR_Damage_test, OR_Damage_test_label, IR_Damage_test, IR_Damage_test_label
+    
+    Healthy_train_label = convert_one_hot(Healthy_train_label) * Healthy_train.shape[0]
+    OR_Damage_train_label = convert_one_hot(OR_Damage_train_label) * OR_Damage_train.shape[0]
+    IR_Damage_train_label = convert_one_hot(IR_Damage_train_label) * IR_Damage_train.shape[0]
 
-    classes = tf.range(0, n_classes,dtype=tf.float32)
-    y_pred_r = tf.reshape(y_pred, (tf.shape(y_pred)[0], 1))
-    y_pred_r = tf.keras.backend.repeat(y_pred_r, n_classes)
+    Healthy_test_label = convert_one_hot(Healthy_test_label) * Healthy_test.shape[0]
+    OR_Damage_test_label = convert_one_hot(OR_Damage_test_label) * OR_Damage_test.shape[0]
+    IR_Damage_test_label = convert_one_hot(IR_Damage_test_label) * IR_Damage_test.shape[0]
 
-    y_true_r = tf.reshape(y_true, (tf.shape(y_true)[0], 1))
-    y_true_r = tf.keras.backend.repeat(y_true_r, n_classes)
-
-    mask = tf.equal(y_true_r[:, :, 0], classes)
-
-    #mask2 = tf.ones((tf.shape(y_true_r)[0], tf.shape(y_true_r)[1]))  # todo inf
-
-    # use tf.where(tf.equal(masked, 0.0), np.inf*tf.ones_like(masked), masked)
-
-    masked = y_pred_r[:, :, 0] * tf.cast(mask, tf.float32) #+ (mask2 * tf.cast(tf.logical_not(mask), tf.float32))*tf.constant(float(2**10))
-    masked = tf.where(tf.equal(masked, 0.0), np.inf*tf.ones_like(masked), masked)
-
-    minimums = tf.math.reduce_min(masked, axis=1)
-
-    loss = K.max(y_pred - minimums +alpha ,0)
-
-    # obtain a mask for each pred
-
-
-    return loss
+    X_train = np.concatenate((Healthy_train, OR_Damage_train, IR_Damage_train))
+    y_train = np.concatenate((Healthy_train_label, OR_Damage_train_label, IR_Damage_train_label))
+    X_test = np.concatenate((Healthy_test, OR_Damage_test, IR_Damage_test))
+    y_test = np.concatenate((Healthy_test_label, OR_Damage_test_label, IR_Damage_test_label))
+  return X_train, X_test, y_train, y_test
