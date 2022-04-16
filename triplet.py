@@ -43,7 +43,7 @@ def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
 def new_triplet_loss(y_true, y_pred, alpha=0.5, lambda_=opt.lambda_):
-        """
+    """
     Implementation of the triplet loss function
     Arguments:
     y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
