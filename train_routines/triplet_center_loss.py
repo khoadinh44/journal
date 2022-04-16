@@ -56,6 +56,9 @@ def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     _,           X_train_embed  = model.predict([x_train, y_train])
     y_test_soft, X_test_embed   = model.predict([x_test, y_test])
-
+    
+    from TSNE_plot import tsne_plot
+    tsne_plot(outdir, "new_triplet_loss_model", X_train_embed[:, :512], X_test_embed[:, :512], y_train, y_test)
+    
     return X_train_embed[:, :512], X_test_embed[:, :512], y_test_soft
 
