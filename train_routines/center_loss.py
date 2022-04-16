@@ -13,7 +13,7 @@ from tensorflow.keras.callbacks import TensorBoard
 from angular_grad import AngularGrad
 import os
 import argparse
-from keras.layers import Activation, BatchNormalization, Conv1D, Dense
+from keras.layers import Dense
 
 def l2_loss(y_true, y_pred):
   pre_logits, center = y_pred[:, :512], y_pred[:, 512:]
