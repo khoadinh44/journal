@@ -8,7 +8,7 @@ from train import parse_opt
 from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
-from train_routines.new_triplet_center import new_triplet_center_train
+from train_routines.new_triplet_center import train_new_triplet_center
 from preprocessing.utils import handcrafted_features
 
 from sklearn.utils import shuffle
@@ -132,6 +132,6 @@ def main(opt):
 
 if __name__ == '__main__':
   opt = parse_opt()
-  if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
-    os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
+  # if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
+  #   os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
   main(opt)
