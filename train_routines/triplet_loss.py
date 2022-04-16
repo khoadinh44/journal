@@ -61,7 +61,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     else:
       print('\n No weight file.')
     model.compile(loss=["categorical_crossentropy", triplet_loss],
-                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
+                  optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
