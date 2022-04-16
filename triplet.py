@@ -97,7 +97,7 @@ def triplet_loss(y_true, y_pred, alpha=0.999, lambda_=opt.lambda_):
     return (1.-lambda_)*loss + lambda_*mean_loss
 
 
-def triplet_center_loss(y_true, y_pred, n_classes= 10, alpha=0.4):
+def triplet_center_loss(y_true, y_pred, n_classes= 3, alpha=0.4):
     """
     Implementation of the triplet loss function
     Arguments:
@@ -109,11 +109,8 @@ def triplet_center_loss(y_true, y_pred, n_classes= 10, alpha=0.4):
     Returns:
     loss -- real number, value of the loss
     """
-    print('y_pred.shape = ', y_pred)
-
-    total_lenght = y_pred.shape.as_list()[-1]
-    #     print('total_lenght=',  total_lenght)
-    #     total_lenght =12
+    pre_logits, center = y_pred[:, :512], y_pred[:, 512:]
+    y_pred = K.sum(K.square(pre_logits - center), axis=1)
 
     # repeat y_true for n_classes and == np.arange(n_classes)
     # repeat also y_pred and apply mask
