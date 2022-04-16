@@ -42,7 +42,7 @@ def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
 
     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
-def new_triplet_loss(y_true, y_pred, alpha=0.999, lambda_=opt.lambda_):
+def new_triplet_loss(y_true, y_pred, alpha=0.5, lambda_=opt.lambda_):
         """
     Implementation of the triplet loss function
     Arguments:
@@ -63,7 +63,7 @@ def new_triplet_loss(y_true, y_pred, alpha=0.999, lambda_=opt.lambda_):
     negative = y_pred[:, int(total_lenght * 2 / 4):int(total_lenght * 3 / 4)]
     negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
     y_center = y_pred[:, int(total_lenght * 3 / 4):int(total_lenght * 4 / 4)]
-    y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
+#     y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
 
     out_l2 = K.sum(K.square(anchor - y_center)) + K.sum(K.square(positive - y_center))
 
@@ -94,7 +94,7 @@ def new_triplet_loss(y_true, y_pred, alpha=0.999, lambda_=opt.lambda_):
     mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
 
     # compute loss
-    loss       = K.maximum(pos_dist - neg_dist + alpha, 0.0)
+    loss       = K.maximum(alpha - neg_dist, 0.0)
     mean_loss     = K.maximum(mean_pos_dist - mean_neg_dist + alpha, 0.0)
 
     # return (lambda_/3.)*loss + (lambda_/3.)*mean_loss + (lambda_/3.)*out_l2
