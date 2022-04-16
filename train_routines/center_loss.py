@@ -14,6 +14,11 @@ from angular_grad import AngularGrad
 import os
 import argparse
 
+def l2_loss(y_true, y_pred):
+  pre_logits, center = y_pred[:, :512], y_pred[:, 512:]
+  out_l2 = K.sum(K.square(pre_logits - center))
+  return out_l2
+
 
 def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("\n Training with Center Loss....")
@@ -24,24 +29,36 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
         os.makedirs(outdir)
     loss_weights = [1, 0.1]
 
-    x_input = Input(shape=(opt.input_shape, 1))
+    x_input_1 = Input(shape=(opt.input_shape, 1), name='x_input 1')
+    x_input_2 = Input(shape=(opt.input_shape, 1), name='x_input 2')
     y_train_onehot = to_one_hot(y_train)
-    
-    softmax, pre_logits = network(opt, x_input)
-    target_input = Input((1,), name='target_input')
-    center = Embedding(10, opt.embedding_size)(target_input)
-    
-    l2_loss = Lambda(lambda x: K.sum(K.square(x[0] - x[1][:, 0]), 1, keepdims=True), name='l2_loss')([pre_logits, center])
-    
-    tf.keras.backend.clear_session()
-    tf.compat.v1.reset_default_graph()
-    model = tf.keras.models.Model(inputs=[x_input, target_input], outputs=[softmax, l2_loss])
-    model.compile(loss=["categorical_crossentropy", lambda y_true, y_pred: y_pred],
-                  optimizer=tf.keras.optimizers.Adam(), metrics=["accuracy"],
+
+    x_train = x_train.astype(np.float32)
+    x_test  = x_test.astype(np.float32)
+    y_train = y_train.astype(np.float32)
+    y_test  = y_test.astype(np.float32)
+
+    softmax, pre_logits = network(opt, x_input_1)
+    shared_model = tf.keras.models.Model(inputs=[x_input_1], outputs=[softmax, pre_logits])
+    softmax, pre_logits = shared_model([x_input_2])
+
+    target_input_1 = Input((1,), name='target_input 1')
+    target_input_2 = Input((1,), name='target_input 2')
+    center = Embedding(10, opt.embedding_size)(target_input_1)
+    center = tf.keras.layers.Reshape((512, ))(center)
+    shared_model = tf.keras.models.Model(inputs=[target_input_1], outputs=[center])
+    center = shared_model([target_input_2])
+
+    merged_pre = concatenate([pre_logits, center], axis=-1, name='merged_pre')
+
+    model = tf.keras.models.Model(inputs=[x_input_2, target_input_2], outputs=[softmax, merged_pre])
+
+    model.compile(loss=["categorical_crossentropy", l2_loss],
+                  optimizer=AngularGrad(), metrics=["accuracy"],
                   loss_weights=loss_weights)
 
-    model.fit([x_train, y_train], y=[y_train_onehot, y_train],
-              batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.2)
+    model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
+              batch_size=opt.batch_size, epochs=opt.epoch, validation_split=0.2)
 
     model.save(outdir + "center_loss_model.h5")
 
