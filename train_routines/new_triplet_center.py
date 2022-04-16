@@ -18,7 +18,7 @@ from keras.layers import Dense
 def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=100):
     print("\n Training with Triplet Loss....")
 
-    outdir = opt.outdir + "/triplet_loss/"
+    outdir = opt.outdir + "/new_triplet_loss/"
     if i==0:
       epoch = 50 # 30
     else:
