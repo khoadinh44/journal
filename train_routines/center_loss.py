@@ -21,6 +21,7 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
+    loss_weights = [1, 0.1]
 
     x_input = Input(shape=(opt.input_shape, 1))
     y_train_onehot = to_one_hot(y_train)
