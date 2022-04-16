@@ -67,8 +67,15 @@ def main(opt):
   X_test, y_test = shuffle(X_test, y_test)
   print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
-
-  train_embs, test_embs, y_test_solf = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+  
+  print('\n Loading model...')
+  if opt.embedding_model == 'triplet':
+    train_embs, test_embs, y_test_solf = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+  if opt.embedding_model == 'center':
+    train_embs, test_embs, y_test_solf = train_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+  if opt.embedding_model == 'triplet_center':
+    train_embs, test_embs, y_test_solf = train_triplet_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+    
 
   print('\n Saving embedding phase...')   
   this_acc = []
