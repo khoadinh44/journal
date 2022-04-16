@@ -55,9 +55,9 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     tf.compat.v1.reset_default_graph()
 
     model = Model(inputs=[anchor_input, positive_input, negative_input], outputs=[merged_soft, merged_pre])
-    if os.path.isfile(outdir + "triplet_loss_model.h5"):
-      model.load_weights(outdir + "triplet_loss_model.h5")
-      print(f'\n Load weight: {outdir}triplet_loss_model.h5')
+    if os.path.isfile(outdir + "triplet_loss_model"):
+      model.load_weights(outdir + "triplet_loss_model")
+      print(f'\n Load weight: {outdir}triplet_loss_model')
     else:
       print('\n No weight file.')
     model.compile(loss=["categorical_crossentropy", triplet_loss],
@@ -90,7 +90,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative], y=[target, target],
               batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)])
-    model.save(outdir + "triplet_loss_model.h5")
+    model.save(outdir + "triplet_loss_model")
 
     # Embedding------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
@@ -98,4 +98,8 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
 
     _, X_train_embed = model.predict([x_train])
     y_test_soft, X_test_embed = model.predict([x_test])
+    
+    from TSNE_plot import tsne_plot
+    tsne_plot(outdir, "triplet_loss_model", X_train_embed, X_test_embed, y_train, y_test)
+    
     return X_train_embed, X_test_embed, y_test_soft
