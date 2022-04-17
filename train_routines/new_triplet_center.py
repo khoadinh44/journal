@@ -6,7 +6,7 @@ from preprocessing.utils import to_one_hot
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, new_triplet_loss
-from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization
 import tensorflow.keras.backend as K
 import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
@@ -48,7 +48,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    center = Dense(int(opt.embedding_size/2), activation='relu', use_bias=False)(target_input)
+    center = Dense(10, activation='relu', use_bias=False)(target_input)
     if opt.activation == 'softmax':
       center = Dense(opt.embedding_size, activation='softmax', use_bias=False)(center)
     elif opt.activation == 'relu':
@@ -116,6 +116,8 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "new_triplet_loss_model")
 
+    x_train, y_train = choosing_features(x_train, y_train)
+    
     _, X_train_embed = model.predict([x_train])
     y_test_soft, X_test_embed = model.predict([x_test])
     
