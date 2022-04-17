@@ -48,27 +48,27 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    # center = Dense(opt.embedding_size//3)(target_input)
+    center = Dense(int(opt.embedding_size*2), activation='relu')(target_input)
     if opt.activation == 'softmax':
-      center = Dense(opt.embedding_size, activation='softmax')(target_input)
+      center = Dense(opt.embedding_size, activation='softmax')(center)
     elif opt.activation == 'relu':
-      center = Dense(opt.embedding_size, activation='relu')(target_input)
+      center = Dense(opt.embedding_size, activation='relu')(center)
     elif opt.activation == 'sigmoid':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.sigmoid)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.sigmoid)(center)
     elif opt.activation == 'softplus':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus)(center)
     elif opt.activation == 'softsign':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus)(center)
     elif opt.activation == 'tanh':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.tanh)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.tanh)(center)
     elif opt.activation == 'selu':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.selu)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.selu)(center)
     elif opt.activation == 'elu':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.elu)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.elu)(center)
     elif opt.activation == 'exponential':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential)(center)
     else:
-      center = Dense(opt.embedding_size)(target_input)
+      center = Dense(opt.embedding_size)(center)
 
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = center_shared_model([target_input])
