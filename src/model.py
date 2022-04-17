@@ -101,9 +101,8 @@ def CNN_C_trip(opt, input_):
     
     x = TransformerLayer(x, c=48)
     x = Dense(opt.embedding_size, use_bias=False)(x)
-    x = Activation('relu')(x)
     x = BatchNormalization(momentum=0.995, epsilon=0.001, scale=False, name='BatchNorm')(x)
-    pre_logit = x
+    pre_logit = Activation('relu')(x)
     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
     return softmax, pre_logit
