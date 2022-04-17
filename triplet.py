@@ -42,7 +42,7 @@ def generate_triplet(x, y,  ap_pairs=10, an_pairs=10):
 
     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
-def new_triplet_loss(y_true, y_pred, alpha=0.2, lambda_=opt.lambda_):
+def new_triplet_loss(y_true, y_pred, alpha=0.5, lambda_=opt.lambda_):
     """
     Implementation of the triplet loss function
     Arguments:
@@ -97,7 +97,7 @@ def new_triplet_loss(y_true, y_pred, alpha=0.2, lambda_=opt.lambda_):
     loss       = K.maximum(alpha - neg_dist, 0.0)
     mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
 
-    return loss + out_l2
+    return out_l2 + loss
 
 def triplet_loss(y_true, y_pred, alpha=0.6, lambda_=opt.lambda_):
     """
