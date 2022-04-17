@@ -48,7 +48,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    center = Dense(int(opt.embedding_size*2), activation='relu')(target_input)
+    center = Dense(int(opt.embedding_size/2), activation='relu')(target_input)
     if opt.activation == 'softmax':
       center = Dense(opt.embedding_size, activation='softmax')(center)
     elif opt.activation == 'relu':
