@@ -91,7 +91,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     #   print('\n No weight file.')
 
     model.compile(loss=["categorical_crossentropy", new_triplet_loss],
-                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
+                  optimizer=AngularGrad(learning_rate=0.05), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
