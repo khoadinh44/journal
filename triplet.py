@@ -8,7 +8,7 @@ from train import parse_opt
 opt = parse_opt()
 
 
-def generate_triplet(x, y,  ap_pairs=10, an_pairs=10):
+def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
     data_xy = tuple([x, y])
 
     trainsize = 1
@@ -42,7 +42,7 @@ def generate_triplet(x, y,  ap_pairs=10, an_pairs=10):
 
     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
-def new_triplet_loss(y_true, y_pred, alpha=0.5, lambda_=opt.lambda_):
+def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
     Implementation of the triplet loss function
     Arguments:
