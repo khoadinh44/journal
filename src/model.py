@@ -100,7 +100,7 @@ def CNN_C_trip(opt, input_):
     x = GlobalAveragePooling1D()(x)
     
     x = TransformerLayer(x, c=48)
-    x = Dense(opt.embedding_size)(x)
+    x = Dense(opt.embedding_size, use_bias=False)(x)
     x = BatchNormalization()(x)
     pre_logit = Activation('relu')(x)
     softmax = Dense(opt.num_classes, activation='softmax')(x)
