@@ -107,7 +107,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
 
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative, y_target], y=[target, y_target],
-              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.1, shuffle=True)
+              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], shuffle=True)
     tf.saved_model.save(model, outdir + 'new_triplet_loss_model')
 
     # Embedding------------------------------------------------
