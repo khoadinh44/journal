@@ -48,8 +48,26 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    center = Dense(opt.embedding_size//3)(target_input)
-    center = Dense(opt.embedding_size, activation='relu')(center)
+    # center = Dense(opt.embedding_size//3)(target_input)
+    if opt.activation == 'softmax':
+      center = Dense(opt.embedding_size, activation='softmax')(target_input)
+    if opt.activation == 'relu':
+      center = Dense(opt.embedding_size, activation='relu')(target_input)
+    if opt.activation == 'sigmoid':
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.sigmoid())(target_input)
+    if opt.activation == 'softplus':
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus())(target_input)
+    if opt.activation == 'softsign':
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus())(target_input)
+    if opt.activation == 'tanh':
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.tanh())(target_input)
+    if opt.activation == 'selu':
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.selu())(target_input)
+    if opt.activation == 'elu':
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.elu())(target_input)
+    if opt.activation == 'exponential':
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential())(target_input)
+
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = center_shared_model([target_input])
 
@@ -98,6 +116,6 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     y_test_soft, X_test_embed = model.predict([x_test])
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, "new_triplet_loss_model", X_train_embed, X_test_embed, y_train, y_test)
+    tsne_plot(outdir, opt.activation, X_train_embed, X_test_embed, y_train, y_test)
     
     return X_train_embed, X_test_embed, y_test_soft
