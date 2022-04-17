@@ -48,25 +48,25 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    # center = Dense(10, activation='relu')(target_input)
+    center = Dense(opt.embedding_size//3, activation='relu', use_bias=False)(target_input)
     if opt.activation == 'softmax':
-      center = Dense(opt.embedding_size, activation='softmax', use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation='softmax', use_bias=False)(center)
     elif opt.activation == 'relu':
-      center = Dense(opt.embedding_size, activation='relu', use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation='relu', use_bias=False)(center)
     elif opt.activation == 'sigmoid':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.sigmoid, use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.sigmoid, use_bias=False)(center)
     elif opt.activation == 'softplus':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus, use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus, use_bias=False)(center)
     elif opt.activation == 'softsign':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus, use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.softplus, use_bias=False)(center)
     elif opt.activation == 'tanh':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.tanh, use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.tanh, use_bias=False)(center)
     elif opt.activation == 'selu':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.selu, use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.selu, use_bias=False)(center)
     elif opt.activation == 'elu':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.elu, use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.elu, use_bias=False)(center)
     elif opt.activation == 'exponential':
-      center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential, use_bias=False)(target_input)
+      center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential, use_bias=False)(center)
     else:
       center = Dense(opt.embedding_size)(target_input)
     
@@ -91,7 +91,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     #   print('\n No weight file.')
 
     model.compile(loss=["categorical_crossentropy", new_triplet_loss],
-                  optimizer=AngularGrad(learning_rate=0.05), metrics=["accuracy"], loss_weights=loss_weights)
+                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
