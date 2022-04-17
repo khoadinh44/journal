@@ -48,7 +48,8 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    center = Dense(10, activation='relu')(target_input)
+    # center = Dense(10, activation='relu')(target_input)
+    center = BatchNormalization(momentum=0.995, epsilon=0.001, scale=False)(target_input)
     if opt.activation == 'softmax':
       center = Dense(opt.embedding_size, activation='softmax', use_bias=False)(center)
     elif opt.activation == 'relu':
@@ -69,7 +70,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
       center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential, use_bias=False)(center)
     else:
       center = Dense(opt.embedding_size)(center)
-    center = BatchNormalization(momentum=0.995, epsilon=0.001, scale=False)(center)
+    
 
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = center_shared_model([target_input])
@@ -84,11 +85,11 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
 
     model = Model(inputs=[anchor_input, positive_input, negative_input, target_input], outputs=[merged_soft, merged_pre])
     
-    if os.path.isdir(outdir + "new_triplet_loss_model"):
-      model.load_weights(outdir + "new_triplet_loss_model")
-      print(f'\n Load weight: {outdir}new_triplet_loss_model')
-    else:
-      print('\n No weight file.')
+    # if os.path.isdir(outdir + "new_triplet_loss_model"):
+    #   model.load_weights(outdir + "new_triplet_loss_model")
+    #   print(f'\n Load weight: {outdir}new_triplet_loss_model')
+    # else:
+    #   print('\n No weight file.')
 
     model.compile(loss=["categorical_crossentropy", new_triplet_loss],
                   optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
