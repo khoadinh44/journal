@@ -39,32 +39,32 @@ def main(opt):
   
   print('\n loading data...')
 
-  if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy'):
-    X_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy')
-    X_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy')
-    y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy')
-    y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
-  else:
-     X_train, X_test, y_train, y_test = get_data(opt)
+  # if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy'):
+  #   X_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy')
+  #   X_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy')
+  #   y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy')
+  #   y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
+  # else:
+  X_train, X_test, y_train, y_test = get_data(opt)
 
-     print('\n Converting data...')
-     y_train = invert_one_hot(y_train)
-     y_test = invert_one_hot(y_test)
+  print('\n Converting data...')
+  y_train = invert_one_hot(y_train)
+  y_test = invert_one_hot(y_test)
 
 
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
-       np.save(f, y_train)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy', 'wb') as f:
-       np.save(f, y_test)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
-       np.save(f, X_train)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
-       np.save(f, y_train)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
-       np.save(f, X_test)
+  with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
+    np.save(f, y_train)
+  with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy', 'wb') as f:
+    np.save(f, y_test)
+  with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
+    np.save(f, X_train)
+  with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
+    np.save(f, y_train)
+  with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
+    np.save(f, X_test)
 
   X_train, y_train = shuffle(X_train, y_train)
- 
+
   print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
   
@@ -76,7 +76,7 @@ def main(opt):
   if opt.embedding_model == 'triplet_center':
     train_embs, test_embs, y_test_solf = train_triplet_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
   if opt.embedding_model == 'new_triplet_center':
-    train_embs, test_embs, y_test_solf = train_new_triplet_center(opt, X_train, y_train, X_test, y_test, CNN_C_trip)
+    train_embs, test_embs, y_test_solf, y_train = train_new_triplet_center(opt, X_train, y_train, X_test, y_test, CNN_C_trip)
     
 
   print('\n Saving embedding phase...')   
