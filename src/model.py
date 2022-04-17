@@ -32,12 +32,12 @@ def TransformerLayer(x=None, c=48, num_heads=4*3):
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(ma) 
-#     fc1 = tf.keras.layers.Dropout(0.5)(fc1)                           
+    fc1 = tf.keras.layers.Dropout(0.2)(fc1)                           
     fc2 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
-#     fc2 = tf.keras.layers.Dropout(0.5)(fc2) 
+    fc2 = tf.keras.layers.Dropout(0.2)(fc2) 
     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -100,9 +100,10 @@ def CNN_C_trip(opt, input_):
     x = GlobalAveragePooling1D()(x)
     
     x = TransformerLayer(x, c=48)
+    x = Activation('relu')(x)
     x = Dense(opt.embedding_size, use_bias=False)(x)
-    x = BatchNormalization()(x)
-    pre_logit = Activation('relu')(x)
+    x = BatchNormalization(momentum=0.995, epsilon=0.001, scale=False, name='BatchNorm')(x)
+    pre_logit = x
     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
     return softmax, pre_logit
