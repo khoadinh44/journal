@@ -45,26 +45,26 @@ def main(opt):
     y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy')
     y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
   else:
-    X_train, X_test, y_train, y_test = get_data(opt)
+     X_train, X_test, y_train, y_test = get_data(opt)
 
-    print('\n Converting data...')
-    y_train = invert_one_hot(y_train)
-    y_test = invert_one_hot(y_test)
+     print('\n Converting data...')
+     y_train = invert_one_hot(y_train)
+     y_test = invert_one_hot(y_test)
 
 
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
-      np.save(f, y_train)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy', 'wb') as f:
-      np.save(f, y_test)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
-      np.save(f, X_train)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
-      np.save(f, y_train)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
-      np.save(f, X_test)
+     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
+       np.save(f, y_train)
+     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy', 'wb') as f:
+       np.save(f, y_test)
+     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
+       np.save(f, X_train)
+     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
+       np.save(f, y_train)
+     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
+       np.save(f, X_test)
 
   X_train, y_train = shuffle(X_train, y_train)
-  X_test, y_test = shuffle(X_test, y_test)
+ 
   print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
   
@@ -89,8 +89,12 @@ def main(opt):
   print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
 
   y_pred_all = []
+  y_pred_SVM_RandomForestClassifier = []
+  y_pred_BT_RandomForestClassifier_cosine = []
 
-  count = 0
+  count1 = 0
+  count2 = 0
+  count3 = 0
   for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'KNN', 'BT', 'euclidean', 'cosine']:
     model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
     y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
@@ -101,7 +105,22 @@ def main(opt):
     else:
       y_pred_all += y_pred_onehot
 
-    count += 1
+    if each_ML == 'SVM' or each_ML == 'RandomForestClassifier':
+      if y_pred_SVM_RandomForestClassifier == []:
+        y_pred_SVM_RandomForestClassifier = y_pred_onehot
+      else:
+        y_pred_SVM_RandomForestClassifier += y_pred_onehot
+      count2 += 1
+    
+    if each_ML == 'BT' or each_ML == 'RandomForestClassifier' or each_ML == 'cosine':
+      if y_pred_BT_RandomForestClassifier_cosine == []:
+        y_pred_BT_RandomForestClassifier_cosine = y_pred_onehot
+      else:
+        y_pred_BT_RandomForestClassifier_cosine += y_pred_onehot
+      count3 += 1
+      
+
+    count1 += 1
     acc = accuracy_score(y_test, y_pred)
 
     print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
@@ -116,8 +135,18 @@ def main(opt):
     # acc = accuracy_score(y_test, y_pred_no_emb)
 
     # print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
-    
-  y_pred_all = y_pred_all.astype(np.float32) / count
+  
+  y_pred_SVM_RandomForestClassifier = y_pred_SVM_RandomForestClassifier.astype(np.float32) / count2
+  y_pred_SVM_RandomForestClassifier = np.argmax(y_pred_SVM_RandomForestClassifier, axis=1)
+  acc_case_1 = accuracy_score(y_test, y_pred_SVM_RandomForestClassifier)
+  print(f'\n--------------Ensemble for case 1: {acc_case_1}--------------')
+
+  y_pred_BT_RandomForestClassifier_cosine = y_pred_BT_RandomForestClassifier_cosine.astype(np.float32) / count3
+  y_pred_BT_RandomForestClassifier_cosine = np.argmax(y_pred_BT_RandomForestClassifier_cosine, axis=1)
+  acc_case_2 = accuracy_score(y_test, y_pred_BT_RandomForestClassifier_cosine)
+  print(f'\n--------------Ensemble for case 2: {acc_case_2}--------------')
+
+  y_pred_all = y_pred_all.astype(np.float32) / count1
   y_pred_all = np.argmax(y_pred_all, axis=1)
   acc_all = accuracy_score(y_test, y_pred_all)
   print(f'\n--------------Ensemble for all: {acc_all}--------------')
