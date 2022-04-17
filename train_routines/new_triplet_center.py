@@ -124,4 +124,4 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     from TSNE_plot import tsne_plot
     tsne_plot(outdir, opt.activation, X_train_embed, X_test_embed, y_train, y_test)
     
-    return X_train_embed, X_test_embed, y_test_soft
+    return X_train_embed, X_test_embed, y_test_soft, y_train
