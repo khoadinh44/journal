@@ -69,6 +69,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
       center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential, use_bias=False)(center)
     else:
       center = Dense(opt.embedding_size)(center)
+    center = BatchNormalization(momentum=0.995, epsilon=0.001, scale=False)(center)
 
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = center_shared_model([target_input])
