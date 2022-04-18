@@ -42,13 +42,13 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     anchor_input   = Input((opt.input_shape, 1,), name='anchor_input')
     positive_input = Input((opt.input_shape, 1,), name='positive_input')
     negative_input = Input((opt.input_shape, 1,), name='negative_input')
-    target_input   = Input((1,), name='target_input')
+    target_input   = Input((3,), name='target_input')
 
     soft_anchor, pre_logits_anchor = shared_model([anchor_input])
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    center = Dense(opt.embedding_size//3, activation='relu', use_bias=False)(target_input)
+    center = Dense(opt.embedding_size//3)(target_input)
     if opt.activation == 'softmax':
       center = Dense(opt.embedding_size, activation='softmax', use_bias=False)(center)
     elif opt.activation == 'relu':
@@ -102,7 +102,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     y_anchor   = to_one_hot(Y_train[:, 0])
     y_positive = to_one_hot(Y_train[:, 1])
     y_negative = to_one_hot(Y_train[:, 2])
-    y_target   = Y_train[:, 1]
+    y_target   = to_one_hot(Y_train[:, 1])
 
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
@@ -116,7 +116,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "new_triplet_loss_model")
 
-    x_train, y_train = choosing_features(x_train, y_train)
+    # x_train, y_train = choosing_features(x_train, y_train)
     
     _, X_train_embed = model.predict([x_train])
     y_test_soft, X_test_embed = model.predict([x_test])
