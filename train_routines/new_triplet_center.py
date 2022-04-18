@@ -116,7 +116,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "new_triplet_loss_model")
 
-    # x_train, y_train = choosing_features(x_train, y_train)
+    x_train, y_train = choosing_features(x_train, y_train)
     
     _, X_train_embed = model.predict([x_train])
     y_test_soft, X_test_embed = model.predict([x_test])
