@@ -86,7 +86,7 @@ def load_table_10_spe(data, label):
       new_label = np.concatenate((new_label, each_label))
   return np.array(new_data), np.array(new_label)
 
-def load_PU_data(path):
+def load_PU_data(path, type_data=None):
   data = []
   all_data = []
   min_l = 0
@@ -96,8 +96,14 @@ def load_PU_data(path):
       file_name = path_signal.split('/')[-1]
       name = file_name.split('.')[0]
       signal = scipy.io.loadmat(path_signal)[name]
-      signal = signal[0][0][2][0][6][2]  #Take out the data
+      if type_data == 'vibration':
+        signal = signal[0][0][2][0][6][2]  
+      if type_data == 'MCS1':
+        signal = signal[0][0][2][0][1][2]
+      if type_data == 'MCS2':
+        signal = signal[0][0][2][0][2][2]
       signal = signal.reshape(-1, )
+      
       if min_l == 0:
         min_l = int(signal.shape[0])
       elif min_l > signal.shape[0]:
