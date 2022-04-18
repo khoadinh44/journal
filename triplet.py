@@ -94,10 +94,10 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
 
     # compute loss
-    loss       = K.maximum(alpha - neg_dist, 0.0)
+    loss       = K.maximum(pos_dist + alpha - neg_dist, 0.0)
     mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
 
-    return out_l2 + loss
+    return 0.1*out_l2 + loss
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
