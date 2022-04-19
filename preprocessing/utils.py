@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
-def choosing_features(x, label, maintain_rate=0.5):
+def choosing_features(x, label, maintain_rate=0.1):
   scaler = MinMaxScaler()
   scaler.fit(x)
   data = scaler.transform(x)
