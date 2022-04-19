@@ -68,11 +68,11 @@ def main(opt):
   
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
-    train_embs, test_embs, y_test_solf = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+    train_embs, test_embs, y_test_solf, y_train = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
   if opt.embedding_model == 'center':
-    train_embs, test_embs, y_test_solf = train_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+    train_embs, test_embs, y_test_solf, y_train = train_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
   if opt.embedding_model == 'triplet_center':
-    train_embs, test_embs, y_test_solf = train_triplet_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
+    train_embs, test_embs, y_test_solf, y_train = train_triplet_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
   if opt.embedding_model == 'new_triplet_center':
     train_embs, test_embs, y_test_solf, y_train = train_new_triplet_center(opt, X_train, y_train, X_test, y_test, CNN_C_trip)
     
