@@ -2,7 +2,7 @@
 # Original implementation by KinWaiCheuk: https://github.com/KinWaiCheuk/Triplet-net-keras
 ######################################################
 
-from preprocessing.utils import to_one_hot
+from preprocessing.utils import to_one_hot, choosing_features
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_loss
@@ -84,11 +84,11 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     # Embedding------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "triplet_loss_model")
-
+    x_train, y_train = choosing_features(x_train, y_train)
     _, X_train_embed = model.predict([x_train])
     y_test_soft, X_test_embed = model.predict([x_test])
     
     from TSNE_plot import tsne_plot
     tsne_plot(outdir, "triplet_loss_model", X_train_embed, X_test_embed, y_train, y_test)
     
-    return X_train_embed, X_test_embed, y_test_soft
+    return X_train_embed, X_test_embed, y_test_soft, y_train
