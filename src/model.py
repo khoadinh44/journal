@@ -31,12 +31,14 @@ def TransformerLayer(x=None, c=48, num_heads=4*3):
     fc1 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(ma) 
+                  activity_regularizer=regularizers.l2(1e-5),
+                  activation='relu')(ma) 
     fc1 = tf.keras.layers.Dropout(0.1)(fc1)                           
     fc2 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(fc1) + x
+                  activity_regularizer=regularizers.l2(1e-5),
+                  activation='relu')(fc1) + x
     fc2 = tf.keras.layers.Dropout(0.1)(fc2) 
     return fc2
 
