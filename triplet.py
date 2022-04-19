@@ -65,7 +65,6 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     y_center = y_pred[:, int(total_lenght * 3 / 4):int(total_lenght * 4 / 4)]
     y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
 
-    out_l2 = K.sum(K.square(anchor - y_center), axis=1)
 
     # mean ---------------------------------
     mean_anchor     = tf.expand_dims(tf.math.reduce_mean(anchor, axis=1), axis=1)
@@ -94,10 +93,11 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
 
     # compute loss
-    loss       = K.maximum(pos_dist + alpha - neg_dist, 0.0)
+    out_l2     = opt.lambda_ * K.sum(K.square(anchor - y_center), axis=1) + (1-opt.lambda_)*pos_dist
+    loss       = K.maximum(out_l2 + alpha - neg_dist, 0.0)
     mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
 
-    return opt.lambda_*out_l2 + loss
+    return loss
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
