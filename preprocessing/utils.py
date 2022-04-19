@@ -36,8 +36,8 @@ def choosing_features(x, label, maintain_rate=0.5):
   maintain_point = d_j_sort[int(len(d_j_sort)*maintain_rate)]
   label = np.array(label)
 
-  maintain_data  = x[d_j_normalize < maintain_point]
-  maintain_label = label[d_j_normalize < maintain_point]
+  maintain_data  = x[d_j_normalize > maintain_point]
+  maintain_label = label[d_j_normalize > maintain_point]
   return maintain_data, maintain_label
 
 def scale_data(signal, scale):
