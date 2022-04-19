@@ -2,7 +2,7 @@
 ### Original implementation by shamangary: https://github.com/shamangary/Keras-MNIST-center-loss-with-visualization
 ##########################################################################
 
-from preprocessing.utils import to_one_hot
+from preprocessing.utils import to_one_hot, choosing_features
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_center_loss
@@ -62,11 +62,11 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     # model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
     # model.load_weights(outdir + "center_loss_model.h5")
-
+    x_train, y_train = choosing_features(x_train, y_train)
     _,           X_train_embed  = model.predict([x_train, y_train])
     y_test_soft, X_test_embed   = model.predict([x_test, y_test])
     
     from TSNE_plot import tsne_plot
     tsne_plot(outdir, "center_loss_model", X_train_embed, X_test_embed, y_train, y_test)
 
-    return X_train_embed[:, :512], X_test_embed[:, :512], y_test_soft
+    return X_train_embed[:, :512], X_test_embed[:, :512], y_test_soft, y_train
