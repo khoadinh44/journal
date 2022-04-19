@@ -106,9 +106,9 @@ def load_PU_data(path, type_data=None, FFT=True):
       signal = signal.reshape(-1, )
       
       if FFT:
-        x = np.fft.fft(x1)
-        x = np.abs(x) / len(x)
-        x = x[range(int(x.shape[0] / 2))]
+        signal = np.fft.fft(signal)
+        signal = np.abs(signal) / len(signal)
+        signal = signal[range(signal.shape[0] // 2)]
         
       if min_l == 0:
         min_l = int(signal.shape[0])
