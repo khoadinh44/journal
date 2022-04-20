@@ -85,9 +85,10 @@ def main(opt):
   y_pred_Lo_Co = []
   y_pred_SVM_Ran = []
 
-  y_test_solf = np.argmax(y_test_solf, axis=1)
-  solf_acc = accuracy_score(y_test, y_test_solf)
-  print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
+  if opt.embedding_model != 'arcface':
+    y_test_solf = np.argmax(y_test_solf, axis=1)
+    solf_acc = accuracy_score(y_test, y_test_solf)
+    print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
 
   y_pred_all = []
   y_pred_SVM_RandomForestClassifier = []
