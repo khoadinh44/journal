@@ -5,12 +5,14 @@ import keras
 from tensorflow_addons.layers import MultiHeadAttention
 from tensorflow.keras.layers import Conv1D, Activation, Dense, concatenate
 import keras.backend as K
+from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras import layers
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda
 from tensorflow.keras.models import Model
-from scr.arc_model import ArcFaceModel
-from scr.losses import SoftmaxLoss
+from angular_grad import AngularGrad
+from src.arc_model import ArcFaceModel
+from src.losses import SoftmaxLoss
 
 def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     print("\n Training with Triplet Loss....")
@@ -28,6 +30,13 @@ def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     
     model = ArcFaceModel(opt=opt)
     model.summary(line_length=80)
+
+    if os.path.isdir(outdir + "ArcFace"):
+      model.load_weights(outdir + "ArcFace")
+      print(f'\n Load weight: {outdir}')
+    else:
+      print('\n No weight file.')
+
     model.compile(optimizer=AngularGrad(), loss=loss_fn)
     
     # Fit data-------------------------------------------------
@@ -40,4 +49,7 @@ def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     
     X_train_embed = model.predict([x_train])
     X_test_embed = model.predict([x_test])
+
+    from TSNE_plot import tsne_plot
+    tsne_plot(outdir, 'ArcFace', X_train_embed, X_test_embed, y_train, y_test)
     return X_train_embed, X_test_embed, y_train
