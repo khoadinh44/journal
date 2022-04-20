@@ -145,7 +145,7 @@ def triplet_center_loss(y_true, y_pred, n_classes= 3, alpha=0.4):
     Returns:
     loss -- real number, value of the loss
     """
-    pre_logits, center = y_pred[:, :512], y_pred[:, 512:]
+    pre_logits, center = y_pred[:, :256], y_pred[:, 256:]
     y_pred = K.sum(K.square(pre_logits - center), axis=1)
 
     # repeat y_true for n_classes and == np.arange(n_classes)
