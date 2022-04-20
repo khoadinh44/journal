@@ -6,7 +6,7 @@ from tensorflow.keras.layers import (
     Flatten,
     Input,
 )
-from .model import CNN_C
+from .model import CNN_C_trip
 from .layers import (
     BatchNormalization,
     ArcMarginPenaltyLogists
@@ -17,22 +17,10 @@ def _regularizer(weights_decay=5e-4):
     return tf.keras.regularizers.l2(weights_decay)
 
 
-def Backbone(backbone_type='ResNet50', use_pretrain=True):
+def Backbone(opt, input_, backbone):
     """Backbone Model"""
-    weights = None
-    if use_pretrain:
-        weights = 'imagenet'
-
-    def backbone(x_in):
-        if backbone_type == 'ResNet50':
-            return ResNet50(input_shape=x_in.shape[1:], include_top=False,
-                            weights=weights)(x_in)
-        elif backbone_type == 'MobileNetV2':
-            return MobileNetV2(input_shape=x_in.shape[1:], include_top=False,
-                               weights=weights)(x_in)
-        else:
-            raise TypeError('backbone_type error!')
-    return backbone
+    x = CNN_C_trip(opt, input_, backbone)
+    return x
 
 
 def OutputLayer(embd_shape, w_decay=5e-4, name='OutputLayer'):
@@ -69,14 +57,14 @@ def NormHead(num_classes, w_decay=5e-4, name='NormHead'):
     return norm_head
 
 
-def ArcFaceModel(size=None, channels=3, num_classes=None, name='arcface_model',
+def ArcFaceModel(size=None, channels=1, num_classes=None, name='arcface_model',
                  margin=0.5, logist_scale=64, embd_shape=512,
                  head_type='ArcHead', backbone_type='ResNet50',
                  w_decay=5e-4, use_pretrain=True, training=False):
     """Arc Face Model"""
-    x = inputs = Input([size, size, channels], name='input_image')
+    x = inputs = Input([opt.input_shape, channels], name='input_signal')
 
-    x = Backbone(backbone_type=backbone_type, use_pretrain=use_pretrain)(x)
+    x = Backbone(opt, x, True)(x)
 
     embds = OutputLayer(embd_shape, w_decay=w_decay)(x)
 
