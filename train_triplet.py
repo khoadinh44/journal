@@ -5,6 +5,7 @@ from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
 from train import parse_opt
+from arc_face import train_ArcFaceModel
 from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
@@ -75,6 +76,8 @@ def main(opt):
     train_embs, test_embs, y_test_solf, y_train = train_triplet_center_loss(opt, X_train, y_train, X_test, y_test, CNN_C_trip) 
   if opt.embedding_model == 'new_triplet_center':
     train_embs, test_embs, y_test_solf, y_train = train_new_triplet_center(opt, X_train, y_train, X_test, y_test, CNN_C_trip)
+  if opt.embedding_model == 'arcface':
+    train_embs, test_embs, y_test_solf, y_train = train_ArcFaceModel(opt, X_train, y_train, X_test, y_test)
     
 
   print('\n Saving embedding phase...')   
