@@ -12,7 +12,7 @@ from tensorflow.keras.models import Model
 from scr.arc_model import ArcFaceModel
 from scr.losses import SoftmaxLoss
 
-def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, network, i=100):
+def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     print("\n Training with Triplet Loss....")
 
     outdir = opt.outdir + "/ArcFace/"
