@@ -77,7 +77,7 @@ def main(opt):
   if opt.embedding_model == 'new_triplet_center':
     train_embs, test_embs, y_test_solf, y_train = train_new_triplet_center(opt, X_train, y_train, X_test, y_test, CNN_C_trip)
   if opt.embedding_model == 'arcface':
-    train_embs, test_embs, y_test_solf, y_train = train_ArcFaceModel(opt, X_train, y_train, X_test, y_test)
+    train_embs, test_embs, y_train = train_ArcFaceModel(opt, X_train, y_train, X_test, y_test)
     
 
   print('\n Saving embedding phase...')   
