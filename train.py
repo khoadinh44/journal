@@ -278,6 +278,7 @@ def parse_opt(known=False):
     parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
 
+    parser.add_argument('--use_FFT',                  type=bool,    default=True)
     parser.add_argument('--use_SNRdb',                type=bool,    default=False)
     parser.add_argument('--lambda_',                  type=float,   default=0.5,         help='lambda_')
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
