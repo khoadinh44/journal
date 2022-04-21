@@ -31,11 +31,11 @@ def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     model = ArcFaceModel(opt=opt)
     model.summary(line_length=80)
 
-    if os.path.isdir(outdir + "ArcFace"):
-      model.load_weights(outdir + "ArcFace")
-      print(f'\n Load weight: {outdir}')
-    else:
-      print('\n No weight file.')
+#     if os.path.isdir(outdir + "ArcFace"):
+#       model.load_weights(outdir + "ArcFace")
+#       print(f'\n Load weight: {outdir}')
+#     else:
+#       print('\n No weight file.')
 
     model.compile(optimizer=AngularGrad(), loss=loss_fn)
     
