@@ -42,34 +42,38 @@ def main(opt):
 
   if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy'):
     X_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy')
-    X_test  = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy')
+    X_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy')
     y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy')
-    y_test  = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
+    y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
   else:
-     X_train, X_test, y_train, y_test = get_data(opt)
+    X_train, X_test, y_train, y_test = get_data(opt)
 
-     print('\n Converting data...')
-     y_train = invert_one_hot(y_train)
-     y_test = invert_one_hot(y_test)
+    print('\n Converting data...')
+    y_train = invert_one_hot(y_train)
+    y_test = invert_one_hot(y_test)
 
 
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
-       np.save(f, y_train)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy', 'wb') as f:
-       np.save(f, y_test)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
-       np.save(f, X_train)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
-       np.save(f, y_train)
-     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
-       np.save(f, X_test)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
+      np.save(f, y_train)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy', 'wb') as f:
+      np.save(f, y_test)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
+      np.save(f, X_train)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
+      np.save(f, y_train)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
+      np.save(f, X_test)
 
   print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
 
   if opt.use_FFT:
+    print('\n Using FFT...')
     X_train_FFT = FFT(X_train)
     X_test_FFT = FFT(X_test)
+  else:
+    X_train_FFT = X_train
+    X_test_FFT = X_test
   
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
@@ -127,8 +131,8 @@ def main(opt):
         y_pred_BT_RandomForestClassifier_cosine += y_pred_onehot
       count3 += 1
 
-    print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
-   
+    print(f'\n-------------- 1. Test accuracy: {acc} with the {each_ML} method--------------')
+
     X_train_hand = handcrafted_features(X_train)
     X_test_hand  = handcrafted_features(X_test)
     model = FaceNetOneShotRecognitor(opt, X_train_hand, y_train, X_test_hand, y_test) 
