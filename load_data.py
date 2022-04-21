@@ -351,31 +351,31 @@ if opt.PU_data_table_8:
     if load == False:
         # Training ################################################
         print('Load 1---------------------------------------------\n')
-        K002 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/K002')
+        K002 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/K002', type_data=opt.type_PU_data)
         
-        KA01 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA01')
-        KA05 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA05')
-        KA07 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA07')
+        KA01 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA01', type_data=opt.type_PU_data)
+        KA05 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA05', type_data=opt.type_PU_data)
+        KA07 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KA07', type_data=opt.type_PU_data)
 
-        KI01 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI01')
-        KI05 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI05')
-        KI07 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI07')
+        KI01 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI01', type_data=opt.type_PU_data)
+        KI05 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI05', type_data=opt.type_PU_data)
+        KI07 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/training/KI07', type_data=opt.type_PU_data)
 
         # Testing ###################################################
         print('Load 2---------------------------------------------\n')
-        K001 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/K001')
+        K001 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/K001', type_data=opt.type_PU_data)
         
-        KA22 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA22')
-        KA04 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA04')
-        KA15 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA15')
-        KA30 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA30')
-        KA16 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA16')
+        KA22 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA22', type_data=opt.type_PU_data)
+        KA04 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA04', type_data=opt.type_PU_data)
+        KA15 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA15', type_data=opt.type_PU_data)
+        KA30 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA30', type_data=opt.type_PU_data)
+        KA16 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KA16', type_data=opt.type_PU_data)
 
-        KI14 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI14')
-        KI21 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI21')
-        KI17 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI17')
-        KI18 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI18')
-        KI16 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI16')
+        KI14 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI14', type_data=opt.type_PU_data)
+        KI21 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI21', type_data=opt.type_PU_data)
+        KI17 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI17', type_data=opt.type_PU_data)
+        KI18 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI18', type_data=opt.type_PU_data)
+        KI16 = load_PU_data('/content/drive/Shareddrives/newpro112233/signal_machine/new_data/testing/KI16', type_data=opt.type_PU_data)
         
         # load ###############################################
         print('Load 3---------------------------------------------\n')
