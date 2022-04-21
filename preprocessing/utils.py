@@ -86,7 +86,20 @@ def load_table_10_spe(data, label):
       new_label = np.concatenate((new_label, each_label))
   return np.array(new_data), np.array(new_label)
 
-def load_PU_data(path, type_data=None, FFT=True):
+def FFT(signals):
+  fft_data = []
+  for signal in signals:
+    signal = np.fft.fft(signal)
+    signal = np.abs(signal) / len(signal)
+    signal = signal[range(signal.shape[0] // 2)]
+    signal = np.expand_dims(signal, axis=0)
+    if fft_data == []:
+      fft_data = signal
+    else:
+      fft_data = np.concatenate((fft_data, signal))
+  return fft_data
+  
+def load_PU_data(path, type_data=None):
   data = []
   all_data = []
   min_l = 0
@@ -104,12 +117,7 @@ def load_PU_data(path, type_data=None, FFT=True):
       if type_data == 'MCS2':
         signal = signal[0][0][2][0][2][2]
       signal = signal.reshape(-1, )
-      
-      if FFT:
-        signal = np.fft.fft(signal)
-        signal = np.abs(signal) / len(signal)
-        signal = signal[range(signal.shape[0] // 2)]
-        
+           
       if min_l == 0:
         min_l = int(signal.shape[0])
       elif min_l > signal.shape[0]:
