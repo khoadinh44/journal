@@ -14,6 +14,8 @@ from angular_grad import AngularGrad
 from src.arc_model import ArcFaceModel
 from src.losses import SoftmaxLoss
 
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+          
 def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     print("\n Training with Triplet Loss....")
 
@@ -29,20 +31,18 @@ def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     loss_fn = SoftmaxLoss()
     
     model = ArcFaceModel(opt=opt)
-    model.summary(line_length=80)
-
-#     if os.path.isdir(outdir + "ArcFace"):
-#       model.load_weights(outdir + "ArcFace")
-#       print(f'\n Load weight: {outdir}')
-#     else:
-#       print('\n No weight file.')
-
-    model.compile(optimizer=AngularGrad(), loss=loss_fn)
-    
-    # Fit data-------------------------------------------------
-    model.fit(x=[x_train, y_train], y=y_train,
-              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], shuffle=True)
-    tf.saved_model.save(model, outdir + 'ArcFace')
+    # model.summary(line_length=80)
+    for _ in range(10):
+      if os.path.isdir(outdir + "ArcFace"):
+        model.load_weights(outdir + "ArcFace")
+        print(f'\n Load weight: {outdir}')
+      else:
+        print('\n No weight file.')
+      model.compile(optimizer=AngularGrad(), loss=loss_fn)
+      # Fit data-------------------------------------------------
+      model.fit(x=[x_train, y_train], y=y_train,
+                batch_size=opt.batch_size, epochs=epoch, callbacks=[callback], shuffle=True)
+      tf.saved_model.save(model, outdir + 'ArcFace')
     
     model = ArcFaceModel(opt=opt, training=False)
     model.load_weights(outdir + 'ArcFace')
