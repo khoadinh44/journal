@@ -32,13 +32,15 @@ def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
     
     model = ArcFaceModel(opt=opt)
     # model.summary(line_length=80)
+          
+    model.compile(optimizer=AngularGrad(), loss=loss_fn)
+
     for _ in range(10):
       if os.path.isdir(outdir + "ArcFace"):
         model.load_weights(outdir + "ArcFace")
         print(f'\n Load weight: {outdir}')
       else:
         print('\n No weight file.')
-      model.compile(optimizer=AngularGrad(), loss=loss_fn)
       # Fit data-------------------------------------------------
       model.fit(x=[x_train, y_train], y=y_train,
                 batch_size=opt.batch_size, epochs=epoch, callbacks=[callback], shuffle=True)
