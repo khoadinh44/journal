@@ -100,11 +100,11 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
-    
-    if backbone:
-        return x
 
     x = TransformerLayer(x, c=48)
+
+    if backbone:
+        return x
     
     x = Dense(opt.embedding_size)(x)
     x = BatchNormalization(momentum=0.995, epsilon=0.001, scale=False, name='BatchNorm')(x)
