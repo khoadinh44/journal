@@ -15,6 +15,8 @@ import argparse
 from angular_grad import AngularGrad
 from keras.layers import Dense
 
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+
 def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=100):
     print("\n Training with Triplet Loss....")
 
@@ -106,11 +108,17 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
 
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
-
-    # Fit data-------------------------------------------------
-    model.fit(x=[anchor, positive, negative, y_target], y=[target, y_target],
-              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], shuffle=True)
-    tf.saved_model.save(model, outdir + 'new_triplet_loss_model')
+    
+    for _ in range(10):
+        if os.path.isdir(outdir + "new_triplet_loss_model"):
+            model.load_weights(outdir + "new_triplet_loss_model")
+            print(f'\n Load weight: {outdir}')
+        else:
+            print('\n No weight file.')
+        # Fit data-------------------------------------------------
+        model.fit(x=[anchor, positive, negative, y_target], y=[target, y_target],
+                  batch_size=opt.batch_size, epochs=epoch, callbacks=[callback], shuffle=True)
+        tf.saved_model.save(model, outdir + 'new_triplet_loss_model')
 
     # Embedding------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
