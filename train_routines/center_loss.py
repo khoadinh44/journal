@@ -21,7 +21,7 @@ def l2_loss(y_true, y_pred):
   return out_l2
 
 
-callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
 def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("\n Training with Center Loss....")
