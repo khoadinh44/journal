@@ -81,7 +81,7 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     for _ in range(10):
         if os.path.isdir(outdir + "triplet_loss_model"):
             model.load_weights(outdir + "triplet_loss_model")
-            print(f'\n Load weight: {outdir}')
+            print(f'\n Load weight {_}: {outdir}')
         else:
             print('\n No weight file.')
         # Fit data-------------------------------------------------
@@ -92,7 +92,8 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     # Embedding------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "triplet_loss_model")
-    x_train, y_train = choosing_features(x_train, y_train)
+
+    # x_train, y_train = choosing_features(x_train, y_train)
     _, X_train_embed = model.predict([x_train])
     y_test_soft, X_test_embed = model.predict([x_test])
     
