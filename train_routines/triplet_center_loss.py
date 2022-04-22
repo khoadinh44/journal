@@ -11,7 +11,7 @@ from keras.layers import Dense
 import os
 import argparse
 
-callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
 def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("\n Training with Triplet Center Loss....")
