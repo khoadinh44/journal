@@ -43,16 +43,18 @@ def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
                   optimizer=AngularGrad(), metrics=["accuracy"],
                   loss_weights=loss_weights)
     
-    for _ in range(10):
-        if os.path.isdir(outdir + "triplet_center_loss_model"):
-            model.load_weights(outdir + "triplet_center_loss_model")
-            print(f'\n Load weight {_}: {outdir}')
-        else:
-            print('\n No weight file.')
-        model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
-                  batch_size=opt.batch_size, epochs=opt.epoch, callbacks = [callback], validation_split=0.2)
+    # for _ in range(10):
+    # if os.path.isdir(outdir + "triplet_center_loss_model"):
+    #     model.load_weights(outdir + "triplet_center_loss_model")
+    #     print(f'\n Load weight: {outdir}')
+    # else:
+    #     print('\n No weight file.')
+    model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
+              batch_size=opt.batch_size,  
+              # allbacks = [callback], 
+              epochs=opt.epoch)
 
-        tf.saved_model.save(model, outdir + 'triplet_center_loss_model')
+    tf.saved_model.save(model, outdir + 'triplet_center_loss_model')
     
 
     # model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
