@@ -14,7 +14,7 @@ import os
 import argparse
 from angular_grad import AngularGrad
 
-callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
 def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     print("\n Training with Triplet Loss....")
