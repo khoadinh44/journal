@@ -15,7 +15,7 @@ import argparse
 from angular_grad import AngularGrad
 from keras.layers import Dense
 
-callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
 def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=100):
     print("\n Training with Triplet Loss....")
