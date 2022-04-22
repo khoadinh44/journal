@@ -112,7 +112,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     for _ in range(10):
         if os.path.isdir(outdir + "new_triplet_loss_model"):
             model.load_weights(outdir + "new_triplet_loss_model")
-            print(f'\n Load weight: {outdir}')
+            print(f'\n Load weight {_}: {outdir}')
         else:
             print('\n No weight file.')
         # Fit data-------------------------------------------------
