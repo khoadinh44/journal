@@ -21,6 +21,8 @@ def l2_loss(y_true, y_pred):
   return out_l2
 
 
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+
 def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("\n Training with Center Loss....")
 
@@ -51,11 +53,17 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     model.compile(loss=["categorical_crossentropy", l2_loss],
                   optimizer=AngularGrad(), metrics=["accuracy"],
                   loss_weights=loss_weights)
+    
+    for _ in range(10):
+      if os.path.isdir(outdir + "center_loss_model"):
+        model.load_weights(outdir + "center_loss_model")
+        print(f'\n Load weight: {outdir}')
+      else:
+        print('\n No weight file.')
+      model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
+                batch_size=opt.batch_size, epochs=opt.epoch, callbacks=[callback])
 
-    model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
-              batch_size=opt.batch_size, epochs=opt.epoch, validation_split=0.1)
-
-    tf.saved_model.save(model, outdir + 'center_loss_model')
+      tf.saved_model.save(model, outdir + 'center_loss_model')
 
     # model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
 
