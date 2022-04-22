@@ -14,6 +14,8 @@ import os
 import argparse
 from angular_grad import AngularGrad
 
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=1)
+
 def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     print("\n Training with Triplet Loss....")
 
@@ -75,11 +77,17 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     y_negative = to_one_hot(Y_train[:, 2])
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
-
-    # Fit data-------------------------------------------------
-    model.fit(x=[anchor, positive, negative], y=[target, target],
-              batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.1)
-    tf.saved_model.save(model, outdir + 'triplet_loss_model')
+    
+    for _ in range(10):
+        if os.path.isdir(outdir + "triplet_loss_model"):
+            model.load_weights(outdir + "triplet_loss_model")
+            print(f'\n Load weight: {outdir}')
+        else:
+            print('\n No weight file.')
+        # Fit data-------------------------------------------------
+        model.fit(x=[anchor, positive, negative], y=[target, target],
+                  batch_size=opt.batch_size, epochs=epoch, callbacks=[TensorBoard(log_dir=outdir)], validation_split=0.1)
+        tf.saved_model.save(model, outdir + 'triplet_loss_model')
 
     # Embedding------------------------------------------------
     model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
