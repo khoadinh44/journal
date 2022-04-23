@@ -74,11 +74,11 @@ def main(opt):
 
   if opt.scaler == 'handcrafted_features':
     print('\n Using hand Crafted feature..')
-    X_train_hand = handcrafted_features(X_train)
-    X_test_hand  = handcrafted_features(X_test)
+    X_train_FFT = handcrafted_features(X_train)
+    X_test_FFT  = handcrafted_features(X_test)
   
-  print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
-  print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
+  print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
+  print(f' Testing data shape: {X_train_FFT.shape},    Testing label shape: {y_test.shape}')
   
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
