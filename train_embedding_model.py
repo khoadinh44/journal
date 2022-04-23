@@ -64,9 +64,6 @@ def main(opt):
     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
       np.save(f, X_test)
 
-  print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
-  print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
-
   if opt.use_FFT:
     print('\n Using FFT...')
     X_train_FFT = FFT(X_train)
@@ -74,6 +71,14 @@ def main(opt):
   else:
     X_train_FFT = X_train
     X_test_FFT = X_test
+
+  if opt.scaler == 'handcrafted_features':
+    print('\n Using hand Crafted feature..')
+    X_train_hand = handcrafted_features(X_train)
+    X_test_hand  = handcrafted_features(X_test)
+  
+  print(f' Training data shape: {X_train.shape},  Training label shape: {y_train.shape}')
+  print(f' Testing data shape: {X_test.shape},    Testing label shape: {y_test.shape}')
   
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
