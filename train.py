@@ -274,7 +274,7 @@ def parse_opt(known=False):
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=256,        help='128 Number of embedding in faceNet')
     parser.add_argument('--input_shape',        type=int,   default=250604,     help='127950 or 255900 in 5-fold or 250604 in the only training.')
-    parser.add_argument('--batch_size',         type=int,   default=36,         help='Number of batch size for training')
+    parser.add_argument('--batch_size',         type=int,   default=32,         help='Number of batch size for training')
     parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
 
