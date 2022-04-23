@@ -13,7 +13,7 @@ from tensorflow.keras.models import Model
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-def TransformerLayer(x=None, c=48, num_heads=4*3):
+def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
     q   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
@@ -31,13 +31,15 @@ def TransformerLayer(x=None, c=48, num_heads=4*3):
     fc1 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(ma) 
-    fc1 = tf.keras.layers.Dropout(0.5)(fc1)                           
+                  activity_regularizer=regularizers.l2(1e-5))(ma)
+    if backbone:
+      fc1 = tf.keras.layers.Dropout(0.5)(fc1)                           
     fc2 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
-    fc2 = tf.keras.layers.Dropout(0.5)(fc2) 
+    if backbone:
+      fc2 = tf.keras.layers.Dropout(0.5)(fc2) 
     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -99,13 +101,13 @@ def CNN_C_trip(opt, input_, backbone=False):
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
 
-    x = TransformerLayer(x, c=48)
+    x = TransformerLayer(x=x, c=48, backbone=backbone)
 
     if backbone:
         return x
     
     x = Dense(opt.embedding_size)(x)
-    x = BatchNormalization(momentum=0.995, epsilon=0.001, scale=False, name='BatchNorm')(x)
+    x = BatchNormalization()(x)
     # pre_logit = Activation('relu')(x)
     pre_logit = x
     softmax = Dense(opt.num_classes, activation='softmax')(x)
