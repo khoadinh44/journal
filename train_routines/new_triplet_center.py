@@ -50,7 +50,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    center = Dense(opt.embedding_size//3)(target_input)
+    center = Dense(opt.embedding_size//3, use_bias=False)(target_input)
     if opt.activation == 'softmax':
       center = Dense(opt.embedding_size, activation='softmax')(center)
     elif opt.activation == 'relu':
@@ -70,7 +70,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     elif opt.activation == 'exponential':
       center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential)(center)
     else:
-      center = Dense(opt.embedding_size)(target_input)
+      center = Dense(opt.embedding_size, use_bias=False)(target_input)
     
 
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
