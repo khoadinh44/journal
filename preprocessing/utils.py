@@ -267,6 +267,8 @@ def scaler_transform(signals, scale_method):
   data = []
   scale = scale_method()
   for signal in signals:
+    if len(signal.shape) < 2:
+      signal = np.expand_dims(signal, axis=-1)
     data.append(scale.fit_transform(signal))
   return np.array(data)
 
