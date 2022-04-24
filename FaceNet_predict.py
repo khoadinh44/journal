@@ -67,7 +67,8 @@ class FaceNetOneShotRecognitor(object):
                     distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
                   elif ML_method == 'cosine':
                     distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
-              res = np.argsort(distances)[0]  # this ID
+              x = np.argsort(distances)[:3]  # this 
+              res = np.exp(x)/sum(np.exp(x))
               list_label[i] = res
 
           if len(list_label) > 0:
