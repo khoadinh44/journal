@@ -15,6 +15,12 @@ from sklearn.model_selection import train_test_split
 from preprocessing.extract_features import AudioFeatureExtractor
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
+def onehot(signal, num_class=3):
+  data = np.zeros((len(signal), num_class))
+  for idx, i in enumerate(signal):
+    data[idx, int(i)] = 1
+  return data
+
 def choosing_features(x, label, maintain_rate=0.1):
   scaler = MinMaxScaler()
   scaler.fit(x)
