@@ -77,4 +77,4 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     tsne_plot(outdir, "center_loss_model", X_train_embed, X_test_embed, y_train, y_test)
 
     y_train = y_train.astype(np.int32)
-    return X_train_embed[:, :256], X_test_embed[:, :256], y_test_soft, y_train
+    return X_train_embed[:, :256], X_test_embed[:, :256], y_test_soft, y_train, outdir
