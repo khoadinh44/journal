@@ -102,4 +102,4 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     from TSNE_plot import tsne_plot
     tsne_plot(outdir, "triplet_loss_model", X_train_embed, X_test_embed, y_train, y_test)
     
-    return X_train_embed, X_test_embed, y_test_soft, y_train
+    return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
