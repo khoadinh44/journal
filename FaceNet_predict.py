@@ -95,7 +95,7 @@ class FaceNetOneShotRecognitor(object):
             elif ML_method == 'BT':
               model = GradientBoostingClassifier()
             model.fit(train_embs, train_label)
-            list_label = model.predict(test_embs)
+            list_label = model.predict_proba(test_embs)
           else:
             if ML_method == 'SVM':
               model = SVC(kernel='rbf', probability=True)
@@ -110,7 +110,7 @@ class FaceNetOneShotRecognitor(object):
             elif ML_method == 'BT':
               model = GradientBoostingClassifier()
             model.fit(self.X_train_all, self.y_train_all)
-            list_label = model.predict(self.X_test)
+            list_label = model.predict_proba(test_embs)
           
         return list_label
 
