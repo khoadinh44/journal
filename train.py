@@ -274,7 +274,7 @@ def parse_opt(known=False):
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=256,        help='128 Number of embedding in faceNet')
     parser.add_argument('--input_shape',        type=int,   default=250604,       help='127950 or 255900 in 5-fold or table 8: 6270 for handcrafted, 250604 in the only training.')
-    parser.add_argument('--batch_size',         type=int,   default=64,         help='80 for arc_face, 32 for others')
+    parser.add_argument('--batch_size',         type=int,   default=32,         help='80 for arc_face, 32 for others')
     parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
 
@@ -282,7 +282,7 @@ def parse_opt(known=False):
     parser.add_argument('--use_SNRdb',                type=bool,    default=False)
     parser.add_argument('--lambda_',                  type=float,   default=0.5,         help='lambda_')
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
-    parser.add_argument('--num_mels',                 type=int,     default=64,          help='num_mels')
+    parser.add_argument('--num_mels',                 type=int,     default=32,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
     parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_B', 'CNN_C', 'wavenet', 'wavelet_head'],   help='name of all NN models')
     parser.add_argument('--embedding_model',          type=str,     default='arcface',   help='new_triplet_loss, new_triplet_loss, triplet, center, triplet_center')
