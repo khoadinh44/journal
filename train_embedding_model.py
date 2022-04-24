@@ -149,7 +149,7 @@ def main(opt):
 
   y_pred_all = []
   y_pred_SVM_RandomForestClassifier = []
-  y_pred_BT_RandomForestClassifier_cosine = []
+  y_pred_KNN_RandomForestClassifier_cosine = []
 
   count1 = 0
   count2 = 0
@@ -157,7 +157,7 @@ def main(opt):
   for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'KNN', 'BT', 'euclidean', 'cosine']:
     model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
     y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
-    y_pred_inv = invert_one_hot(y_pred)
+    y_pred_inv = np.argmax(y_pred, axis=1)
     count1 += 1
     acc = accuracy_score(y_test, y_pred_inv)
 
@@ -174,10 +174,10 @@ def main(opt):
       count2 += 1
     
     if each_ML == 'KNN' or each_ML == 'RandomForestClassifier' or each_ML == 'cosine':
-      if y_pred_BT_RandomForestClassifier_cosine == []:
-        y_pred_BT_RandomForestClassifier_cosine = y_pred
+      if y_pred_KNN_RandomForestClassifier_cosine == []:
+        y_pred_KNN_RandomForestClassifier_cosine = y_pred
       else:
-        y_pred_BT_RandomForestClassifier_cosine += y_pred
+        y_pred_KNN_RandomForestClassifier_cosine += y_pred
       count3 += 1
 
     print(f'\n-------------- 1. Test accuracy: {acc} with the {each_ML} method--------------')
@@ -186,11 +186,10 @@ def main(opt):
     # X_test_hand  = handcrafted_features(X_test)
     # model = FaceNetOneShotRecognitor(opt, X_train_hand, y_train, X_test_hand, y_test) 
     # y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
-    # y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
     
-    # y_pred_all += y_pred_onehot_no_emb
+    # y_pred_all += y_pred_no_emb
     # count1 += 1
-    # acc = accuracy_score(y_test, y_pred_no_emb)
+    # acc = accuracy_score(y_test, np.argmax(y_pred_no_emb, axis=1))
 
     # print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
   
