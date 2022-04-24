@@ -56,4 +56,4 @@ def train_ArcFaceModel(opt, x_train, y_train, x_test, y_test, i=100):
 
     from TSNE_plot import tsne_plot
     tsne_plot(outdir, 'ArcFace', X_train_embed, X_test_embed, y_train, y_test)
-    return X_train_embed, X_test_embed, y_train
+    return X_train_embed, X_test_embed, y_train, outdir
