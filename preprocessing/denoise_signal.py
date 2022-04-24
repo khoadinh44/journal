@@ -143,7 +143,7 @@ def Fourier(f, plot_all=False, get_result=True, get_PSD=False):
     return ffilt.real
 
 def SVD_denoise(Xnoisy=None):
-    # X = np.expand_dims(Xnoisy, axis=1)
+    Xnoisy = np.expand_dims(Xnoisy, axis=1)
     n, m = Xnoisy.shape
     if  m > n:
       m, n = Xnoisy.shape
