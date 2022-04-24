@@ -1,6 +1,6 @@
 from load_cases import get_data
 from FaceNet_predict import FaceNetOneShotRecognitor
-from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot, use_denoise
+from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot, use_denoise, scaler_transform
 from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
@@ -13,6 +13,13 @@ from train_routines.new_triplet_center import train_new_triplet_center
 from preprocessing.utils import handcrafted_features, FFT
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MaxAbsScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import QuantileTransformer
+from sklearn.preprocessing import PowerTransformer
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
 import angular_grad
@@ -85,15 +92,34 @@ def main(opt):
     X_train_FFT = use_denoise(X_train, Wavelet_denoise)
     X_test_FFT  = use_denoise(X_test, Wavelet_denoise)
   elif opt.denoise == 'SVD':
-    X_train = np.expand_dims(X_train, axis=-1)
-    x_test = np.expand_dims(X_test, axis=-1)
-
-    X_train_FFT = np.squeeze(use_denoise(X_train, SVD_denoise))
-    X_test_FFT  = np.squeeze(use_denoise(X_test, SVD_denoise))
+    X_train_FFT = use_denoise(X_train, SVD_denoise)
+    X_test_FFT  = use_denoise(X_test, SVD_denoise)
   elif opt.denoise == 'savitzky_golay':
     X_train_FFT = use_denoise(X_train, savitzky_golay)
     X_test_FFT  = use_denoise(X_test, savitzky_golay)
-  
+
+  if opt.scaler == 'MinMaxScaler':
+    X_train_FFT = scaler_transform(X_train, MinMaxScaler)
+    X_test_FFT = scaler_transform(X_test, MinMaxScaler)
+  elif opt.scaler == 'MaxAbsScaler':
+    X_train_FFT = scaler_transform(X_train, MaxAbsScaler)
+    X_test_FFT = scaler_transform(X_test, MaxAbsScaler)
+  elif opt.scaler == 'StandardScaler':
+    X_train_FFT = scaler_transform(X_train, StandardScaler)
+    X_test_FFT = scaler_transform(X_test, StandardScaler)
+  elif opt.scaler == 'RobustScaler':
+    X_train_FFT = scaler_transform(X_train, RobustScaler)
+    X_test_FFT = scaler_transform(X_test, RobustScaler)
+  elif opt.scaler == 'Normalizer':
+    X_train_FFT = scaler_transform(X_train, Normalizer)
+    X_test_FFT = scaler_transform(X_test, Normalizer)
+  elif opt.scaler == 'QuantileTransformer':
+    X_train_FFT = scaler_transform(X_train, QuantileTransformer)
+    X_test_FFT = scaler_transform(X_test, QuantileTransformer)
+  elif opt.scaler == 'PowerTransformer':
+    X_train_FFT = scaler_transform(X_train, PowerTransformer)
+    X_test_FFT = scaler_transform(X_test, PowerTransformer)
+
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_train_FFT.shape},   Testing label shape: {y_test.shape}')
   
@@ -108,7 +134,8 @@ def main(opt):
     train_embs, test_embs, y_test_solf, y_train = train_new_triplet_center(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip)
   if opt.embedding_model == 'arcface':
     train_embs, test_embs, y_train = train_ArcFaceModel(opt, X_train_FFT, y_train, X_test_FFT, y_test)
-    
+  
+  
 
   print('\n Saving embedding phase...')   
   this_acc = []
