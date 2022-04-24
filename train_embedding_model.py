@@ -1,6 +1,6 @@
 from load_cases import get_data
 from FaceNet_predict import FaceNetOneShotRecognitor
-from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot
+from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot, use_denoise
 from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
@@ -11,6 +11,7 @@ from train_routines.center_loss import train_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.new_triplet_center import train_new_triplet_center
 from preprocessing.utils import handcrafted_features, FFT
+from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
@@ -77,8 +78,24 @@ def main(opt):
     X_train_FFT = handcrafted_features(X_train)
     X_test_FFT  = handcrafted_features(X_test)
   
+  if opt.denoise == 'DFK':
+    X_train_FFT = use_denoise(X_train, Fourier)
+    X_test_FFT  = use_denoise(X_test, Fourier)
+  elif opt.denoise == 'Wavelet_denoise':
+    X_train_FFT = use_denoise(X_train, Wavelet_denoise)
+    X_test_FFT  = use_denoise(X_test, Wavelet_denoise)
+  elif opt.denoise == 'SVD':
+    X_train = np.expand_dims(X_train, axis=-1)
+    x_test = np.expand_dims(X_test, axis=-1)
+
+    X_train_FFT = np.squeeze(use_denoise(X_train, SVD_denoise))
+    X_test_FFT  = np.squeeze(use_denoise(X_test, SVD_denoise))
+  elif opt.denoise == 'savitzky_golay':
+    X_train_FFT = use_denoise(X_train, savitzky_golay)
+    X_test_FFT  = use_denoise(X_test, savitzky_golay)
+  
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
-  print(f' Testing data shape: {X_train_FFT.shape},    Testing label shape: {y_test.shape}')
+  print(f' Testing data shape: {X_train_FFT.shape},   Testing label shape: {y_test.shape}')
   
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
