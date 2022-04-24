@@ -263,6 +263,14 @@ def scaler(signal, scale_method):
   scale = scale_method().fit(signal)
   return scale.transform(signal), scale
 
+def scaler_transform(signals, scale_method):
+  data = []
+  scale = scale_method()
+  for signal in signals:
+    data.append(scale.fit_transform(signal))
+  return np.array(data)
+
+
 def concatenate_data(x=None, scale=None, window_length=400, hop_length=200, hand_fea=True, SNdb=10, opt=None):
   X_train_all = []
   X_test = []
