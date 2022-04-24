@@ -121,7 +121,7 @@ def main(opt):
     X_test_FFT = scaler_transform(X_test, PowerTransformer)
 
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
-  print(f' Testing data shape: {X_train_FFT.shape},   Testing label shape: {y_test.shape}')
+  print(f' Testing data shape: {X_test_FFT.shape},   Testing label shape: {y_test.shape}')
   
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
@@ -157,52 +157,52 @@ def main(opt):
   for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'KNN', 'BT', 'euclidean', 'cosine']:
     model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
     y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
+    y_pred_inv = invert_one_hot(y_pred)
     count1 += 1
-    acc = accuracy_score(y_test, y_pred)
+    acc = accuracy_score(y_test, y_pred_inv)
 
-    y_pred_onehot = to_one_hot(y_pred)
     if y_pred_all == []:
-      y_pred_all = y_pred_onehot
+      y_pred_all = y_pred
     else:
-      y_pred_all += y_pred_onehot
+      y_pred_all += y_pred
 
     if each_ML == 'SVM' or each_ML == 'RandomForestClassifier':
       if y_pred_SVM_RandomForestClassifier == []:
-        y_pred_SVM_RandomForestClassifier = y_pred_onehot
+        y_pred_SVM_RandomForestClassifier = y_pred
       else:
-        y_pred_SVM_RandomForestClassifier += y_pred_onehot
+        y_pred_SVM_RandomForestClassifier += y_pred
       count2 += 1
     
-    if each_ML == 'BT' or each_ML == 'RandomForestClassifier' or each_ML == 'cosine':
+    if each_ML == 'KNN' or each_ML == 'RandomForestClassifier' or each_ML == 'cosine':
       if y_pred_BT_RandomForestClassifier_cosine == []:
-        y_pred_BT_RandomForestClassifier_cosine = y_pred_onehot
+        y_pred_BT_RandomForestClassifier_cosine = y_pred
       else:
-        y_pred_BT_RandomForestClassifier_cosine += y_pred_onehot
+        y_pred_BT_RandomForestClassifier_cosine += y_pred
       count3 += 1
 
     print(f'\n-------------- 1. Test accuracy: {acc} with the {each_ML} method--------------')
 
-    X_train_hand = handcrafted_features(X_train)
-    X_test_hand  = handcrafted_features(X_test)
-    model = FaceNetOneShotRecognitor(opt, X_train_hand, y_train, X_test_hand, y_test) 
-    y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
-    y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
+    # X_train_hand = handcrafted_features(X_train)
+    # X_test_hand  = handcrafted_features(X_test)
+    # model = FaceNetOneShotRecognitor(opt, X_train_hand, y_train, X_test_hand, y_test) 
+    # y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
+    # y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
     
-    y_pred_all += y_pred_onehot_no_emb
-    count1 += 1
-    acc = accuracy_score(y_test, y_pred_no_emb)
+    # y_pred_all += y_pred_onehot_no_emb
+    # count1 += 1
+    # acc = accuracy_score(y_test, y_pred_no_emb)
 
-    print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
+    # print(f'\n-------------- 2.Test accuracy: {acc} with the {each_ML} method--------------')
   
   y_pred_SVM_RandomForestClassifier = y_pred_SVM_RandomForestClassifier.astype(np.float32) / count2
   y_pred_SVM_RandomForestClassifier = np.argmax(y_pred_SVM_RandomForestClassifier, axis=1)
   acc_case_1 = accuracy_score(y_test, y_pred_SVM_RandomForestClassifier)
-  print(f'\n--------------Ensemble for case 1: {acc_case_1}--------------')
+  print(f'\n--------------Ensemble for SVM vs RandomForestClassifier: {acc_case_1}--------------')
 
-  y_pred_BT_RandomForestClassifier_cosine = y_pred_BT_RandomForestClassifier_cosine.astype(np.float32) / count3
-  y_pred_BT_RandomForestClassifier_cosine = np.argmax(y_pred_BT_RandomForestClassifier_cosine, axis=1)
-  acc_case_2 = accuracy_score(y_test, y_pred_BT_RandomForestClassifier_cosine)
-  print(f'\n--------------Ensemble for case 2: {acc_case_2}--------------')
+  y_pred_KNN_RandomForestClassifier_cosine = y_pred_KNN_RandomForestClassifier_cosine.astype(np.float32) / count3
+  y_pred_KNN_RandomForestClassifier_cosine = np.argmax(y_pred_KNN_RandomForestClassifier_cosine, axis=1)
+  acc_case_2 = accuracy_score(y_test, y_pred_KNN_RandomForestClassifier_cosine)
+  print(f'\n--------------Ensemble for BT vs RandomForestClassifier vs cosine: {acc_case_2}--------------')
 
   y_pred_all = y_pred_all.astype(np.float32) / count1
   y_pred_all = np.argmax(y_pred_all, axis=1)
