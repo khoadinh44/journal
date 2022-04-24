@@ -125,15 +125,15 @@ def main(opt):
   
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
-    train_embs, test_embs, y_test_solf, y_train = train(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
+    train_embs, test_embs, y_test_solf, y_train, outdir = train(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
   if opt.embedding_model == 'center':
-    train_embs, test_embs, y_test_solf, y_train = train_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
+    train_embs, test_embs, y_test_solf, y_train, outdir = train_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
   if opt.embedding_model == 'triplet_center':
-    train_embs, test_embs, y_test_solf, y_train = train_triplet_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
+    train_embs, test_embs, y_test_solf, y_train, outdir = train_triplet_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
   if opt.embedding_model == 'new_triplet_center':
-    train_embs, test_embs, y_test_solf, y_train = train_new_triplet_center(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip)
+    train_embs, test_embs, y_test_solf, y_train, outdir = train_new_triplet_center(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip)
   if opt.embedding_model == 'arcface':
-    train_embs, test_embs, y_train = train_ArcFaceModel(opt, X_train_FFT, y_train, X_test_FFT, y_test)
+    train_embs, test_embs, y_train, outdir = train_ArcFaceModel(opt, X_train_FFT, y_train, X_test_FFT, y_test)
   
   
 
@@ -159,6 +159,17 @@ def main(opt):
     y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
     y_pred_inv = np.argmax(y_pred, axis=1)
     count1 += 1
+    confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
+    commands = ['Healthy', 'OR Damage', 'IR Damage']
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(confusion_mtx,
+                xticklabels=commands,
+                yticklabels=commands,
+                annot=True, fmt='g')
+    plt.xlabel('Prediction')
+    plt.ylabel('Label')
+    plt.savefig(np.path.join(outdir, each_ML))
+    plt.show()
     acc = accuracy_score(y_test, y_pred_inv)
 
     if y_pred_all == []:
