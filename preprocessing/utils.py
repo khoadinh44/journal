@@ -352,8 +352,8 @@ def convert_one_hot(x, state=True):
 def invert_one_hot(x):
   labels = []
   for i in x:
-    each = np.argmax(i).tolist()
-    labels.append(labels)
+    each = i.tolist()
+    labels.append(each.index(1))
   return np.array(labels)
 
 def use_denoise(x, denoise_method):
