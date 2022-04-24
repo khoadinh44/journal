@@ -53,7 +53,8 @@ class FaceNetOneShotRecognitor(object):
     def predict(self, test_embs, train_embs, ML_method=None, emb=True):
         print('\n Test embs: ', test_embs.shape)
         print(' Train embs: ', train_embs.shape)
-        list_label = {}
+        # list_label = {}
+        list_label = []
 
         for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
             self.df_train.loc[len(self.df_train)] = [train_data, ID, train_label]
@@ -69,15 +70,15 @@ class FaceNetOneShotRecognitor(object):
                     distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
               x = np.argsort(distances)[:3]  # this 
               res = np.exp(x)/sum(np.exp(x))
-              list_label[i] = res
+              list_label.append(res.tolist())
+              # list_label[i] = res
 
-          if len(list_label) > 0:
-              for idx in list_label:
-                  name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
-                  list_label[idx] = name
-
-          list_label = list(list_label.values())
-        
+          # if len(list_label) > 0:
+          #     for idx in list_label:
+          #         name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
+          #         list_label[idx] = name
+          # list_label = list(list_label.values())
+          list_label = np.array(list_label)
         else:
           train_label = self.df_train['name']
           train_label = self.loading(train_label)
