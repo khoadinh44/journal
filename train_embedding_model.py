@@ -119,12 +119,19 @@ def main(opt):
     X_train_FFT = scaler_transform(X_train, QuantileTransformer)
     X_test_FFT = scaler_transform(X_test, QuantileTransformer)
   elif opt.scaler == 'PowerTransformer':
-    X_train_FFT = scaler_transform(X_train, PowerTransformer)
-    X_test_FFT = scaler_transform(X_test, PowerTransformer)
+    # X_train_FFT = scaler_transform(X_train, PowerTransformer)
+    # X_test_FFT = scaler_transform(X_test, PowerTransformer)
+    X_train_FFT= np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy')
+    X_test_FFT = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy')
 
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test_FFT.shape},   Testing label shape: {y_test.shape}')
   
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy', 'wb') as f:
+  #   np.save(f, X_train_FFT)
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy', 'wb') as f:
+  #   np.save(f, X_test_FFT)
+
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
     train_embs, test_embs, y_test_solf, y_train, outdir = train(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
@@ -170,7 +177,7 @@ def main(opt):
                 annot=True, fmt='g')
     plt.xlabel('Prediction')
     plt.ylabel('Label')
-    plt.savefig(np.path.join(outdir, each_ML))
+    plt.savefig(os.path.join(outdir, each_ML))
     plt.show()
     acc = accuracy_score(y_test, y_pred_inv)
 
