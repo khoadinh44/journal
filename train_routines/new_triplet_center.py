@@ -50,7 +50,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    # center = Dense(opt.embedding_size//3)(target_input)
+    center = Dense(opt.embedding_size//3)(target_input)
     if opt.activation == 'softmax':
       center = Dense(opt.embedding_size, activation='softmax')(center)
     elif opt.activation == 'relu':
@@ -70,7 +70,7 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     elif opt.activation == 'exponential':
       center = Dense(opt.embedding_size, activation=tf.keras.activations.exponential)(center)
     else:
-      center = Dense(opt.embedding_size)(target_input)
+      center = Dense(opt.embedding_size)(center)
     
 
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
@@ -103,12 +103,12 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
     
-    # for _ in range(10):
-    if os.path.isdir(outdir + "new_triplet_loss_model"):
-        model.load_weights(outdir + "new_triplet_loss_model")
-        print(f'\n Load weight : {outdir}')
-    else:
-        print('\n No weight file.')
+    if opt.use_weight:
+      if os.path.isdir(outdir + "new_triplet_loss_model"):
+          model.load_weights(outdir + "new_triplet_loss_model")
+          print(f'\n Load weight : {outdir}')
+      else:
+          print('\n No weight file.')
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative, y_target], y=[target, y_target],
               batch_size=opt.batch_size, epochs=epoch, 
