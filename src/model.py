@@ -33,13 +33,17 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(ma)
     if backbone:
-      fc1 = tf.keras.layers.Dropout(0.5)(fc1)                           
+      fc1 = tf.keras.layers.Dropout(0.5)(fc1)    
+    else:
+      fc1 = tf.keras.layers.Dropout(0.2)(fc1)                         
     fc2 = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
     if backbone:
       fc2 = tf.keras.layers.Dropout(0.5)(fc2) 
+    else:
+      fc2 = tf.keras.layers.Dropout(0.2)(fc2) 
     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
