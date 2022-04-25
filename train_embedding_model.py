@@ -177,7 +177,7 @@ def main(opt):
     else:
       y_pred_all += y_pred
 
-    if each_ML == 'SVM' or each_ML == 'RandomForestClassifier':
+    if each_ML == 'SVM' or each_ML == 'RandomForestClassifier' or each_ML == 'KNN':
       if y_pred_SVM_RandomForestClassifier == []:
         y_pred_SVM_RandomForestClassifier = y_pred
       else:
@@ -207,7 +207,7 @@ def main(opt):
   y_pred_SVM_RandomForestClassifier = y_pred_SVM_RandomForestClassifier.astype(np.float32) / count2
   y_pred_SVM_RandomForestClassifier = np.argmax(y_pred_SVM_RandomForestClassifier, axis=1)
   acc_case_1 = accuracy_score(y_test, y_pred_SVM_RandomForestClassifier)
-  print(f'\n--------------Ensemble for SVM vs RandomForestClassifier: {acc_case_1}--------------')
+  print(f'\n--------------Ensemble for SVM vs RandomForestClassifier vs KNN: {acc_case_1}--------------')
 
   y_pred_KNN_RandomForestClassifier_cosine = y_pred_KNN_RandomForestClassifier_cosine.astype(np.float32) / count3
   y_pred_KNN_RandomForestClassifier_cosine = np.argmax(y_pred_KNN_RandomForestClassifier_cosine, axis=1)
