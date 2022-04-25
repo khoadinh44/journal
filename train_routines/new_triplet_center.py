@@ -44,13 +44,13 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     anchor_input   = Input((opt.input_shape, 1,), name='anchor_input')
     positive_input = Input((opt.input_shape, 1,), name='positive_input')
     negative_input = Input((opt.input_shape, 1,), name='negative_input')
-    target_input   = Input((3,), name='target_input')
+    target_input   = Input((1,), name='target_input')
 
     soft_anchor, pre_logits_anchor = shared_model([anchor_input])
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    center = Dense(opt.embedding_size//3)(target_input)
+    # center = Dense(opt.embedding_size//3)(target_input)
     if opt.activation == 'softmax':
       center = Dense(opt.embedding_size, activation='softmax')(center)
     elif opt.activation == 'relu':
@@ -98,17 +98,17 @@ def train_new_triplet_center(opt, x_train, y_train, x_test, y_test, network, i=1
     y_anchor   = to_one_hot(Y_train[:, 0])
     y_positive = to_one_hot(Y_train[:, 1])
     y_negative = to_one_hot(Y_train[:, 2])
-    y_target   = to_one_hot(Y_train[:, 1])
+    y_target   = Y_train[:, 1]
 
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
     
     # for _ in range(10):
-    # if os.path.isdir(outdir + "new_triplet_loss_model"):
-    #     model.load_weights(outdir + "new_triplet_loss_model")
-    #     print(f'\n Load weight : {outdir}')
-    # else:
-    #     print('\n No weight file.')
+    if os.path.isdir(outdir + "new_triplet_loss_model"):
+        model.load_weights(outdir + "new_triplet_loss_model")
+        print(f'\n Load weight : {outdir}')
+    else:
+        print('\n No weight file.')
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative, y_target], y=[target, y_target],
               batch_size=opt.batch_size, epochs=epoch, 
