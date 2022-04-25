@@ -280,6 +280,7 @@ def parse_opt(known=False):
 
     parser.add_argument('--use_FFT',                  type=bool,    default=False)
     parser.add_argument('--use_SNRdb',                type=bool,    default=False)
+    parser.add_argument('--use_weight',               type=bool,    default=False)
     parser.add_argument('--lambda_',                  type=float,   default=0.5,         help='lambda_')
     parser.add_argument('--SNRdb',                    type=str,     default=[0, 5, 10, 15, 20, 25, 30],         help='intensity of noise')
     parser.add_argument('--num_mels',                 type=int,     default=32,          help='num_mels')
