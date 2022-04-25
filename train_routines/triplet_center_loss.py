@@ -43,12 +43,12 @@ def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
                   optimizer=AngularGrad(), metrics=["accuracy"],
                   loss_weights=loss_weights)
     
-    # for _ in range(10):
-    # if os.path.isdir(outdir + "triplet_center_loss_model"):
-    #     model.load_weights(outdir + "triplet_center_loss_model")
-    #     print(f'\n Load weight: {outdir}')
-    # else:
-    #     print('\n No weight file.')
+    if opt.use_weight:
+      if os.path.isdir(outdir + "triplet_center_loss_model"):
+          model.load_weights(outdir + "triplet_center_loss_model")
+          print(f'\n Load weight: {outdir}')
+      else:
+          print('\n No weight file.')
     model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
               batch_size=opt.batch_size,  
               # allbacks = [callback], 
