@@ -1,100 +1,179 @@
-######################################################
-# Original implementation by KinWaiCheuk: https://github.com/KinWaiCheuk/Triplet-net-keras
-######################################################
-
-from preprocessing.utils import to_one_hot, choosing_features
-import tensorflow as tf
-from tensorflow.keras.models import Model
-from triplet import generate_triplet, triplet_loss
-from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input
+# triplet loss
 import tensorflow.keras.backend as K
+from itertools import permutations
+import random
+import tensorflow as tf
 import numpy as np
-from tensorflow.keras.callbacks import TensorBoard
-import os
-import argparse
-from angular_grad import AngularGrad
+from train import parse_opt
+opt = parse_opt()
 
-callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
-def train(opt, x_train, y_train, x_test, y_test, network, i=100):
-    print("\n Training with Triplet Loss....")
+def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
+    data_xy = tuple([x, y])
 
-    outdir = opt.outdir + "/triplet_loss/"
-    if i==0:
-      epoch = 50 # 30
-    else:
-      epoch = opt.epoch # 10
+    trainsize = 1
 
-    if not os.path.isdir(outdir):
-        os.makedirs(outdir)
+    triplet_train_pairs = []
+    y_triplet_pairs = []
+    #triplet_test_pairs = []
+    for data_class in sorted(set(data_xy[1])):
+        same_class_idx = np.where((data_xy[1] == data_class))[0]
+        diff_class_idx = np.where(data_xy[1] != data_class)[0]
+        A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=ap_pairs)  # Generating Anchor-Positive pairs
+        Neg_idx = random.sample(list(diff_class_idx), k=an_pairs)
 
-    model_input = Input(shape=(opt.input_shape, 1))
-    softmax, pre_logits = network(opt, model_input)
-    
-    tf.keras.backend.clear_session()
-    tf.compat.v1.reset_default_graph()
+        # train
+        A_P_len = len(A_P_pairs)
+        #Neg_len = len(Neg_idx)
+        for ap in A_P_pairs[:int(A_P_len * trainsize)]:
+            Anchor = data_xy[0][ap[0]]
+            y_Anchor = data_xy[1][ap[0]]
 
-    shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
-    # shared_model.summary()
-   
-    X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
-    # X_test, Y_test = generate_triplet(x_test, y_test)
-  
-    anchor_input = Input((opt.input_shape, 1,), name='anchor_input')
-    positive_input = Input((opt.input_shape, 1,), name='positive_input')
-    negative_input = Input((opt.input_shape, 1,), name='negative_input')
+            Positive = data_xy[0][ap[1]]
+            y_Pos = data_xy[1][ap[1]]
 
-    soft_anchor, pre_logits_anchor = shared_model([anchor_input])
-    soft_pos, pre_logits_pos = shared_model([positive_input])
-    soft_neg, pre_logits_neg = shared_model([negative_input])
+            for n in Neg_idx:
+                Negative = data_xy[0][n]
+                y_Neg = data_xy[1][n]
+                
+                triplet_train_pairs.append([Anchor, Positive, Negative])
+                y_triplet_pairs.append([y_Anchor, y_Pos, y_Neg])
+                # test
 
-    merged_pre = concatenate([pre_logits_anchor, pre_logits_pos, pre_logits_neg], axis=-1, name='merged_pre')
-    merged_soft = concatenate([soft_anchor, soft_pos, soft_neg], axis=-1, name='merged_soft')
-    
-    loss_weights = [1, 0.01]
+    return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
-    tf.keras.backend.clear_session()
-    tf.compat.v1.reset_default_graph()
+def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
+    """
+    Implementation of the triplet loss function
+    Arguments:
+    y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
+    y_pred -- python list containing three objects:
+            anchor -- the encodings for the anchor data
+            positive -- the encodings for the positive data (similar to anchor)
+            negative -- the encodings for the negative data (different from anchor)
+    Returns:
+    loss -- real number, value of the loss
+    """
+    total_lenght = y_pred.shape.as_list()[-1]
+    print(total_lenght)
 
-    model = Model(inputs=[anchor_input, positive_input, negative_input], outputs=[merged_soft, merged_pre])
+    anchor   = y_pred[:, 0:int(total_lenght * 1 / 4)]
+    anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
+    positive = y_pred[:, int(total_lenght * 1 / 4):int(total_lenght * 2 / 4)]
+    positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
+    negative = y_pred[:, int(total_lenght * 2 / 4):int(total_lenght * 3 / 4)]
+    negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
+    y_center = y_pred[:, int(total_lenght * 3 / 4):int(total_lenght * 4 / 4)]
+    y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
 
-    model.compile(loss=["categorical_crossentropy", triplet_loss],
-                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
-    # https://keras.io/api/losses/
-    
-    # data-----------------------------------------------------
-    anchor   = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
-    positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
-    negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
 
-    y_anchor   = to_one_hot(Y_train[:, 0])
-    y_positive = to_one_hot(Y_train[:, 1])
-    y_negative = to_one_hot(Y_train[:, 2])
+    # mean ---------------------------------
+    mean_anchor     = tf.expand_dims(tf.math.reduce_mean(anchor, axis=1), axis=1)
+    multiple_anchor = tf.constant([1, anchor.shape.as_list()[1]])
+    mean_anchor     = tf.tile(mean_anchor, multiple_anchor)
 
-    target = np.concatenate((y_anchor, y_positive, y_negative), -1)
-    
-    # for _ in range(10):
-    # if os.path.isdir(outdir + "triplet_loss_model"):
-    #     model.load_weights(outdir + "triplet_loss_model")
-    #     print(f'\n Load weight : {outdir}')
-    # else:
-    #     print('\n No weight file.')
-    # Fit data-------------------------------------------------
-    model.fit(x=[anchor, positive, negative], y=[target, target],
-              batch_size=opt.batch_size, 
-              # callbacks=[callback], 
-              epochs=epoch)
-    tf.saved_model.save(model, outdir + 'triplet_loss_model')
+    mean_positive     = tf.expand_dims(tf.math.reduce_mean(positive, axis=1), axis=1)
+    multiple_positive = tf.constant([1, positive.shape.as_list()[1]])
+    mean_positive     = tf.tile(mean_positive, multiple_positive)
 
-    # Embedding------------------------------------------------
-    model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
-    model.load_weights(outdir + "triplet_loss_model")
+    mean_negative     = tf.expand_dims(tf.math.reduce_mean(negative, axis=1), axis=1)
+    multiple_negative = tf.constant([1, negative.shape.as_list()[1]])
+    mean_negative     = tf.tile(mean_negative, multiple_negative)
 
-    # x_train, y_train = choosing_features(x_train, y_train)
-    _, X_train_embed = model.predict([x_train])
-    y_test_soft, X_test_embed = model.predict([x_test])
-    
-    from TSNE_plot import tsne_plot
-    tsne_plot(outdir, "triplet_loss_model", X_train_embed, X_test_embed, y_train, y_test)
-    
-    return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
+    # variance ------------------------------
+    variance_anchor   = K.sum(K.square(anchor - mean_anchor), axis=1)/tf.cast(anchor.shape.as_list()[1], tf.float32)
+    variance_positive = K.sum(K.square(positive - mean_positive), axis=1)/tf.cast(positive.shape.as_list()[1], tf.float32)
+    variance_negative = K.sum(K.square(negative - mean_negative), axis=1)/tf.cast(negative.shape.as_list()[1], tf.float32)
+
+    # distance between the anchor and the positive
+    pos_dist          = K.sum(K.square(anchor - positive), axis=1)
+    mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
+
+    # distance between the anchor and the negative
+    neg_dist          = K.sum(K.square(anchor - negative), axis=1)
+    mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
+
+    # compute loss
+    out_l2     = K.sum(K.square(anchor - y_center), axis=1) 
+    loss       = K.maximum(alpha - neg_dist, 0.0)
+    mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
+
+    return out_l2 + opt.lambda_*loss
+
+def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
+    """
+    Implementation of the triplet loss function
+    Arguments:
+    y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
+    y_pred -- python list containing three objects:
+            anchor -- the encodings for the anchor data
+            positive -- the encodings for the positive data (similar to anchor)
+            negative -- the encodings for the negative data (different from anchor)
+    Returns:
+    loss -- real number, value of the loss
+    """
+    total_lenght = y_pred.shape.as_list()[-1]
+
+    anchor   = y_pred[:, 0:int(total_lenght * 1 / 3)]
+    anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
+    positive = y_pred[:, int(total_lenght * 1 / 3):int(total_lenght * 2 / 3)]
+    positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
+    negative = y_pred[:, int(total_lenght * 2 / 3):int(total_lenght * 3 / 3)]
+    negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
+
+    # distance between the anchor and the positive
+    pos_dist          = K.sum(K.square(anchor - positive), axis=1)
+
+    # distance between the anchor and the negative
+    neg_dist          = K.sum(K.square(anchor - negative), axis=1)
+
+    # compute loss
+    basic_loss = pos_dist - neg_dist + alpha
+    loss       = K.maximum(basic_loss, 0.0)
+
+    return loss
+
+
+def triplet_center_loss(y_true, y_pred, n_classes= 3, alpha=0.4):
+    """
+    Implementation of the triplet loss function
+    Arguments:
+    y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
+    y_pred -- python list containing three objects:
+            anchor -- the encodings for the anchor data
+            positive -- the encodings for the positive data (similar to anchor)
+            negative -- the encodings for the negative data (different from anchor)
+    Returns:
+    loss -- real number, value of the loss
+    """
+    pre_logits, center = y_pred[:, :256], y_pred[:, 256:]
+    y_pred = K.sum(K.square(pre_logits - center), axis=1)
+
+    # repeat y_true for n_classes and == np.arange(n_classes)
+    # repeat also y_pred and apply mask
+    # obtain min for each column min vector for each class
+
+    classes = tf.range(0, n_classes,dtype=tf.float32)
+    y_pred_r = tf.reshape(y_pred, (tf.shape(y_pred)[0], 1))
+    y_pred_r = tf.keras.backend.repeat(y_pred_r, n_classes)
+
+    y_true_r = tf.reshape(y_true, (tf.shape(y_true)[0], 1))
+    y_true_r = tf.keras.backend.repeat(y_true_r, n_classes)
+
+    mask = tf.equal(y_true_r[:, :, 0], classes)
+
+    #mask2 = tf.ones((tf.shape(y_true_r)[0], tf.shape(y_true_r)[1]))  # todo inf
+
+    # use tf.where(tf.equal(masked, 0.0), np.inf*tf.ones_like(masked), masked)
+
+    masked = y_pred_r[:, :, 0] * tf.cast(mask, tf.float32) #+ (mask2 * tf.cast(tf.logical_not(mask), tf.float32))*tf.constant(float(2**10))
+    masked = tf.where(tf.equal(masked, 0.0), np.inf*tf.ones_like(masked), masked)
+
+    minimums = tf.math.reduce_min(masked, axis=1)
+
+    loss = K.max(y_pred - minimums +alpha ,0)
+
+    # obtain a mask for each pred
+
+
+    return loss
