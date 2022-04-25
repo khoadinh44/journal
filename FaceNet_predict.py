@@ -50,35 +50,49 @@ class FaceNetOneShotRecognitor(object):
             all_data.append(i)
         return np.array(all_data)
       
-    def predict(self, test_embs, train_embs, ML_method=None, emb=True):
+    def predict(self, test_embs, train_embs, ML_method=None, emb=True, use_mean=True):
         print('\n Test embs: ', test_embs.shape)
         print(' Train embs: ', train_embs.shape)
-        list_label = {}
-        # list_label = []
+        # list_label = {}
+        list_label = []
 
         for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
             self.df_train.loc[len(self.df_train)] = [train_data, ID, train_label]
+        
+        emb_class_0 = np.mean(train_embs[self.y_train_all==0], axis=0)
+        emb_class_1 = np.mean(train_embs[self.y_train_all==1], axis=0)
+        emb_class_2 = np.mean(train_embs[self.y_train_all==2], axis=0)
+        emb_class_all = [emb_class_0, emb_class_1, emb_class_2]
 
         if ML_method == 'euclidean' or ML_method == 'cosine':
           for i in range(test_embs.shape[0]):
               distances = []
-              for j in range(train_embs.shape[0]):
-                  # the min of clustering
-                  if ML_method == 'euclidean':
-                    distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j]))
-                  elif ML_method == 'cosine':
-                    distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
-              res = np.argsort(distances)[0]  
 
-              # res = np.exp(x)/sum(np.exp(x))
-              # list_label.append(res.tolist())
-              list_label[i] = res
+              if use_mean:
+                  for emb_class in emb_class_all:
+                      if ML_method == 'euclidean':
+                          distances.append(euclidean(test_embs[i].reshape(-1), emb_class)) # append one value
+                      elif ML_method == 'cosine':
+                          distances.append(cosine(test_embs[i].reshape(-1), emb_class))
+                  list_label.append(np.argsort(distances)[0])
+              else:
+                  for j in range(train_embs.shape[0]):
+                      if ML_method == 'euclidean':
+                        distances.append(euclidean(test_embs[i].reshape(-1), train_embs[j])) # append one value
+                      elif ML_method == 'cosine':
+                        distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
+                  res = np.argsort(distances)[0]  
+                  print(np.argsort(distances))
+                  # res = np.exp(x)/sum(np.exp(x))
+                  # list_label.append(res.tolist())
+                  list_label[i] = res
 
-          if len(list_label) > 0:
-              for idx in list_label:
-                  name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
-                  list_label[idx] = name
-          list_label = list(list_label.values())
+          if use_mean == False:
+              if len(list_label) > 0:
+                  for idx in list_label:
+                      name = self.df_train[( self.df_train['ID'] == list_label[idx] )].name.iloc[0]
+                      list_label[idx] = name
+              list_label = list(list_label.values())
 
           list_label = onehot(list_label)
         else:
