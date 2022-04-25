@@ -406,6 +406,8 @@ if opt.PU_data_table_8:
             np.save(f, OR_Damage_train_label)
 
     if load:
+      # Adding noise to IR training data---------------------------------------------------------------------------
+        # IR_Damage_train = add_noise(np.load('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/IR_Damage_train.npy'), 20)
         IR_Damage_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/IR_Damage_train.npy')
         IR_Damage_train_label = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/PU_data/case_1/IR_Damage_train_label.npy')
     else:
