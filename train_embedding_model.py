@@ -97,8 +97,8 @@ def main(opt):
     X_train_FFT = use_denoise(X_train, SVD_denoise)
     X_test_FFT  = use_denoise(X_test, SVD_denoise)
   elif opt.denoise == 'savitzky_golay':
-    X_train_FFT = use_denoise(X_train, savitzky_golay)
-    X_test_FFT  = use_denoise(X_test, savitzky_golay)
+    X_train_FFT = X_train = use_denoise(X_train, savitzky_golay)
+    X_test_FFT  = X_test = use_denoise(X_test, savitzky_golay)
 
   if opt.scaler == 'MinMaxScaler':
     X_train_FFT = scaler_transform(X_train, MinMaxScaler)
@@ -127,9 +127,9 @@ def main(opt):
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test_FFT.shape},   Testing label shape: {y_test.shape}')
   
-  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy', 'wb') as f:
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT_1.npy', 'wb') as f:
   #   np.save(f, X_train_FFT)
-  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy', 'wb') as f:
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT_1.npy', 'wb') as f:
   #   np.save(f, X_test_FFT)
 
   print('\n Loading model...')
