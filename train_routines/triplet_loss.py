@@ -57,14 +57,16 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
     tf.compat.v1.reset_default_graph()
 
     model = Model(inputs=[anchor_input, positive_input, negative_input], outputs=[merged_soft, merged_pre])
-    # if os.path.isdir(outdir + "triplet_loss_model"):
-    #   model.load_weights(outdir + "triplet_loss_model")
-    #   print(f'\n Load weight: {outdir}triplet_loss_model')
-    # else:
-    #   print('\n No weight file.')
+    
+    if opt.use_weight:
+      if os.path.isdir(outdir + "triplet_loss_model"):
+        model.load_weights(outdir + "triplet_loss_model")
+        print(f'\n Load weight: {outdir}triplet_loss_model')
+      else:
+        print('\n No weight file.')
 
-    model.compile(loss=["categorical_crossentropy", triplet_loss],
-                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
+      model.compile(loss=["categorical_crossentropy", triplet_loss],
+                    optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
@@ -78,12 +80,12 @@ def train(opt, x_train, y_train, x_test, y_test, network, i=100):
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
     
-    # for _ in range(10):
-    # if os.path.isdir(outdir + "triplet_loss_model"):
-    #     model.load_weights(outdir + "triplet_loss_model")
-    #     print(f'\n Load weight : {outdir}')
-    # else:
-    #     print('\n No weight file.')
+    if opt.use_weight:
+        if os.path.isdir(outdir + "triplet_loss_model"):
+            model.load_weights(outdir + "triplet_loss_model")
+            print(f'\n Load weight : {outdir}')
+        else:
+            print('\n No weight file.')
     # Fit data-------------------------------------------------
     model.fit(x=[anchor, positive, negative], y=[target, target],
               batch_size=opt.batch_size, 
