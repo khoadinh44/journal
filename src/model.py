@@ -103,14 +103,34 @@ def CNN_C_trip(opt, input_, backbone=False):
     # x = tf.keras.activations.gelu(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
+    # for i in range(3):
+    #     x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+
+    #-----------------
     for i in range(3):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
-    # x = GlobalAveragePooling1D()(x)
-    
-    x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
-    x = TransformerLayer(x=x, c=opt.embedding_size, backbone=backbone)
+
+    for i in range(4):
+        x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(6):
+        x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(3):
+        x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
+    #------------------------------
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    x = GlobalAveragePooling1D()(x)
+    # x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
+    x = TransformerLayer(x=x, c=512, backbone=backbone)
     
     
     if backbone:
