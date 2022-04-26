@@ -59,9 +59,18 @@ class FaceNetOneShotRecognitor(object):
         for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
             self.df_train.loc[len(self.df_train)] = [train_data, ID, train_label]
         
-        emb_class_0 = np.mean(train_embs[self.y_train_all==0], axis=0)
-        emb_class_1 = np.mean(train_embs[self.y_train_all==1], axis=0)
-        emb_class_2 = np.mean(train_embs[self.y_train_all==2], axis=0)
+        mean_class_0 = np.mean(train_embs[self.y_train_all==0], axis=0)
+        var_class_0  = np.var(train_embs[self.y_train_all==0], axis=0)
+        emb_class_0  = np.concatenate(mean_class_0, var_class_0)
+        
+        mean_class_1 = np.mean(train_embs[self.y_train_all==1], axis=0)
+        var_class_1  = np.var(train_embs[self.y_train_all==1], axis=0)
+        emb_class_1  = np.concatenate(mean_class_1, var_class_1)
+        
+        mean_class_2 = np.mean(train_embs[self.y_train_all==2], axis=0)
+        var_class_2  = np.var(train_embs[self.y_train_all==2], axis=0)
+        emb_class_2  = np.concatenate(mean_class_2, var_class_2)
+        
         emb_class_all = [emb_class_0, emb_class_1, emb_class_2]
 
         if ML_method == 'euclidean' or ML_method == 'cosine':
@@ -70,10 +79,13 @@ class FaceNetOneShotRecognitor(object):
 
               if use_mean:
                   for emb_class in emb_class_all:
+                          test_emb = test_embs[i].reshape(-1)
+                          var_test = np.var(test_emb)
+                          emb_test_each = np.concatenate((test_emb, np.repeat(var_test, len(test_emb))))
                       if ML_method == 'euclidean':
-                          distances.append(euclidean(test_embs[i].reshape(-1), emb_class)) # append one value
+                          distances.append(euclidean(emb_test_each, emb_class)) # append one value
                       elif ML_method == 'cosine':
-                          distances.append(cosine(test_embs[i].reshape(-1), emb_class))
+                          distances.append(cosine(emb_test_each, emb_class))
                   list_label.append(np.argsort(distances)[0])
               else:
                   for j in range(train_embs.shape[0]):
