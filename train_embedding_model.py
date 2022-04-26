@@ -127,10 +127,14 @@ def main(opt):
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test_FFT.shape},   Testing label shape: {y_test.shape}')
   
+  ## Save data ----------------------------------------------
   # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT_1.npy', 'wb') as f:
   #   np.save(f, X_train_FFT)
   # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT_1.npy', 'wb') as f:
   #   np.save(f, X_test_FFT)
+
+  # Convert label 2 to label 1. Train with 30 epochs
+  # y_train = np.where(y_train!=2, y_train, 1)
 
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
@@ -150,10 +154,22 @@ def main(opt):
   this_acc = []
   y_pred_Lo_Co = []
   y_pred_SVM_Ran = []
+  commands = ['Healthy', 'OR Damage', 'IR Damage']
 
   if opt.embedding_model != 'arcface':
     y_test_solf = np.argmax(y_test_solf, axis=1)
     solf_acc = accuracy_score(y_test, y_test_solf)
+    confusion_mtx = tf.math.confusion_matrix(y_test, y_test_solf)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(confusion_mtx,
+                xticklabels=commands,
+                yticklabels=commands,
+                annot=True, fmt='g')
+    plt.xlabel('Prediction')
+    plt.ylabel('Label')
+    plt.savefig(os.path.join(outdir, 'solfmax'))
+    plt.show()
+    
     print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
 
   y_pred_all = []
@@ -169,7 +185,7 @@ def main(opt):
     y_pred_inv = np.argmax(y_pred, axis=1)
     count1 += 1
     confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
-    commands = ['Healthy', 'OR Damage', 'IR Damage']
+
     plt.figure(figsize=(10, 8))
     sns.heatmap(confusion_mtx,
                 xticklabels=commands,
