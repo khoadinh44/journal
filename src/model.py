@@ -117,21 +117,20 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(6):
-        x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
+    # for i in range(6):
+    #     x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
 
-    x = MaxPooling1D(pool_size=4, strides=None)(x)
+    # x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(3):
-        x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
+    # for i in range(3):
+    #     x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
     #------------------------------
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    x = GlobalAveragePooling1D()(x)
-    # x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
-    x = TransformerLayer(x=x, c=512, backbone=backbone)
-    
+    # x = GlobalAveragePooling1D()(x)
+    x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
+    x = TransformerLayer(x=x, c=244, backbone=backbone)
     
     if backbone:
         return x
