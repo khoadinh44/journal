@@ -27,23 +27,23 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
-    fc1 = Dense(c, use_bias=True, 
-                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                  bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(ma)
+    ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
+#     fc1 = Dense(c, use_bias=True, 
+#                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+#                   bias_regularizer=regularizers.l2(1e-4),
+#                   activity_regularizer=regularizers.l2(1e-5))(ma)
+#     if backbone:
+#       fc1 = tf.keras.layers.Dropout(0.5)(fc1)    
+#     else:
+#       fc1 = tf.keras.layers.Dropout(0.2)(fc1)                         
+#     fc2 = Dense(c, use_bias=True, 
+#                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+#                   bias_regularizer=regularizers.l2(1e-4),
+#                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
     if backbone:
-      fc1 = tf.keras.layers.Dropout(0.5)(fc1)    
+      fc2 = tf.keras.layers.Dropout(0.5)(ma) 
     else:
-      fc1 = tf.keras.layers.Dropout(0.2)(fc1)                         
-    fc2 = Dense(c, use_bias=True, 
-                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                  bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(fc1) + x
-    if backbone:
-      fc2 = tf.keras.layers.Dropout(0.5)(fc2) 
-    else:
-      fc2 = tf.keras.layers.Dropout(0.2)(fc2) 
+      fc2 = tf.keras.layers.Dropout(0.2)(ma) 
     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -61,7 +61,6 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
               name=conv_name_base + '2a')(input_tensor)
     x = BatchNormalization(name=bn_name_base + '2a')(x)
     x = Activation('relu')(x)
-    # x = tf.keras.activations.gelu(x)
 
     x = Conv1D(filters,
                kernel_size=kernel_size,
@@ -103,9 +102,10 @@ def CNN_C_trip(opt, input_, backbone=False):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
-    x = GlobalAveragePooling1D()(x)
 
     x = TransformerLayer(x=x, c=48, backbone=backbone)
+    x = GlobalAveragePooling1D()(x)
+    # x = GlobalAveragePooling1D(data_format='channels_first')(x)
 
     if backbone:
         return x
