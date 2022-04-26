@@ -79,9 +79,9 @@ class FaceNetOneShotRecognitor(object):
 
               if use_mean:
                   for emb_class in emb_class_all:
-                          test_emb = test_embs[i].reshape(-1)
-                          var_test = np.var(test_emb)
-                          emb_test_each = np.concatenate((test_emb, np.repeat(var_test, len(test_emb))))
+                      test_emb = test_embs[i].reshape(-1)
+                      var_test = np.var(test_emb)
+                      emb_test_each = np.concatenate((test_emb, np.repeat(var_test, len(test_emb))))
                       if ML_method == 'euclidean':
                           distances.append(euclidean(emb_test_each, emb_class)) # append one value
                       elif ML_method == 'cosine':
