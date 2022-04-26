@@ -108,9 +108,10 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     # x = GlobalAveragePooling1D()(x)
-    x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
     
-    x = TransformerLayer(x=x, c=128, backbone=backbone)
+    x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
+    x = TransformerLayer(x=x, c=opt.embedding_size, backbone=backbone)
+    
     
     if backbone:
         return x
