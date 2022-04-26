@@ -87,9 +87,9 @@ class FaceNetOneShotRecognitor(object):
 
                       # emb_test_each = np.concatenate((test_emb, test_var))
                       if ML_method == 'euclidean':
-                          distances.append(euclidean(mean_each, test_emb)+euclidean(var_each, test_var)) # append one value
+                          distances.append(np.sqrt(euclidean(mean_each, test_emb)**2 + euclidean(var_each, test_var)**2)) # append one value
                       elif ML_method == 'cosine':
-                          distances.append(cosine(mean_each, test_emb)+cosine(var_each, test_var))
+                          distances.append(cosine(mean_each, test_emb) + cosine(var_each, test_var))
                   list_label.append(np.argsort(distances)[0])
               else:
                   for j in range(train_embs.shape[0]):
