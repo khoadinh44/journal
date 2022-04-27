@@ -80,7 +80,7 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     if opt.use_weight:
       if os.path.isdir(outdir + "new_center_loss_model"):
         model.load_weights(outdir + "new_center_loss_model")
-        print(f'\n Load weight: {outdir}')
+        print(f'\n Load weight: {outdir}/new_center_loss_model')
       else:
         print('\n No weight file.')
     
@@ -92,7 +92,7 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     tf.saved_model.save(model, outdir + 'new_center_loss_model')
 
     model = Model(inputs=[x_input, mean_var_input], outputs=[softmax, merged_pre_mean_var])
-    model.load_weights(outdir + "center_loss_model")
+    model.load_weights(outdir + "new_center_loss_model")
 
     # x_train, y_train = choosing_features(x_train, y_train)
     _,           X_train_embed  = model.predict([x_train, x_train_mean_var])
