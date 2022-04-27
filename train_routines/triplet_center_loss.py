@@ -56,7 +56,9 @@ def train_triplet_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     tf.saved_model.save(model, outdir + 'triplet_center_loss_model')
     
-
+    model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
+    model.load_weights(outdir + "triplet_center_loss_model")
+    
     # model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
     # x_train, y_train = choosing_features(x_train, y_train)
     _,           X_train_embed  = model.predict([x_train, y_train])
