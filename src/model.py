@@ -45,10 +45,8 @@ def TransformerLayer(x=None, c=48, num_heads=4, backbone=None):
 #                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
 #                   bias_regularizer=regularizers.l2(1e-4),
 #                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
-    if backbone:
-      fc2 = tf.keras.layers.Dropout(0.5)(ma) 
-    else:
-      fc2 = tf.keras.layers.Dropout(0.2)(ma) 
+    fc2 = tf.keras.layers.Dropout(0.5)(ma) 
+
     return fc2
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -100,6 +98,7 @@ def CNN_C_trip(opt, input_, backbone=False):
                kernel_regularizer=regularizers.l2(l=0.0001),)(input_)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
+    # x = tf.keras.activations.gelu(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     # for i in range(3):
