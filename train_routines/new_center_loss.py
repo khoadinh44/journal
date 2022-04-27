@@ -99,11 +99,10 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_test_soft, X_test_embed_or   = model.predict([x_test])
 
     # from mean and variance of data ----------------------
-    model = Model(inputs=[mean_var_input], outputs=[y_mean_var])
-    model.load_weights(outdir + "new_center_loss_model")
+    mean_var_shared_model.load_weights(outdir + "new_center_loss_model")
 
-    X_train_embed_m_v  = model.predict([x_train_mean_var])
-    X_test_embed_m_v   = model.predict([x_test_mean_var])
+    X_train_embed_m_v  = mean_var_shared_model.predict([x_train_mean_var])
+    X_test_embed_m_v   = mean_var_shared_model.predict([x_test_mean_var])
 
     X_train_embed = np.concatenate((X_train_embed_or, X_train_embed_m_v), axis=-1)
     X_test_embed = np.concatenate((X_test_embed_or, X_test_embed_m_v), axis=-1)
