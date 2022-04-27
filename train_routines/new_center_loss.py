@@ -35,14 +35,14 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_train = y_train.astype(np.float32)
 
     x_train_get = np.squeeze(x_train)
-    x_train_mean = np.expand_dims(np.mean(x_train_get, axis=0), axis=-1)
-    x_train_var = np.expand_dims(np.var(x_train_get, axis=0), axis=-1)
+    x_train_mean = np.expand_dims(np.mean(x_train_get, axis=1), axis=-1)
+    x_train_var = np.expand_dims(np.var(x_train_get, axis=1), axis=-1)
     x_train_mean_var = np.concatenate((x_train_mean, x_train_var), axis=-1)
     print(f'x_train_mean_var shape: {x_train_mean_var.shape}')
     
     x_test_get = np.squeeze(x_test)
-    x_test_mean = np.expand_dims(np.mean(x_test_get, axis=0), axis=-1)
-    x_test_var = np.expand_dims(np.var(x_test_get, axis=0), axis=-1)
+    x_test_mean = np.expand_dims(np.mean(x_test_get, axis=1), axis=-1)
+    x_test_var = np.expand_dims(np.var(x_test_get, axis=1), axis=-1)
     x_test_mean_var = np.concatenate((x_test_mean, x_test_var), axis=-1)
     
     # Input layers------------------------------------------------
