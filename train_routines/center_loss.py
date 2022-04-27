@@ -52,7 +52,8 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     model = tf.keras.models.Model(inputs=[x_input, target_input], outputs=[softmax, merged_pre])
 
     model.compile(loss=["categorical_crossentropy", l2_loss],
-                  optimizer=AngularGrad(), metrics=["accuracy"],
+                  optimizer=AngularGrad(), 
+                  metrics=["accuracy"],
                   loss_weights=loss_weights)
     
     if opt.use_weight:
@@ -68,7 +69,8 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     tf.saved_model.save(model, outdir + 'center_loss_model')
 
-    # model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
+    model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
+    model.load_weights(outdir + "center_loss_model")
 
     # x_train, y_train = choosing_features(x_train, y_train)
     _,           X_train_embed  = model.predict([x_train, y_train])
