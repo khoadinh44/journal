@@ -70,7 +70,7 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     merged_pre = concatenate([pre_logits, y_center, y_mean_var], axis=-1, name='merged_pre')
     merged_pre_mean_var = concatenate([pre_logits, y_mean_var], axis=-1, name='merged_pre_mean_var')
 
-    model = tf.keras.models.Model(inputs=[x_input, target_input, mean_var_input], outputs=[softmax, merged_pre])
+    model = tf.keras.models.Model(inputs=[x_input, mean_var_input, target_input], outputs=[softmax, merged_pre])
 
     model.compile(loss=["categorical_crossentropy", l2_loss],
                   optimizer=AngularGrad(), 
@@ -84,19 +84,29 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
       else:
         print('\n No weight file.')
     
-    model.fit(x=[x_train, y_train, x_train_mean_var], y=[y_train_onehot, y_train],
+    model.fit(x=[x_train, x_train_mean_var, y_train], y=[y_train_onehot, y_train],
               batch_size=opt.batch_size,  
               # callbacks=[callback],
               epochs=opt.epoch,)
 
     tf.saved_model.save(model, outdir + 'new_center_loss_model')
 
-    model = Model(inputs=[x_input, mean_var_input], outputs=[softmax, merged_pre_mean_var])
+    # from input data---------------------------
+    model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
     model.load_weights(outdir + "new_center_loss_model")
 
-    # x_train, y_train = choosing_features(x_train, y_train)
-    _,           X_train_embed  = model.predict([x_train, x_train_mean_var])
-    y_test_soft, X_test_embed   = model.predict([x_test, x_test_mean_var])
+    _,           X_train_embed_or  = model.predict([x_train])
+    y_test_soft, X_test_embed_or   = model.predict([x_test])
+
+    # from mean and variance of data ----------------------
+    model = Model(inputs=[mean_var_input], outputs=[y_mean_var])
+    model.load_weights(outdir + "new_center_loss_model")
+
+    X_train_embed_m_v  = model.predict([x_train_mean_var])
+    X_test_embed_m_v   = model.predict([x_test_mean_var])
+
+    X_train_embed = np.concatenate((X_train_embed_or, X_train_embed_m_v), axis=-1)
+    X_test_embed = np.concatenate((X_test_embed_or, X_test_embed_m_v), axis=-1)
     
     from TSNE_plot import tsne_plot
     tsne_plot(outdir, "new_center_loss_model", X_train_embed, X_test_embed, y_train, y_test)
