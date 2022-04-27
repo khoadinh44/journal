@@ -53,8 +53,11 @@ class FaceNetOneShotRecognitor(object):
     def predict(self, test_embs, train_embs, ML_method=None, emb=True, use_mean=True):
         print('\n Test embs: ', test_embs.shape)
         print(' Train embs: ', train_embs.shape)
-        # list_label = {}
-        list_label = []
+        
+        if use_mean:
+            list_label = []
+        else:
+            list_label = {}
 
         for ID, (train_data, train_label) in enumerate(zip(self.X_train_all, self.y_train_all)):
             self.df_train.loc[len(self.df_train)] = [train_data, ID, train_label]
@@ -98,7 +101,6 @@ class FaceNetOneShotRecognitor(object):
                       elif ML_method == 'cosine':
                         distances.append(cosine(test_embs[i].reshape(-1), train_embs[j]))
                   res = np.argsort(distances)[0]  
-                  print(np.argsort(distances))
                   # res = np.exp(x)/sum(np.exp(x))
                   # list_label.append(res.tolist())
                   list_label[i] = res
