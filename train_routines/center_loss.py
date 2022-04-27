@@ -16,7 +16,8 @@ import argparse
 from keras.layers import Dense
 
 def l2_loss(y_true, y_pred):
-  pre_logits, center = y_pred[:, :256], y_pred[:, 256:]
+  shape = y_pred.shape[1]//2
+  pre_logits, center = y_pred[:, :shape], y_pred[:, shape:]
   out_l2 = K.sum(K.square(pre_logits - center))
   return out_l2
 
