@@ -84,7 +84,8 @@ class FaceNetOneShotRecognitor(object):
                   for emb_class in emb_class_all:
                       test_emb = test_embs[i].reshape(-1)
                       
-                      mean_each, var_each = emb_class[ :opt.embedding_size], emb_class[opt.embedding_size: ]
+                      half = emb_class.shape[0]//2
+                      mean_each, var_each = emb_class[ :half], emb_class[half: ]
                       test_combi = np.concatenate((np.expand_dims(mean_each, axis=0), np.expand_dims(test_emb, axis=0)))
                       test_var = np.var(test_combi, axis=0)
 
