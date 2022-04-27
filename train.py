@@ -286,7 +286,7 @@ def parse_opt(known=False):
     parser.add_argument('--num_mels',                 type=int,     default=32,          help='num_mels')
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
     parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_B', 'CNN_C', 'wavenet', 'wavelet_head'],   help='name of all NN models')
-    parser.add_argument('--embedding_model',          type=str,     default='arcface',   help='new_triplet_loss, new_triplet_loss, triplet, center, triplet_center')
+    parser.add_argument('--embedding_model',          type=str,     default='arcface',   help='new_triplet_loss, new_triplet_loss, triplet, center, new_center, triplet_center')
     parser.add_argument('--type_PU_data',             type=str,     default='vibration', help='vibration, MCS1, MCS2')
     parser.add_argument('--activation',               type=str,     default='relu',      help='softmax, sigmoid, softplus, softsign, tanh, selu, elu, exponential')
     parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
