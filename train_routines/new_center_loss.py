@@ -12,7 +12,7 @@ import argparse
 from keras.layers import Dense
 
 def l2_loss(y_true, y_pred):
-  total_length = y_pred.shape[1]//2
+  total_length = y_pred.shape[1]
   pre_logits, center, mean_var = y_pred[:, :int(total_length * 1/3)], y_pred[:, int(total_length * 1/3): int(total_length * 2/3)], y_pred[:, int(total_length * 2/3):]
   
   out_l2_pre      = K.sum(K.square(pre_logits - center))
@@ -22,7 +22,7 @@ def l2_loss(y_true, y_pred):
 
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
-def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
+def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("\n Training with Center Loss....")
 
     outdir = opt.outdir + "/new_center_loss_model/"
@@ -55,8 +55,8 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
     
     center = Dense(opt.embedding_size)(target_input)
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
-    y_center = shared_model([target_input])
-    
+    y_center = center_shared_model([target_input])
+
     
 #     mean_var = Dense(opt.embedding_size//3)(mean_var_input)
     mean_var = Dense(opt.embedding_size)(mean_var_input)
@@ -87,12 +87,12 @@ def train_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     tf.saved_model.save(model, outdir + 'new_center_loss_model')
 
-    model = Model(inputs=[x_input, mean_var_input], outputs=[softmax, pre_logits])
+    model = Model(inputs=[x_input, mean_var_input], outputs=[softmax, merged_pre_mean_var])
     model.load_weights(outdir + "center_loss_model")
 
     # x_train, y_train = choosing_features(x_train, y_train)
-    _,           X_train_embed  = model.predict([x_train, y_train])
-    y_test_soft, X_test_embed   = model.predict([x_test, y_test])
+    _,           X_train_embed  = model.predict([x_train, x_train_mean_var])
+    y_test_soft, X_test_embed   = model.predict([x_test, x_test_mean_var])
     
     from TSNE_plot import tsne_plot
     tsne_plot(outdir, "new_center_loss_model", X_train_embed, X_test_embed, y_train, y_test)
