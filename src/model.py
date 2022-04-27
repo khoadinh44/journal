@@ -13,7 +13,7 @@ from tensorflow.keras.models import Model
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-def TransformerLayer(x=None, c=48, num_heads=12, backbone=None):
+def TransformerLayer(x=None, c=48, num_heads=4, backbone=None):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
     # x   = Dense(128, use_bias=True, 
     #               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
@@ -100,7 +100,6 @@ def CNN_C_trip(opt, input_, backbone=False):
                kernel_regularizer=regularizers.l2(l=0.0001),)(input_)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    # x = tf.keras.activations.gelu(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     # for i in range(3):
@@ -128,10 +127,10 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    # x = GlobalAveragePooling1D()(x)
-    x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
-    x = TransformerLayer(x=x, c=244, backbone=backbone)
     
+    x = TransformerLayer(x=x, c=182, backbone=backbone)
+    x = GlobalAveragePooling1D()(x)
+    # x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
     if backbone:
         return x
     
