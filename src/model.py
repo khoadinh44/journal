@@ -15,10 +15,6 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-    # x   = Dense(128, use_bias=True, 
-    #               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-    #               bias_regularizer=regularizers.l2(1e-4),
-    #               activity_regularizer=regularizers.l2(1e-5))(x)
 
     q   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
