@@ -33,6 +33,8 @@ import numpy as np
 import os
 from sklearn.metrics import accuracy_score
 
+tf.compat.v1.reset_default_graph()
+
 class color:
    PURPLE = '\033[95m'
    CYAN = '\033[96m'
