@@ -24,7 +24,7 @@ def l2_loss(y_true, y_pred):
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
 def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
-    print("\n Training with Center Loss....")
+    print("\n Training with New Center Loss....")
 
     outdir = opt.outdir + "/new_center_loss/"
 
