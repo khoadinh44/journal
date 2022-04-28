@@ -55,28 +55,30 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     loss -- real number, value of the loss
     """
     total_lenght = y_pred.shape.as_list()[-1]
+    print(total_lenght)
 
-    anchor   = y_pred[:, 0:int(total_lenght * 1/8)]
+    anchor   = y_pred[:, 0: opt.embedding_size]
     # anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
 
-    anchor_extract   = y_pred[:, int(total_lenght * 1/8): int(total_lenght * 2/8)]
+    anchor_extract   = y_pred[:, opt.embedding_size: opt.embedding_size*2]
     # anchor_extract   = tf.math.l2_normalize(anchor_extract, axis=1, epsilon=1e-10)
 
-    positive = y_pred[:, int(total_lenght * 2/8): int(total_lenght * 3/8)]
+    positive = y_pred[:, opt.embedding_size*2: opt.embedding_size*3]
     # positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
 
-    positive_extract = y_pred[:, int(total_lenght * 3/8): int(total_lenght * 4/8)]
+    positive_extract = y_pred[:, opt.embedding_size*3: opt.embedding_size*4]
     # positive_extract = tf.math.l2_normalize(positive_extract, axis=1, epsilon=1e-10)
 
-    negative = y_pred[:, int(total_lenght * 4/8): int(total_lenght * 5/8)]
+    negative = y_pred[:, opt.embedding_size*4: opt.embedding_size*5]
     # negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
 
-    negative_extract = y_pred[:, int(total_lenght * 5/8): int(total_lenght * 6/8)]
+    negative_extract = y_pred[:, opt.embedding_size*5: opt.embedding_size*6]
     # negative_extract = tf.math.l2_normalize(negative_extract, axis=1, epsilon=1e-10)
 
-    y_center = y_pred[:, int(total_lenght * 6/8): int(total_lenght * 7/8)]
+    y_center = y_pred[:, opt.embedding_size*6: opt.embedding_size*7]
     y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
-    y_center_extract = y_pred[:, int(total_lenght * 7/8):]
+
+    y_center_extract = y_pred[:, opt.embedding_size*7:]
     y_center_extract = tf.math.l2_normalize(y_center_extract, axis=1, epsilon=1e-10)
     
 
@@ -117,7 +119,7 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
 
     mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
 
-    return loss + loss_extract
+    return loss + 0.3*loss_extract
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
