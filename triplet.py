@@ -75,8 +75,10 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     # negative_extract = tf.math.l2_normalize(negative_extract, axis=1, epsilon=1e-10)
 
     y_center = y_pred[:, int(total_lenght * 6/8): int(total_lenght * 7/8)]
+    y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
     y_center_extract = y_pred[:, int(total_lenght * 7/8):]
-    # y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
+    y_center_extract = tf.math.l2_normalize(y_center_extract, axis=1, epsilon=1e-10)
+    
 
     pos_extract_dist  = K.sum(K.square(anchor_extract - positive_extract), axis=1)
     neg_extract_dist  = K.sum(K.square(anchor_extract - negative_extract), axis=1)
