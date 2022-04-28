@@ -102,7 +102,7 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
 
     # from input data---------------------------
     model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
-    model.load_weights(outdir + "new_center_loss_model")
+    model.load_weights(outdir + "new_center_loss")
 
     _,           X_train_embed_or  = model.predict([x_train])
     y_test_soft, X_test_embed_or   = model.predict([x_test])
