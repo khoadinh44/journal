@@ -178,15 +178,7 @@ def main(opt):
     y_test_solf = np.argmax(y_test_solf, axis=1)
     solf_acc = accuracy_score(y_test, y_test_solf)
     confusion_mtx = tf.math.confusion_matrix(y_test, y_test_solf)
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(confusion_mtx,
-                xticklabels=commands,
-                yticklabels=commands,
-                annot=True, fmt='g')
-    plt.xlabel('Prediction')
-    plt.ylabel('Label')
-    plt.savefig(os.path.join(outdir, 'solfmax'))
-    plt.show()
+    plot_confusion(y_test, y_test_solf, outdir, 'softmax')
     
     print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
 
