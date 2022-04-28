@@ -140,22 +140,22 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     y_negative = to_one_hot(Y_train[:, 2])
     y_target   = Y_train[:, 1]
 
-
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
-    
-    if opt.use_weight:
-      if os.path.isdir(outdir + "new_triplet_loss_model"):
-          model.load_weights(outdir + "new_triplet_loss_model")
-          print(f'\n Load weight : {outdir}')
-      else:
-          print('\n No weight file.')
-
 
     # Fit data-------------------------------------------------
     model = Model(inputs=[anchor_input, extract_input_1, positive_input, extract_input_2, negative_input, extract_input_3, target_input], outputs=[merged_soft, merged_pre])
+    if opt.use_weight:
+      if os.path.isdir(outdir + "new_triplet_loss_model"):
+        model.load_weights(outdir + "new_triplet_loss_model")
+        print(f'\n Load weight : {outdir}')
+      else:
+        print('\n No weight file.')
 
-    model.compile(loss=["categorical_crossentropy", new_triplet_loss],
-                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
+    model.compile(loss=["categorical_crossentropy",
+                  new_triplet_loss],
+                  optimizer=AngularGrad(), 
+                  metrics=["accuracy"], 
+                  loss_weights=loss_weights)
 
     model.fit(x=[anchor, anchor_extract, positive, positive_extract, negative, negative_extract, y_target], y=[target, y_target],
               batch_size=opt.batch_size, epochs=epoch, 
