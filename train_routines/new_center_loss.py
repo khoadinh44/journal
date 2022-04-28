@@ -117,7 +117,9 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     X_test_embed  = np.concatenate((X_test_embed_or, X_test_embed_extract), axis=-1)
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, "new_center_loss", X_train_embed, X_test_embed, y_train, y_test)
+    tsne_plot(outdir, "new_center_loss_or", X_train_embed_or, X_test_embed_or, y_train, y_test)
+    from TSNE_plot import tsne_plot
+    tsne_plot(outdir, "new_center_loss_extract", X_train_embed_extract, X_test_embed_extract, y_train, y_test)
 
     y_train = y_train.astype(np.int32)
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
