@@ -16,15 +16,13 @@ from tensorflow.keras import regularizers
 
 def l2_loss(y_true, y_pred):
   total_length = y_pred.shape[1]
-  pre_logits, center, mean_var = y_pred[:, :int(total_length * 1/3)], y_pred[:, int(total_length * 1/3): int(total_length * 2/3)], y_pred[:, int(total_length * 2/3):]
+  pre_logits, center = y_pred[:, :int(total_length/2)], y_pred[:, int(total_length/2): ]
   pre_logits = tf.math.l2_normalize(pre_logits, axis=1, epsilon=1e-10)
   center     = tf.math.l2_normalize(center, axis=1, epsilon=1e-10)
-  mean_var   = tf.math.l2_normalize(mean_var, axis=1, epsilon=1e-10)
 
   out_l2_pre      = K.sum(K.square(pre_logits - center))
-  out_l2_mean_var = K.sum(K.square(mean_var - center))
 
-  return out_l2_pre + out_l2_mean_var
+  return out_l2_pre
 
 
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
@@ -90,29 +88,55 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract])
     y_extract = extract_shared_model([extract_input])
 
-    merged_pre = concatenate([pre_logits, y_center, y_extract], axis=-1, name='merged_pre')
+    merged_pre_logits = concatenate([pre_logits, y_center], axis=-1, name='merged_pre')
+    merged_pre_extract = concatenate([y_extract, y_center], axis=-1, name='merged_extract')
 
-    model = tf.keras.models.Model(inputs=[x_input, extract_input, target_input], outputs=[softmax, merged_pre])
+    # train logic------------------------------------------------------------------------------------------------
+    # model = tf.keras.models.Model(inputs=[x_input, target_input], outputs=[softmax, merged_pre_logits])
 
-    model.compile(loss=["categorical_crossentropy", l2_loss],
-                  optimizer=AngularGrad(), 
+    # model.compile(loss=["categorical_crossentropy", l2_loss],
+    #               optimizer=AngularGrad(), 
+    #               metrics=["accuracy"],
+    #               loss_weights=loss_weights)
+    
+    # if opt.use_weight:
+    #   if os.path.isdir(outdir + "new_center_loss"):
+    #     model.load_weights(outdir + "new_center_loss")
+    #     print(f'\n Load weight: {outdir}/new_center_loss')
+    #   else:
+    #     print('\n No weight file.')
+    
+    # model.fit(x=[x_train, y_train], y=[y_train_onehot, y_train],
+    #           validation_data=([x_test, y_test], [y_test_onehot, y_test]),
+    #           batch_size=opt.batch_size,  
+    #           # callbacks=[callback],
+    #           epochs=opt.epoch,)
+
+    # tf.saved_model.save(model, outdir + 'new_center_loss')
+
+    # Train extract----------------------------------------------------------
+    model = tf.keras.models.Model(inputs=[extract_input, target_input], outputs=[merged_pre_extract])
+
+    model.compile(optimizer=AngularGrad(), 
                   metrics=["accuracy"],
-                  loss_weights=loss_weights)
+                  # loss_weights=loss_weights,
+                  loss=[l2_loss],)
     
     if opt.use_weight:
-      if os.path.isdir(outdir + "new_center_loss"):
-        model.load_weights(outdir + "new_center_loss")
-        print(f'\n Load weight: {outdir}/new_center_loss')
+      if os.path.isdir(outdir + "new_center_loss_extract"):
+        model.load_weights(outdir + "new_center_loss_extract")
+        print(f'\n Load weight: {outdir}/new_center_loss_extract')
       else:
         print('\n No weight file.')
     
-    model.fit(x=[x_train, x_train_extract, y_train], y=[y_train_onehot, y_train],
-              validation_data=([x_test, x_test_extract, y_test], [y_test_onehot, y_test]),
+    model.fit(x=[x_train_extract, y_train], y=y_train,
+              validation_data=([x_test_extract, y_test], y_test),
               batch_size=opt.batch_size,  
               # callbacks=[callback],
               epochs=opt.epoch,)
 
-    tf.saved_model.save(model, outdir + 'new_center_loss')
+    tf.saved_model.save(model, outdir + 'new_center_loss_extract')
+
 
     # from input data---------------------------
     model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
@@ -122,7 +146,7 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_test_soft, X_test_embed_or   = model.predict([x_test])
 
     # from extract features of data ----------------------
-    extract_shared_model.load_weights(outdir + "new_center_loss")
+    extract_shared_model.load_weights(outdir + "new_center_loss_extract")
 
     X_train_embed_extract  = extract_shared_model.predict([x_train_extract])
     X_test_embed_extract   = extract_shared_model.predict([x_test_extract])
