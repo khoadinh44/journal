@@ -35,7 +35,7 @@ def extracted_model(in_, opt):
                   activity_regularizer=regularizers.l2(1e-5))(x)
   x = concatenate([x, in_], axis=-1)
   x = Dropout(rate=0.5)(x)
-  x = Dense(opt.embedding_size*2)(x)
+  x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
   return x
 
@@ -86,10 +86,9 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     # Center model----------------------------------------------------------
     target_input   = Input((1,), name='target_input')
-    center = Dense(opt.embedding_size*2)(target_input)
+    center = Dense(opt.embedding_size)(target_input)
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = center_shared_model([target_input])
-
 
     # Triplet model----------------------------------------------------------
     model_input = Input(shape=(opt.input_shape, 1))
