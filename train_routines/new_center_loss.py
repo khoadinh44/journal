@@ -1,4 +1,5 @@
 from preprocessing.utils import to_one_hot, choosing_features
+from preprocessing.extracted_signal import extracted_feature_of_signal
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_center_loss
@@ -25,7 +26,7 @@ callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=
 def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     print("\n Training with Center Loss....")
 
-    outdir = opt.outdir + "/new_center_loss_model/"
+    outdir = opt.outdir + "/new_center_loss/"
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
@@ -35,20 +36,17 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_train = y_train.astype(np.float32)
 
     x_train_get = np.squeeze(x_train)
-    x_train_mean = np.expand_dims(np.mean(x_train_get, axis=1), axis=-1)
-    x_train_var = np.expand_dims(np.var(x_train_get, axis=1), axis=-1)
-    x_train_mean_var = np.concatenate((x_train_mean, x_train_var), axis=-1)
-    print(f'x_train_mean_var shape: {x_train_mean_var.shape}')
+    x_train_extract = extracted_feature_of_signal(x_train_get)
+    print(f'x_train_extract shape: {x_train_extract.shape}')
     
     x_test_get = np.squeeze(x_test)
-    x_test_mean = np.expand_dims(np.mean(x_test_get, axis=1), axis=-1)
-    x_test_var = np.expand_dims(np.var(x_test_get, axis=1), axis=-1)
-    x_test_mean_var = np.concatenate((x_test_mean, x_test_var), axis=-1)
+    x_test_extract = extracted_feature_of_signal(x_test_get)
+    print(f'x_test_extract shape: {x_test_extract.shape}')
     
     # Input layers------------------------------------------------
     x_input        = Input(shape=(opt.input_shape, 1), name='x_input')
     target_input   = Input((1,), name='target_input')
-    mean_var_input = Input((2, ), name='mean_and_variance_input')
+    extract_input = Input((11, ), name='extract_input')
     
     
     # Extra Model ----------------------------------------------------
@@ -62,15 +60,14 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_center = center_shared_model([target_input])
 
     
-#     mean_var = Dense(opt.embedding_size//3)(mean_var_input)
-    mean_var = Dense(opt.embedding_size)(mean_var_input)
-    mean_var_shared_model = tf.keras.models.Model(inputs=[mean_var_input], outputs=[mean_var])
-    y_mean_var = mean_var_shared_model([mean_var_input])
+    extract = Dense(opt.embedding_size//3)(extract_input)
+    extract = Dense(opt.embedding_size)(extract)
+    extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract])
+    y_extract = extract_shared_model([extract_input])
 
-    merged_pre = concatenate([pre_logits, y_center, y_mean_var], axis=-1, name='merged_pre')
-    merged_pre_mean_var = concatenate([pre_logits, y_mean_var], axis=-1, name='merged_pre_mean_var')
+    merged_pre = concatenate([pre_logits, y_center, y_extract], axis=-1, name='merged_pre')
 
-    model = tf.keras.models.Model(inputs=[x_input, mean_var_input, target_input], outputs=[softmax, merged_pre])
+    model = tf.keras.models.Model(inputs=[x_input, extract_input, target_input], outputs=[softmax, merged_pre])
 
     model.compile(loss=["categorical_crossentropy", l2_loss],
                   optimizer=AngularGrad(), 
@@ -78,9 +75,9 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
                   loss_weights=loss_weights)
     
     if opt.use_weight:
-      if os.path.isdir(outdir + "new_center_loss_model"):
-        model.load_weights(outdir + "new_center_loss_model")
-        print(f'\n Load weight: {outdir}/new_center_loss_model')
+      if os.path.isdir(outdir + "new_center_loss"):
+        model.load_weights(outdir + "new_center_loss")
+        print(f'\n Load weight: {outdir}/new_center_loss')
       else:
         print('\n No weight file.')
     
@@ -89,7 +86,7 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
               # callbacks=[callback],
               epochs=opt.epoch,)
 
-    tf.saved_model.save(model, outdir + 'new_center_loss_model')
+    tf.saved_model.save(model, outdir + 'new_center_loss')
 
     # from input data---------------------------
     model = Model(inputs=[x_input], outputs=[softmax, pre_logits])
@@ -99,16 +96,16 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_test_soft, X_test_embed_or   = model.predict([x_test])
 
     # from mean and variance of data ----------------------
-    mean_var_shared_model.load_weights(outdir + "new_center_loss_model")
+    extract_shared_model.load_weights(outdir + "new_center_loss")
 
-    X_train_embed_m_v  = mean_var_shared_model.predict([x_train_mean_var])
-    X_test_embed_m_v   = mean_var_shared_model.predict([x_test_mean_var])
+    X_train_embed_extract  = extract_shared_model.predict([x_train_extract])
+    X_test_embed_extract   = extract_shared_model.predict([x_test_extract])
 
-    X_train_embed = np.concatenate((X_train_embed_or, X_train_embed_m_v), axis=-1)
-    X_test_embed = np.concatenate((X_test_embed_or, X_test_embed_m_v), axis=-1)
+    X_train_embed = np.concatenate((X_train_embed_or, X_train_embed_extract), axis=-1)
+    X_test_embed  = np.concatenate((X_test_embed_or, X_test_embed_extract), axis=-1)
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, "new_center_loss_model", X_train_embed, X_test_embed, y_train, y_test)
+    tsne_plot(outdir, "new_center_loss", X_train_embed, X_test_embed, y_train, y_test)
 
     y_train = y_train.astype(np.int32)
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
