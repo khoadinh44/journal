@@ -121,15 +121,19 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
     anchor = scaler_transform(anchor, PowerTransformer)
     print(f'anchor shape: {anchor.shape}')
-    print(f'anchor_extract shape: {anchor_extract.shape}')
+    print(f'anchor-extract shape: {anchor_extract.shape}\n')
 
     positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
     positive_extract = extracted_feature_of_signal(np.squeeze(positive))
     positive = scaler_transform(positive, PowerTransformer)
+    print(f'positive shape: {positive.shape}')
+    print(f'positive-extract shape: {positive_extract.shape}\n')
 
     negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
     negative_extract = extracted_feature_of_signal(np.squeeze(negative))
     negative = scaler_transform(negative, PowerTransformer)
+    print(f'negative shape: {negative.shape}')
+    print(f'negative-extract shape: {negative_extract.shape}\n')
 
     y_anchor   = to_one_hot(Y_train[:, 0])
     y_positive = to_one_hot(Y_train[:, 1])
