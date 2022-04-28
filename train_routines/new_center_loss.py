@@ -1,4 +1,4 @@
-from preprocessing.utils import to_one_hot, choosing_features
+from preprocessing.utils import to_one_hot, choosing_features, scaler_transform
 from preprocessing.extracted_signal import extracted_feature_of_signal
 import tensorflow as tf
 from tensorflow.keras.models import Model
@@ -8,6 +8,7 @@ import tensorflow.keras.backend as K
 import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
 from angular_grad import AngularGrad
+from sklearn.preprocessing import PowerTransformer
 import os
 import argparse
 from keras.layers import Dense
@@ -46,11 +47,14 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
       x_train_extract = extracted_feature_of_signal(x_train_get)
       x_test_get = np.squeeze(x_test)
       x_test_extract = extracted_feature_of_signal(x_test_get)
+      x_train_extract = scaler_transform(x_train_extract, PowerTransformer)
+      x_test_extract  = scaler_transform(x_test_extract, PowerTransformer)
       with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy', 'wb') as f:
         np.save(f, x_train_extract)
       with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy', 'wb') as f:
         np.save(f, x_test_extract)
 
+    
     print(f'x_train_extract shape: {x_train_extract.shape}')
     print(f'x_test_extract shape: {x_test_extract.shape}')
     
@@ -60,9 +64,10 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     extract_input = Input((11, ), name='extract_input')
     
     
-    # Extra Model ----------------------------------------------------
+    # Model ----------------------------------------------------
     softmax, pre_logits = network(opt, x_input)
     shared_model = tf.keras.models.Model(inputs=[x_input], outputs=[softmax, pre_logits])
+    shared_model.summary()
     softmax, pre_logits = shared_model([x_input])
 
     
@@ -71,8 +76,8 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_center = center_shared_model([target_input])
 
     
-    extract = Dense(opt.embedding_size//3)(extract_input)
-    extract = Dense(opt.embedding_size)(extract)
+    # extract = Dense(opt.embedding_size//3)(extract_input)
+    extract = Dense(opt.embedding_size)(extract_input)
     extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract])
     y_extract = extract_shared_model([extract_input])
 
