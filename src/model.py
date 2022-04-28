@@ -117,12 +117,6 @@ def CNN_C_trip(opt, input_, backbone=False):
 
 
 # def TransformerLayer(x=None, c=48, num_heads=4, backbone=None):
-#     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-#     # x   = Dense(128, use_bias=True, 
-#     #               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-#     #               bias_regularizer=regularizers.l2(1e-4),
-#     #               activity_regularizer=regularizers.l2(1e-5))(x)
-
 #     q   = Dense(c, use_bias=True, 
 #                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
 #                   bias_regularizer=regularizers.l2(1e-4),
@@ -136,18 +130,6 @@ def CNN_C_trip(opt, input_, backbone=False):
 #                   bias_regularizer=regularizers.l2(1e-4),
 #                   activity_regularizer=regularizers.l2(1e-5))(x)
 #     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
-# #     fc1 = Dense(c, use_bias=True, 
-# #                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-# #                   bias_regularizer=regularizers.l2(1e-4),
-# #                   activity_regularizer=regularizers.l2(1e-5))(ma)
-# #     if backbone:
-# #       fc1 = tf.keras.layers.Dropout(0.5)(fc1)    
-# #     else:
-# #       fc1 = tf.keras.layers.Dropout(0.2)(fc1)                         
-# #     fc2 = Dense(c, use_bias=True, 
-# #                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-# #                   bias_regularizer=regularizers.l2(1e-4),
-# #                   activity_regularizer=regularizers.l2(1e-5))(fc1) + x
 #     fc2 = tf.keras.layers.Dropout(0.5)(ma) 
 
 #     return fc2
@@ -185,7 +167,6 @@ def CNN_C_trip(opt, input_, backbone=False):
 
 #     x = BatchNormalization()(x)
 #     x = Activation('relu')(x)
-#     # x = tf.keras.activations.gelu(x)
 #     return x
 
 # def CNN_C_trip(opt, input_, backbone=False):
@@ -201,13 +182,8 @@ def CNN_C_trip(opt, input_, backbone=False):
 #                kernel_regularizer=regularizers.l2(l=0.0001),)(input_)
 #     x = BatchNormalization()(x)
 #     x = Activation('relu')(x)
-#     # x = tf.keras.activations.gelu(x)
 #     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-#     # for i in range(3):
-#     #     x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
-
-#     #-----------------
 #     for i in range(3):
 #         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
 
@@ -217,28 +193,16 @@ def CNN_C_trip(opt, input_, backbone=False):
 #         x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
 
 #     x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-#     # for i in range(6):
-#     #     x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
-
-#     # x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-#     # for i in range(3):
-#     #     x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
-#     #------------------------------
-
-#     x = MaxPooling1D(pool_size=4, strides=None)(x)
-
     
+#     # x = GlobalAveragePooling1D()(x)
+#     x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
 #     x = TransformerLayer(x=x, c=182, backbone=backbone)
-#     x = GlobalAveragePooling1D()(x)
-#     # x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
+    
 #     if backbone:
 #         return x
     
 #     x = Dense(opt.embedding_size)(x)
 #     x = BatchNormalization()(x)
-#     # pre_logit = Activation('relu')(x)
 #     pre_logit = x
 #     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
