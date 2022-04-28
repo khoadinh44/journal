@@ -4,8 +4,7 @@ def RMS(x):
   return np.sqrt(np.mean(x**2))
 
 def Variance(x):
-  data_RMS = RMS(x)
-  return np.mean((x-data_RMS)**2)
+  return np.var(x)
 
 def Peak_value(x):
   return np.max(np.abs(x))
@@ -13,23 +12,23 @@ def Peak_value(x):
 def Crest_factor(x):
   data_PvT = Peak_value(x)
   data_RMS = RMS(x)
-  return data_PvT/data_RMS
+  return data_PvT/data_RMS + 1e-10
 
 def Kurtosis(x):
   var = Variance(x)
-  return np.sum((x-np.mean(x))**4)/(float(len(x))*var**2)
+  return np.sum((x-np.mean(x))**4)/(float(len(x))*(var**2)) + 1e-10
 
 def Clearance_factor(x):
   data_PvT = Peak_value(x)
-  return data_PvT/np.mean(x)**2
+  return data_PvT/np.mean(np.sqrt(x))**2 + 1e-10
 
 def Impulse_factor(x):
   data_PvT = Peak_value(x)
-  return data_PvT/np.mean(x)
+  return data_PvT/np.mean(abs(x)) + 1e-10
 
 def shape_factor(x):
   data_RMS = RMS(x)
-  return data_RMS/np.mean(x)
+  return data_RMS/np.mean(abs(x)) + 1e-10
 
 def Line_integral(x):
   a = 0.
@@ -42,7 +41,7 @@ def Peak_peak_value(x):
 
 def Skewness(x):
   mean = np.mean(x)
-  return np.mean((x-mean)**3) / (np.sqrt(np.mean((x-mean)**2)))**3
+  return np.mean((x-mean)**3) / (np.sqrt(np.mean((x-mean)**2)))**3 + 1e-10
 
 def extracted_feature_of_signal(signals):
   data = []
