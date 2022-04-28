@@ -8,6 +8,7 @@ import tensorflow as tf
 from tensorflow.keras.callbacks import TensorBoard
 import os
 import argparse
+from sklearn.preprocessing import PowerTransformer
 
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization, Dropout
@@ -17,7 +18,7 @@ from keras.layers import Dense
 
 from triplet import generate_triplet, new_triplet_loss
 from preprocessing.extracted_signal import extracted_feature_of_signal
-from preprocessing.utils import to_one_hot, choosing_features
+from preprocessing.utils import to_one_hot, choosing_features, scaler_transform
 from angular_grad import AngularGrad
 
 
@@ -119,6 +120,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     anchor   = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
     anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
     anchor = scaler_transform(anchor, PowerTransformer)
+    print(f'anchor shape: {anchor.shape}')
+    print(f'anchor_extract shape: {anchor_extract.shape}')
 
     positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
     positive_extract = extracted_feature_of_signal(np.squeeze(positive))
