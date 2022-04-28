@@ -159,7 +159,7 @@ def main(opt):
   if opt.embedding_model == 'center': 
     train_embs, test_embs, y_test_solf, y_train, outdir = train_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
   if opt.embedding_model == 'new_center': 
-    train_embs, test_embs, y_test_solf, y_train, outdir = train_new_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
+    train_embs, test_embs, y_test_solf, y_train, outdir = train_new_center_loss(opt, X_train_FFT, X_train, y_train, X_test_FFT, X_test, y_test, CNN_C_trip) 
   if opt.embedding_model == 'triplet_center':
     train_embs, test_embs, y_test_solf, y_train, outdir = train_triplet_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
   if opt.embedding_model == 'new_triplet_center':
