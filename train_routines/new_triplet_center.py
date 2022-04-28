@@ -3,7 +3,7 @@ from preprocessing.extracted_signal import extracted_feature_of_signal
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from triplet import generate_triplet, triplet_center_loss
-from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, Dropout
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, Dropout, BatchNormalization
 import tensorflow.keras.backend as K
 import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
