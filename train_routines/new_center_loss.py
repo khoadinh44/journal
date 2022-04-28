@@ -35,12 +35,20 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_train_onehot = to_one_hot(y_train)
     y_train = y_train.astype(np.float32)
 
-    x_train_get = np.squeeze(x_train)
-    x_train_extract = extracted_feature_of_signal(x_train_get)
+    if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy'):
+      x_train_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy')
+      x_test_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy')
+    else:
+      x_train_get = np.squeeze(x_train)
+      x_train_extract = extracted_feature_of_signal(x_train_get)
+      x_test_get = np.squeeze(x_test)
+      x_test_extract = extracted_feature_of_signal(x_test_get)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy', 'wb') as f:
+        np.save(f, x_train_extract)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy', 'wb') as f:
+        np.save(f, x_test_extract)
+
     print(f'x_train_extract shape: {x_train_extract.shape}')
-    
-    x_test_get = np.squeeze(x_test)
-    x_test_extract = extracted_feature_of_signal(x_test_get)
     print(f'x_test_extract shape: {x_test_extract.shape}')
     
     # Input layers------------------------------------------------
