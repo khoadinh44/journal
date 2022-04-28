@@ -35,6 +35,9 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_train_onehot = to_one_hot(y_train)
     y_train = y_train.astype(np.float32)
 
+    y_test_onehot = to_one_hot(y_test)
+    y_test = y_test.astype(np.float32)
+
     if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy'):
       x_train_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy')
       x_test_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy')
@@ -89,7 +92,8 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
       else:
         print('\n No weight file.')
     
-    model.fit(x=[x_train, x_train_mean_var, y_train], y=[y_train_onehot, y_train],
+    model.fit(x=[x_train, x_train_extract, y_train], y=[y_train_onehot, y_train],
+              validation_data=([x_test, x_test_extract, y_test], [y_test_onehot, y_test]),
               batch_size=opt.batch_size,  
               # callbacks=[callback],
               epochs=opt.epoch,)
@@ -103,7 +107,7 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     _,           X_train_embed_or  = model.predict([x_train])
     y_test_soft, X_test_embed_or   = model.predict([x_test])
 
-    # from mean and variance of data ----------------------
+    # from extract features of data ----------------------
     extract_shared_model.load_weights(outdir + "new_center_loss")
 
     X_train_embed_extract  = extract_shared_model.predict([x_train_extract])
