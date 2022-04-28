@@ -1,47 +1,44 @@
-from preprocessing.utils import to_one_hot, choosing_features, scaler_transform
-from preprocessing.extracted_signal import extracted_feature_of_signal
-import tensorflow as tf
-from tensorflow.keras.models import Model
-from triplet import generate_triplet, triplet_center_loss
-from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, Dropout, BatchNormalization
-import tensorflow.keras.backend as K
+######################################################
+# Original implementation by KinWaiCheuk: https://github.com/KinWaiCheuk/Triplet-net-keras
+######################################################
+
+
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.callbacks import TensorBoard
-from angular_grad import AngularGrad
-from sklearn.preprocessing import PowerTransformer
 import os
 import argparse
-from keras.layers import Dense
+
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization, Dropout
 from tensorflow.keras import regularizers
+import tensorflow.keras.backend as K
+from keras.layers import Dense
 
-def l2_loss(y_true, y_pred):
-  total_length = y_pred.shape[1]
-  pre_logits, center = y_pred[:, :int(total_length/2)], y_pred[:, int(total_length/2): ]
-  # pre_logits = tf.math.l2_normalize(pre_logits, axis=1, epsilon=1e-10)
-  # center     = tf.math.l2_normalize(center, axis=1, epsilon=1e-10)
-
-  out_l2_pre      = K.sum(K.square(pre_logits - center))
-
-  return out_l2_pre
+from triplet import generate_triplet, new_triplet_loss
+from preprocessing.extracted_signal import extracted_feature_of_signal
+from preprocessing.utils import to_one_hot, choosing_features
+from angular_grad import AngularGrad
 
 
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
-def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_test, y_test, network):
-    print("\n Training with New Center Loss....")
+def extracted_model(in_, opt):
+  x = Dense(opt.embedding_size*2,
+                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                    bias_regularizer=regularizers.l2(1e-4),
+                    activity_regularizer=regularizers.l2(1e-5))(in_)
+  x = Dense(opt.embedding_size*4,
+                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                  bias_regularizer=regularizers.l2(1e-4),
+                  activity_regularizer=regularizers.l2(1e-5))(x)
+  x = concatenate([x, in_], axis=-1)
+  x = Dropout(rate=0.5)(x)
+  x = Dense(opt.embedding_size*2)(x)
+  x = BatchNormalization()(x)
+  return x
 
-    outdir = opt.outdir + "/new_center_loss/"
-
-    if not os.path.isdir(outdir):
-        os.makedirs(outdir)
-    loss_weights = [1, 0.01]
-    
-    y_train_onehot = to_one_hot(y_train)
-    y_train = y_train.astype(np.float32)
-
-    y_test_onehot = to_one_hot(y_test)
-    y_test = y_test.astype(np.float32)
-
+def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale, x_test, y_test, network, i=100):
     if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy'):
       x_train_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy')
       x_test_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy')
@@ -58,114 +55,119 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
       with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy', 'wb') as f:
         np.save(f, x_test_extract)
 
-    
-    print(f'x_train_extract shape: {x_train_extract.shape}')
-    print(f'x_test_extract shape: {x_test_extract.shape}')
-    
-    # Input layers------------------------------------------------
-    x_input        = Input(shape=(opt.input_shape, 1), name='x_input')
-    target_input   = Input((1,), name='target_input')
-    extract_input = Input((11, ), name='extract_input')
-    
-    
-    # Model ----------------------------------------------------
-    softmax, pre_logits = network(opt, x_input)
-    shared_model = tf.keras.models.Model(inputs=[x_input], outputs=[softmax, pre_logits])
-    shared_model.summary()
-    softmax, pre_logits = shared_model([x_input])
+    print("\n Training with Triplet Loss....")
 
+    outdir = opt.outdir + "/new_triplet_loss/"
+    if i==0:
+      epoch = 50 # 30
+    else:
+      epoch = opt.epoch # 10
+
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir)
     
+    # Extract model ---------------------------------------------------------
+    extract_input_1 = Input((11, ), name='extract_input_1')
+    extract_model_1  = extracted_model(extract_input_1, opt)
+    extract_shared_model_1 = tf.keras.models.Model(inputs=[extract_input_1], outputs=[extract_model_1])
+    y_extract_1 = extract_shared_model_1([extract_input_1])
+
+    extract_input_2 = Input((11, ), name='extract_input_2')
+    extract_model_2  = extracted_model(extract_input_2, opt)
+    extract_shared_model_2 = tf.keras.models.Model(inputs=[extract_input_2], outputs=[extract_model_2])
+    y_extract_2 = extract_shared_model_2([extract_input_2])
+    
+    extract_input_3 = Input((11, ), name='extract_input_3')
+    extract_model_3  = extracted_model(extract_input_3, opt)
+    extract_shared_model_3 = tf.keras.models.Model(inputs=[extract_input_3], outputs=[extract_model_3])
+    y_extract_3 = extract_shared_model_3([extract_input_3])
+
+
+    # Center model----------------------------------------------------------
+    target_input   = Input((1,), name='target_input')
     center = Dense(opt.embedding_size*2)(target_input)
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
-    y_center = center_shared_model([target_input])
+    center = center_shared_model([target_input])
 
+
+    # Triplet model----------------------------------------------------------
+    model_input = Input(shape=(opt.input_shape, 1))
+    softmax, pre_logits = network(opt, model_input)
+    shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
+    shared_model.summary()
+   
+    X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
     
-    extract_fc1 = Dense(opt.embedding_size*2,
-                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                    bias_regularizer=regularizers.l2(1e-4),
-                    activity_regularizer=regularizers.l2(1e-5))(extract_input)
-    extract_fc2 = Dense(opt.embedding_size*4,
-                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                    bias_regularizer=regularizers.l2(1e-4),
-                    activity_regularizer=regularizers.l2(1e-5))(extract_fc1)
-    extract_fc3 = concatenate([extract_fc2, extract_input], axis=-1)
-    extract_fc3 = Dropout(rate=0.5)(extract_fc3)
-    extract_fc4 = Dense(opt.embedding_size*2)(extract_fc3)
-    extract_fc4 = BatchNormalization()(extract_fc4)
+  
+    anchor_input   = Input((opt.input_shape, 1,), name='anchor_input')
+    positive_input = Input((opt.input_shape, 1,), name='positive_input')
+    negative_input = Input((opt.input_shape, 1,), name='negative_input')
+    
 
-    extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract_fc4])
-    y_extract = extract_shared_model([extract_input])
+    soft_anchor, pre_logits_anchor = shared_model([anchor_input])
+    soft_pos, pre_logits_pos       = shared_model([positive_input])
+    soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    merged_pre_logits = concatenate([pre_logits, y_extract, y_center], axis=-1, name='merged_pre')
-    merged_pre_extract = concatenate([pre_logits, y_extract], axis=-1, name='merged_extract')
+    merged_pre  = concatenate([pre_logits_anchor, y_extract_1, pre_logits_pos, y_extract_2, pre_logits_neg, y_extract_3, center], axis=-1, name='merged_pre')
+    merged_soft = concatenate([soft_anchor, soft_pos, soft_neg], axis=-1, name='merged_soft')
+    
+    loss_weights = [1, 0.01]
+  
+    # https://keras.io/api/losses/
+    
+    # data-----------------------------------------------------
+    anchor   = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
+    anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
+    anchor = scaler_transform(anchor, PowerTransformer)
 
-    # train logic------------------------------------------------------------------------------------------------
-    model = tf.keras.models.Model(inputs=[x_input, extract_input, target_input], outputs=[softmax, merged_pre_logits])
+    positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
+    positive_extract = extracted_feature_of_signal(np.squeeze(positive))
+    positive = scaler_transform(positive, PowerTransformer)
 
-    model.compile(loss=["categorical_crossentropy", l2_loss],
-                  optimizer=AngularGrad(), 
-                  metrics=["accuracy"],
-                  loss_weights=loss_weights)
+    negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
+    negative_extract = extracted_feature_of_signal(np.squeeze(negative))
+    negative = scaler_transform(negative, PowerTransformer)
+
+    y_anchor   = to_one_hot(Y_train[:, 0])
+    y_positive = to_one_hot(Y_train[:, 1])
+    y_negative = to_one_hot(Y_train[:, 2])
+    y_target   = Y_train[:, 1]
+
+
+    target = np.concatenate((y_anchor, y_positive, y_negative), -1)
     
     if opt.use_weight:
-      if os.path.isdir(outdir + "new_center_loss"):
-        model.load_weights(outdir + "new_center_loss")
-        print(f'\n Load weight: {outdir}/new_center_loss')
+      if os.path.isdir(outdir + "new_triplet_loss_model"):
+          model.load_weights(outdir + "new_triplet_loss_model")
+          print(f'\n Load weight : {outdir}')
       else:
-        print('\n No weight file.')
+          print('\n No weight file.')
+
+
+    # Fit data-------------------------------------------------
+    model = Model(inputs=[anchor_input, extract_input_1, positive_input, extract_input_2, negative_input, extract_input_3, target_input], outputs=[merged_soft, merged_pre])
+
+    model.compile(loss=["categorical_crossentropy", new_triplet_loss],
+                  optimizer=AngularGrad(), metrics=["accuracy"], loss_weights=loss_weights)
+
+    model.fit(x=[anchor, anchor_extract, positive, positive_extract, negative, negative_extract, y_target], y=[target, y_target],
+              batch_size=opt.batch_size, epochs=epoch, 
+              # callbacks=[callback], 
+              shuffle=True)
+    tf.saved_model.save(model, outdir + 'new_triplet_loss_model')
+
+
+    # Embedding------------------------------------------------
+    pre_anchor = concatenate([pre_logits_anchor, y_extract_1], axis=-1, name='merged_soft')
+    model = Model(inputs=[anchor_input, extract_input_1], outputs=[soft_anchor, pre_anchor])
+    model.load_weights(outdir + "new_triplet_loss_model")
+
+    # x_train, y_train = choosing_features(x_train, y_train)
     
-    model.fit(x=[x_train_scale, x_train_extract, y_train], y=[y_train_onehot, y_train],
-              validation_data=([x_test_scale, x_test_extract, y_test], [y_test_onehot, y_test]),
-              batch_size=opt.batch_size,  
-              # callbacks=[callback],
-              epochs=opt.epoch,)
-
-    tf.saved_model.save(model, outdir + 'new_center_loss')
-
-    # Train extract----------------------------------------------------------
-    # model = tf.keras.models.Model(inputs=[extract_input, target_input], outputs=[merged_pre_extract])
-
-    # model.compile(optimizer=AngularGrad(), 
-    #               metrics=["accuracy"],
-    #               # loss_weights=loss_weights,
-    #               loss=[l2_loss],)
-    
-    # if opt.use_weight:
-    #   if os.path.isdir(outdir + "new_center_loss_extract"):
-    #     model.load_weights(outdir + "new_center_loss_extract")
-    #     print(f'\n Load weight: {outdir}/new_center_loss_extract')
-    #   else:
-    #     print('\n No weight file.')
-    
-    # model.fit(x=[x_train_extract, y_train], y=y_train,
-    #           validation_data=([x_test_extract, y_test], y_test),
-    #           batch_size=opt.batch_size,  
-    #           # callbacks=[callback],
-    #           epochs=opt.epoch,)
-
-    # tf.saved_model.save(model, outdir + 'new_center_loss_extract')
-
-
-    # from input data---------------------------
-    model = Model(inputs=[x_input, extract_input], outputs=[softmax, merged_pre_extract])
-    model.load_weights(outdir + "new_center_loss")
-
-    _,           X_train_embed = model.predict([x_train_scale, x_train_extract])
+    _, X_train_embed = model.predict([x_train_scale, x_train_extract])
     y_test_soft, X_test_embed = model.predict([x_test_scale, x_test_extract])
-
-    # from extract features of data ----------------------
-    # extract_shared_model.load_weights(outdir + "new_center_loss_extract")
-
-    # X_train_embed_extract  = extract_shared_model.predict([x_train_extract])
-    # X_test_embed_extract   = extract_shared_model.predict([x_test_extract])
-
-    # X_train_embed = np.concatenate((X_train_embed_or, X_train_embed_extract), axis=-1)
-    # X_test_embed  = np.concatenate((X_test_embed_or, X_test_embed_extract), axis=-1)
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, "new_center_loss_or", X_train_embed, X_test_embed, y_train, y_test)
-    # from TSNE_plot import tsne_plot
-    # tsne_plot(outdir, "new_center_loss_extract", X_train_embed_extract, X_test_embed_extract, y_train, y_test)
-
-    y_train = y_train.astype(np.int32)
+    tsne_plot(outdir, opt.activation, X_train_embed, X_test_embed, y_train, y_test)
+    
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
