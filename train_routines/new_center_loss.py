@@ -12,13 +12,18 @@ from sklearn.preprocessing import PowerTransformer
 import os
 import argparse
 from keras.layers import Dense
+from tensorflow.keras import regularizers
 
 def l2_loss(y_true, y_pred):
   total_length = y_pred.shape[1]
   pre_logits, center, mean_var = y_pred[:, :int(total_length * 1/3)], y_pred[:, int(total_length * 1/3): int(total_length * 2/3)], y_pred[:, int(total_length * 2/3):]
-  
+  pre_logits = tf.math.l2_normalize(pre_logits, axis=1, epsilon=1e-10)
+  center     = tf.math.l2_normalize(center, axis=1, epsilon=1e-10)
+  mean_var   = tf.math.l2_normalize(mean_var, axis=1, epsilon=1e-10)
+
   out_l2_pre      = K.sum(K.square(pre_logits - center))
   out_l2_mean_var = K.sum(K.square(mean_var - center))
+
   return out_l2_pre + out_l2_mean_var
 
 
@@ -76,8 +81,12 @@ def train_new_center_loss(opt, x_train, y_train, x_test, y_test, network):
     y_center = center_shared_model([target_input])
 
     
-    # extract = Dense(opt.embedding_size//3)(extract_input)
-    extract = Dense(opt.embedding_size)(extract_input)
+    extract = Dense(opt.embedding_size//3,
+                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                    bias_regularizer=regularizers.l2(1e-4),
+                    activity_regularizer=regularizers.l2(1e-5))(extract_input)
+    extract = tf.keras.layers.Dropout(0.1)(extract)
+    extract = Dense(opt.embedding_size)(extract)
     extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract])
     y_extract = extract_shared_model([extract_input])
 
