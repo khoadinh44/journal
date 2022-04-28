@@ -8,6 +8,7 @@ from train import parse_opt
 from arc_face import train_ArcFaceModel
 from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
+from train_routines.new_center_loss import train_new_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.new_triplet_center import train_new_triplet_center
 from preprocessing.utils import handcrafted_features, FFT
@@ -46,6 +47,20 @@ class color:
    BOLD = '\033[1m'
    UNDERLINE = '\033[4m'
    END = '\033[0m'
+
+def plot_confusion(y_test, y_pred_inv, outdir, each_ML):
+   commands = ['Healthy', 'OR Damage', 'IR Damage']
+   confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
+
+   plt.figure(figsize=(10, 8))
+   sns.heatmap(confusion_mtx,
+             xticklabels=commands,
+             yticklabels=commands,
+             annot=True, fmt='g')
+   plt.xlabel('Prediction')
+   plt.ylabel('Label')
+   plt.savefig(os.path.join(outdir, each_ML))
+   plt.show()
 
 def main(opt):
   print(color.GREEN + '\n\n\t *************START*************\n\n' + color.END)
@@ -141,8 +156,10 @@ def main(opt):
   print('\n Loading model...')
   if opt.embedding_model == 'triplet':
     train_embs, test_embs, y_test_solf, y_train, outdir = train(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
-  if opt.embedding_model == 'center':
+  if opt.embedding_model == 'center': 
     train_embs, test_embs, y_test_solf, y_train, outdir = train_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
+  if opt.embedding_model == 'new_center': 
+    train_embs, test_embs, y_test_solf, y_train, outdir = train_new_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
   if opt.embedding_model == 'triplet_center':
     train_embs, test_embs, y_test_solf, y_train, outdir = train_triplet_center_loss(opt, X_train_FFT, y_train, X_test_FFT, y_test, CNN_C_trip) 
   if opt.embedding_model == 'new_triplet_center':
@@ -156,7 +173,6 @@ def main(opt):
   this_acc = []
   y_pred_Lo_Co = []
   y_pred_SVM_Ran = []
-  commands = ['Healthy', 'OR Damage', 'IR Damage']
 
   if opt.embedding_model != 'arcface':
     y_test_solf = np.argmax(y_test_solf, axis=1)
@@ -176,7 +192,7 @@ def main(opt):
 
   y_pred_all = []
   y_pred_SVM_RandomForestClassifier = []
-  y_pred_KNN_RandomForestClassifier_cosine = []
+  y_pred_KNN_RandomForestClassifier = []
 
   count1 = 0
   count2 = 0
@@ -185,40 +201,41 @@ def main(opt):
     model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
     y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
     y_pred_inv = np.argmax(y_pred, axis=1)
-    count1 += 1
-    confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
-
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(confusion_mtx,
-                xticklabels=commands,
-                yticklabels=commands,
-                annot=True, fmt='g')
-    plt.xlabel('Prediction')
-    plt.ylabel('Label')
-    plt.savefig(os.path.join(outdir, each_ML))
-    plt.show()
+    
+    plot_confusion(y_test, y_pred_inv, outdir, each_ML)
     acc = accuracy_score(y_test, y_pred_inv)
+    
+    if each_ML not in ['euclidean', 'cosine']:
+       if y_pred_all == []:
+         y_pred_all = y_pred
+       else:
+         y_pred_all += y_pred
+       count1 += 1
 
-    if y_pred_all == []:
-      y_pred_all = y_pred
-    else:
-      y_pred_all += y_pred
-
-    if each_ML == 'SVM' or each_ML == 'RandomForestClassifier' or each_ML == 'KNN':
+    if each_ML in ['SVM', 'RandomForestClassifier', 'KNN']:
       if y_pred_SVM_RandomForestClassifier == []:
         y_pred_SVM_RandomForestClassifier = y_pred
       else:
         y_pred_SVM_RandomForestClassifier += y_pred
       count2 += 1
     
-    if each_ML == 'KNN' or each_ML == 'RandomForestClassifier' or each_ML == 'cosine':
-      if y_pred_KNN_RandomForestClassifier_cosine == []:
-        y_pred_KNN_RandomForestClassifier_cosine = y_pred
+    if each_ML in ['KNN', 'RandomForestClassifier']:
+      if y_pred_KNN_RandomForestClassifier == []:
+        y_pred_KNN_RandomForestClassifier = y_pred
       else:
-        y_pred_KNN_RandomForestClassifier_cosine += y_pred
+        y_pred_KNN_RandomForestClassifier += y_pred
       count3 += 1
 
-    print(f'\n-------------- 1. Test accuracy: {acc} with the {each_ML} method--------------')
+    print(f'\n-------------- Test accuracy: {acc} with the {each_ML} method--------------')
+    
+    if each_ML in ['euclidean', 'cosine']:
+       y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, use_mean=False)
+       y_pred_inv = np.argmax(y_pred, axis=1)
+
+       plot_confusion(y_test, y_pred_inv, outdir, each_ML+'no_mean')
+       acc = accuracy_score(y_test, y_pred_inv)
+       print(f'\n-------------- Test accuracy: {acc} with the {each_ML} no mean method--------------')
+    
 
     # X_train_hand = handcrafted_features(X_train)
     # X_test_hand  = handcrafted_features(X_test)
@@ -236,9 +253,9 @@ def main(opt):
   acc_case_1 = accuracy_score(y_test, y_pred_SVM_RandomForestClassifier)
   print(f'\n--------------Ensemble for SVM vs RandomForestClassifier vs KNN: {acc_case_1}--------------')
 
-  y_pred_KNN_RandomForestClassifier_cosine = y_pred_KNN_RandomForestClassifier_cosine.astype(np.float32) / count3
-  y_pred_KNN_RandomForestClassifier_cosine = np.argmax(y_pred_KNN_RandomForestClassifier_cosine, axis=1)
-  acc_case_2 = accuracy_score(y_test, y_pred_KNN_RandomForestClassifier_cosine)
+  y_pred_KNN_RandomForestClassifier = y_pred_KNN_RandomForestClassifier.astype(np.float32) / count3
+  y_pred_KNN_RandomForestClassifier = np.argmax(y_pred_KNN_RandomForestClassifier, axis=1)
+  acc_case_2 = accuracy_score(y_test, y_pred_KNN_RandomForestClassifier)
   print(f'\n--------------Ensemble for BT vs RandomForestClassifier vs cosine: {acc_case_2}--------------')
 
   y_pred_all = y_pred_all.astype(np.float32) / count1
