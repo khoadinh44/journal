@@ -5,8 +5,8 @@ import random
 import tensorflow as tf
 import numpy as np
 from train import parse_opt
-
 opt = parse_opt()
+
 
 def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
     data_xy = tuple([x, y])
@@ -57,30 +57,31 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     total_lenght = y_pred.shape.as_list()[-1]
 
     anchor   = y_pred[:, 0:int(total_lenght * 1/8)]
-    anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
+    # anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
 
     anchor_extract   = y_pred[:, int(total_lenght * 1/8): int(total_lenght * 2/8)]
-    anchor_extract   = tf.math.l2_normalize(anchor_extract, axis=1, epsilon=1e-10)
+    # anchor_extract   = tf.math.l2_normalize(anchor_extract, axis=1, epsilon=1e-10)
 
     positive = y_pred[:, int(total_lenght * 2/8): int(total_lenght * 3/8)]
-    positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
+    # positive = tf.math.l2_normalize(positive, axis=1, epsilon=1e-10)
 
     positive_extract = y_pred[:, int(total_lenght * 3/8): int(total_lenght * 4/8)]
-    positive_extract = tf.math.l2_normalize(positive_extract, axis=1, epsilon=1e-10)
+    # positive_extract = tf.math.l2_normalize(positive_extract, axis=1, epsilon=1e-10)
 
     negative = y_pred[:, int(total_lenght * 4/8): int(total_lenght * 5/8)]
-    negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
+    # negative = tf.math.l2_normalize(negative, axis=1, epsilon=1e-10)
 
     negative_extract = y_pred[:, int(total_lenght * 5/8): int(total_lenght * 6/8)]
-    negative_extract = tf.math.l2_normalize(negative_extract, axis=1, epsilon=1e-10)
+    # negative_extract = tf.math.l2_normalize(negative_extract, axis=1, epsilon=1e-10)
 
-    y_center = y_pred[:, int(total_lenght * 6/8):]
-    y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
+    y_center = y_pred[:, int(total_lenght * 6/8): int(total_lenght * 7/8)]
+    y_center_extract = y_pred[:, int(total_lenght * 7/8):]
+    # y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
 
     pos_extract_dist  = K.sum(K.square(anchor_extract - positive_extract), axis=1)
     neg_extract_dist  = K.sum(K.square(anchor_extract - negative_extract), axis=1)
-    out_extract_l2    = K.sum(K.square(anchor_extract - y_center), axis=1) + pos_extract_dist
-    loss_extract  = K.maximum(lambda_*out_extract_l2 + alpha - pos_extract_dist, 0.0)
+    out_extract_l2    = K.sum(K.square(anchor_extract - y_center_extract), axis=1) + pos_extract_dist
+    loss_extract  = K.maximum(lambda_*out_extract_l2 + alpha - neg_extract_dist, 0.0)
 
     # mean ---------------------------------
     mean_anchor     = tf.expand_dims(tf.math.reduce_mean(anchor, axis=1), axis=1)
@@ -114,7 +115,7 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
 
     mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
 
-    return loss + 0.1*loss_extract
+    return loss + loss_extract
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
