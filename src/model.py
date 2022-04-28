@@ -109,7 +109,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 #         return x
 #     x = Dense(opt.embedding_size)(x)
 #     x = BatchNormalization()(x)
-#     pre_logit = x
+#     pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
 #     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
 #     return softmax, pre_logit
@@ -189,14 +189,10 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(2):
+    for i in range(4):
         x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-    for i in range(2):
-        x = identity_block(x, kernel_size=3, filters=96, stage=3, block=i)
-
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     
     # x = GlobalAveragePooling1D()(x)
@@ -208,7 +204,7 @@ def CNN_C_trip(opt, input_, backbone=False):
     
     x = Dense(opt.embedding_size)(x)
     x = BatchNormalization()(x)
-    pre_logit = x
+    pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
     return softmax, pre_logit
