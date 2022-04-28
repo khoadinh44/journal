@@ -20,7 +20,7 @@ def Kurtosis(x):
 
 def Clearance_factor(x):
   data_PvT = Peak_value(x)
-  return data_PvT/np.mean(np.sqrt(x))**2 + 1e-10
+  return data_PvT/np.mean(np.sqrt(abs(x)))**2 + 1e-10
 
 def Impulse_factor(x):
   data_PvT = Peak_value(x)
