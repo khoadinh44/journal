@@ -144,8 +144,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     # Fit data-------------------------------------------------
     model = Model(inputs=[anchor_input, extract_input_1, positive_input, extract_input_2, negative_input, extract_input_3, target_input], outputs=[merged_soft, merged_pre])
     if opt.use_weight:
-      if os.path.isdir(outdir + "best_result/best_new_triplet_loss_model"):
-        model.load_weights(outdir + "best_result/best_new_triplet_loss_model")
+      if os.path.isdir(outdir + "best_new_triplet_loss_model"):
+        model.load_weights(outdir + "best_new_triplet_loss_model")
         print(f'\n Load weight : {outdir}')
       else:
         print('\n No weight file.')
