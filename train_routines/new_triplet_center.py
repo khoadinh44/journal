@@ -144,8 +144,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     # Fit data-------------------------------------------------
     model = Model(inputs=[anchor_input, extract_input_1, positive_input, extract_input_2, negative_input, extract_input_3, target_input], outputs=[merged_soft, merged_pre])
     if opt.use_weight:
-      if os.path.isdir(outdir + "new_triplet_loss_model"):
-        model.load_weights(outdir + "new_triplet_loss_model")
+      if os.path.isdir(outdir + "best_result/best_new_triplet_loss_model"):
+        model.load_weights(outdir + "best_result/best_new_triplet_loss_model")
         print(f'\n Load weight : {outdir}')
       else:
         print('\n No weight file.')
@@ -174,6 +174,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     y_test_soft, X_test_embed = model.predict([x_test_scale, x_test_extract])
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, opt.activation, X_train_embed, X_test_embed, y_train, y_test)
+    tsne_plot(outdir, 'original', X_train_embed[:, :opt.embedding_size], X_test_embed[:, :opt.embedding_size], y_train, y_test)
+    tsne_plot(outdir, 'extracted', X_train_embed[:, opt.embedding_size: ], X_test_embed[:, opt.embedding_size: ], y_train, y_test)
     
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
