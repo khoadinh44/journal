@@ -161,7 +161,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
                   metrics=["accuracy"], 
                   loss_weights=loss_weights)
 
-    model.fit(x=[anchor, anchor_extract, positive, positive_extract, negative, negative_extract, y_target], y=[target, y_target],
+    model.fit(x=[anchor, anchor_extract, positive, positive_extract, negative, negative_extract, y_target, y_target], y=[target, y_target],
               batch_size=opt.batch_size, epochs=epoch, 
               # callbacks=[callback], 
               shuffle=True)
