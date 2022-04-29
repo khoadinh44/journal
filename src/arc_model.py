@@ -32,7 +32,6 @@ def OutputLayer(embd_shape, w_decay=5e-4, name='OutputLayer'):
         x = Flatten()(x)
         x = Dense(embd_shape, kernel_regularizer=_regularizer(w_decay))(x)
         x = BatchNormalization()(x)
-        x = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer_arcface')(x)
         return Model(inputs, x, name=name)(x_in)
     return output_layer
 
