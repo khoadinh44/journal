@@ -55,7 +55,6 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     loss -- real number, value of the loss
     """
     total_lenght = y_pred.shape.as_list()[-1]
-    print(total_lenght)
 
     anchor   = y_pred[:, 0: opt.embedding_size]
     # anchor   = tf.math.l2_normalize(anchor, axis=1, epsilon=1e-10)
