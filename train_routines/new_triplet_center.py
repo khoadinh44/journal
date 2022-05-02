@@ -40,6 +40,20 @@ def extracted_model(in_, opt):
   return x
 
 def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale, x_test, y_test, network, i=100):
+    print("\n Training with Triplet Loss....")
+
+    outdir = opt.outdir + "/new_triplet_loss/"
+    if i==0:
+      epoch = 50 # 30
+    else:
+      epoch = opt.epoch # 10
+
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir)
+    # Get generator------------------------------------------------
+    X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
+    
+    # Get extracted data for testing-------------------------------
     if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy'):
       x_train_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy')
       x_test_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy')
@@ -55,17 +69,6 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
         np.save(f, x_train_extract)
       with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy', 'wb') as f:
         np.save(f, x_test_extract)
-
-    print("\n Training with Triplet Loss....")
-
-    outdir = opt.outdir + "/new_triplet_loss/"
-    if i==0:
-      epoch = 50 # 30
-    else:
-      epoch = opt.epoch # 10
-
-    if not os.path.isdir(outdir):
-        os.makedirs(outdir)
     
     # Extract model ---------------------------------------------------------
     extract_input_1 = Input((11, ), name='extract_input_1')
@@ -77,11 +80,6 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     extract_model_2  = extracted_model(extract_input_2, opt)
     extract_shared_model_2 = tf.keras.models.Model(inputs=[extract_input_2], outputs=[extract_model_2])
     y_extract_2 = extract_shared_model_2([extract_input_2])
-    
-    extract_input_3 = Input((11, ), name='extract_input_3')
-    extract_model_3  = extracted_model(extract_input_3, opt)
-    extract_shared_model_3 = tf.keras.models.Model(inputs=[extract_input_3], outputs=[extract_model_3])
-    y_extract_3 = extract_shared_model_3([extract_input_3])
 
 
     # Center model----------------------------------------------------------
@@ -95,57 +93,47 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     softmax, pre_logits = network(opt, model_input)
     shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
     shared_model.summary()
-   
-    X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
     
   
     anchor_input   = Input((opt.input_shape, 1,), name='anchor_input')
-    positive_input = Input((opt.input_shape, 1,), name='positive_input')
     negative_input = Input((opt.input_shape, 1,), name='negative_input')
     
 
     soft_anchor, pre_logits_anchor = shared_model([anchor_input])
-    soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    merged_pre  = concatenate([pre_logits_anchor, y_extract_1, pre_logits_pos, y_extract_2, pre_logits_neg, y_extract_3, center], axis=-1, name='merged_pre')
-    merged_soft = concatenate([soft_anchor, soft_pos, soft_neg], axis=-1, name='merged_soft')
+    merged_pre  = concatenate([pre_logits_anchor, y_extract_1, pre_logits_neg, y_extract_2, center], axis=-1, name='merged_pre')
+    merged_soft = concatenate([soft_anchor, soft_neg], axis=-1, name='merged_soft')
     
     loss_weights = [1, 0.01]
   
     # https://keras.io/api/losses/
     
-    # data-----------------------------------------------------
-    anchor   = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
-    anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
-    anchor = scaler_transform(anchor, PowerTransformer)
+    # Data for triplet loss-----------------------------------------------------
+    anchor   = X_train[:, :X_train.shape[1]//2]
+    negative = X_train[:, X_train.shape[1]//2: ]
+    
+    anchor_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(anchor)), PowerTransformer)
+    anchor         = scaler_transform(anchor, PowerTransformer)
     print(f'anchor shape: {anchor.shape}')
     print(f'anchor-extract shape: {anchor_extract.shape}\n')
-
-    positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
-    positive_extract = extracted_feature_of_signal(np.squeeze(positive))
-    positive = scaler_transform(positive, PowerTransformer)
-    print(f'positive shape: {positive.shape}')
-    print(f'positive-extract shape: {positive_extract.shape}\n')
-
-    negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
-    negative_extract = extracted_feature_of_signal(np.squeeze(negative))
-    negative = scaler_transform(negative, PowerTransformer)
+    
+    negative_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(negative)), PowerTransformer)
+    negative         = scaler_transform(negative, PowerTransformer)
     print(f'negative shape: {negative.shape}')
     print(f'negative-extract shape: {negative_extract.shape}\n')
 
     y_anchor   = to_one_hot(Y_train[:, 0])
-    y_positive = to_one_hot(Y_train[:, 1])
-    y_negative = to_one_hot(Y_train[:, 2])
-    y_target   = Y_train[:, 1]
+    y_negative = to_one_hot(Y_train[:, 1])
+    y_target   = Y_train[:, 0]
 
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
 
     # Fit data-------------------------------------------------
-    model = Model(inputs=[anchor_input, extract_input_1, positive_input, extract_input_2, negative_input, extract_input_3, target_input], outputs=[merged_soft, merged_pre])
+    model = Model(inputs=[anchor_input, extract_input_1, negative_input, extract_input_2, target_input], outputs=[merged_soft, merged_pre])
     if opt.use_weight:
-      if os.path.isdir(outdir + "best_new_triplet_loss_model"):
-        model.load_weights(outdir + "best_new_triplet_loss_model")
+      if os.path.isdir(outdir + "new_triplet_loss_model"):
+        model.load_weights(outdir + "new_triplet_loss_model")
         print(f'\n Load weight : {outdir}')
       else:
         print('\n No weight file.')
@@ -156,7 +144,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
                   metrics=["accuracy"], 
                   loss_weights=loss_weights)
 
-    model.fit(x=[anchor, anchor_extract, positive, positive_extract, negative, negative_extract, y_target], y=[target, y_target],
+    model.fit(x=[anchor, anchor_extract, negative, negative_extract, y_target], y=[target, y_target],
               batch_size=opt.batch_size, epochs=epoch, 
               # callbacks=[callback], 
               shuffle=True)
