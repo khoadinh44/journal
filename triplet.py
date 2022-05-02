@@ -8,40 +8,73 @@ from train import parse_opt
 opt = parse_opt()
 
 
-def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
-    data_xy = tuple([x, y])
+# def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
+#     data_xy = tuple([x, y])
 
-    trainsize = 1
+#     trainsize = 1
 
-    triplet_train_pairs = []
-    y_triplet_pairs = []
-    #triplet_test_pairs = []
-    for data_class in sorted(set(data_xy[1])):
-        same_class_idx = np.where((data_xy[1] == data_class))[0]
-        diff_class_idx = np.where(data_xy[1] != data_class)[0]
-        A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=ap_pairs)  # Generating Anchor-Positive pairs
-        Neg_idx = random.sample(list(diff_class_idx), k=an_pairs)
+#     triplet_train_pairs = []
+#     y_triplet_pairs = []
+#     #triplet_test_pairs = []
+#     for data_class in sorted(set(data_xy[1])):
+#         same_class_idx = np.where((data_xy[1] == data_class))[0]
+#         diff_class_idx = np.where(data_xy[1] != data_class)[0]
+#         A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=ap_pairs)  # Generating Anchor-Positive pairs
+#         Neg_idx = random.sample(list(diff_class_idx), k=an_pairs)
 
-        # train
-        A_P_len = len(A_P_pairs)
-        #Neg_len = len(Neg_idx)
-        for ap in A_P_pairs[:int(A_P_len * trainsize)]:
-            Anchor = data_xy[0][ap[0]]
-            y_Anchor = data_xy[1][ap[0]]
+#         # train
+#         A_P_len = len(A_P_pairs)
+#         #Neg_len = len(Neg_idx)
+#         for ap in A_P_pairs[:int(A_P_len * trainsize)]:
+#             Anchor = data_xy[0][ap[0]]
+#             y_Anchor = data_xy[1][ap[0]]
 
-            Positive = data_xy[0][ap[1]]
-            y_Pos = data_xy[1][ap[1]]
+#             Positive = data_xy[0][ap[1]]
+#             y_Pos = data_xy[1][ap[1]]
 
-            for n in Neg_idx:
-                Negative = data_xy[0][n]
-                y_Neg = data_xy[1][n]
+#             for n in Neg_idx:
+#                 Negative = data_xy[0][n]
+#                 y_Neg = data_xy[1][n]
                 
-                triplet_train_pairs.append([Anchor, Positive, Negative])
-                y_triplet_pairs.append([y_Anchor, y_Pos, y_Neg])
-                # test
+#                 triplet_train_pairs.append([Anchor, Positive, Negative])
+#                 y_triplet_pairs.append([y_Anchor, y_Pos, y_Neg])
+#                 # test
 
-    return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
+#     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
+def generate_triplet(x, y):
+    label = []
+    data = []
+    for i in sorted(set(y)):
+      anchor_idx = np.where(y==i)[0]
+      negative_idx = np.where(y!=i)[0]
+      # print(negative_idx, '\n')
+      if len(anchor_idx) > len(negative_idx):
+        negative_full_idx = random.sample(negative_idx.tolist(), k=len(negative_idx))*np.ceil(len(anchor_idx)/len(negative_idx)).astype(np.int32)
+        negative_idx = negative_full_idx[:len(anchor_idx)]
+      else:
+        negative_idx = negative_idx[:len(anchor_idx)]
+
+      # label pair-------------------------------
+      anchor_label = y[anchor_idx].reshape(-1, 1)
+      negative_label = y[negative_idx].reshape(-1, 1)
+
+      each_label = np.concatenate((anchor_label, negative_label), axis=1)
+      if label ==[]:
+        label = each_label
+      else:
+        label = np.concatenate((label, each_label))
+
+      # data pair--------------------------
+      anchor_data = x[anchor_idx]
+      negative_data = x[negative_idx]
+      each_data = np.concatenate((anchor_data, negative_data), axis=1)
+      if data ==[]:
+        data = each_data
+      else:
+        data = np.concatenate((data, each_data))
+    return data, label
+    
 def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
     Implementation of the triplet loss function
