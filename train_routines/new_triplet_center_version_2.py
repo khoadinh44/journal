@@ -85,15 +85,10 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
 
     # Center model----------------------------------------------------------
-    target_input_1   = Input((1,), name='target_input_1')
-    center_1 = Dense(opt.embedding_size)(target_input_1)
-    center_shared_model_1 = tf.keras.models.Model(inputs=[target_input_1], outputs=[center_1])
-    center_1 = center_shared_model_1([target_input_1])
-
-    target_input_2   = Input((1,), name='target_input_2')
-    center_2 = Dense(opt.embedding_size)(target_input_2)
-    center_shared_model_2 = tf.keras.models.Model(inputs=[target_input_2], outputs=[center_2])
-    center_2 = center_shared_model_2([target_input_2])
+    target_input   = Input((1,), name='target_input')
+    center = Dense(opt.embedding_size*2)(target_input)
+    center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
+    center = center_shared_model([target_input])
 
     # Triplet model----------------------------------------------------------
     model_input = Input(shape=(opt.input_shape, 1))
@@ -113,7 +108,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     soft_pos, pre_logits_pos       = shared_model([positive_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    merged_pre  = concatenate([pre_logits_anchor, y_extract_1, pre_logits_pos, y_extract_2, pre_logits_neg, y_extract_3, center_1, center_2], axis=-1, name='merged_pre')
+    merged_pre  = concatenate([pre_logits_anchor, y_extract_1, pre_logits_pos, y_extract_2, pre_logits_neg, y_extract_3, center], axis=-1, name='merged_pre')
     merged_soft = concatenate([soft_anchor, soft_pos, soft_neg], axis=-1, name='merged_soft')
     
     loss_weights = [1, 0.01]
@@ -147,7 +142,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     target = np.concatenate((y_anchor, y_positive, y_negative), -1)
 
     # Fit data-------------------------------------------------
-    model = Model(inputs=[anchor_input, extract_input_1, positive_input, extract_input_2, negative_input, extract_input_3, target_input_1, target_input_2], outputs=[merged_soft, merged_pre])
+    model = Model(inputs=[anchor_input, extract_input_1, positive_input, extract_input_2, negative_input, extract_input_3, target_input], outputs=[merged_soft, merged_pre])
     if opt.use_weight:
       if os.path.isdir(outdir + "best_new_triplet_loss_model"):
         model.load_weights(outdir + "best_new_triplet_loss_model")
@@ -161,7 +156,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
                   metrics=["accuracy"], 
                   loss_weights=loss_weights)
 
-    model.fit(x=[anchor, anchor_extract, positive, positive_extract, negative, negative_extract, y_target, y_target], y=[target, y_target],
+    model.fit(x=[anchor, anchor_extract, positive, positive_extract, negative, negative_extract, y_target], y=[target, y_target],
               batch_size=opt.batch_size, epochs=epoch, 
               # callbacks=[callback], 
               shuffle=True)
