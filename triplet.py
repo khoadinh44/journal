@@ -205,10 +205,10 @@ def new_triplet_loss(y_true, y_pred):
     out_l2            = tf.math.acos(product(anchor, y_center) / (magnitudes_anchor*magnitudes_y_center))
     out_extract_l2    = tf.math.acos(product(anchor_extract, y_center_extract) / (magnitudes_anchor_extract*magnitudes_y_center_extract))
     
-    loss           = K.maximum(neg_dist - out_extract_l2 - alpha, 0.0)
-    loss_extract   = K.maximum(neg_extract_dist - out_extract_l2 - alpha, 0.0)
+    loss           = K.maximum(out_extract_l2 + alpha - neg_dist, 0.0)
+    loss_extract   = K.maximum(out_extract_l2 + alpha - neg_extract_dist, 0.0)
 
-    return loss + loss_extract
+    return loss + opt.lambda_*loss_extract
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
