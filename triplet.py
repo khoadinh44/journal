@@ -162,7 +162,7 @@ def magnitudes(x):
 def product(x, y):
   return tf.math.reduce_sum(x*y)
 
-def new_triplet_loss(y_true, y_pred, lambda_=opt.lambda_):
+def new_triplet_loss(y_true, y_pred):
     """
     Implementation of the triplet loss function
     Arguments:
