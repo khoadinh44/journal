@@ -124,10 +124,10 @@ def magnitudes(x):
   '''
   https://www.omnicalculator.com/math/angle-between-two-vectors
   '''
-  return np.sqrt(np.sum(x**2))
+  return tf.math.sqrt(tf.math.reduce_sum(x**2))
 
 def product(x, y):
-  return np.sum(x*y)
+  return tf.math.reduce_sum(x*y)
 
 # def new_triplet_loss(y_true, y_pred, alpha=3., lambda_=opt.lambda_):
 #     """
