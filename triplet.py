@@ -120,6 +120,97 @@ def new_triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
 
     return loss + 0.3*loss_extract
 
+def magnitudes(x):
+  '''
+  https://www.omnicalculator.com/math/angle-between-two-vectors
+  '''
+  return np.sqrt(np.sum(x**2))
+
+def product(x, y):
+  return np.sum(x*y)
+
+# def new_triplet_loss(y_true, y_pred, alpha=3., lambda_=opt.lambda_):
+#     """
+#     Implementation of the triplet loss function
+#     Arguments:
+#     y_true -- true labels, required when you define a loss in Keras, you don't need it in this function.
+#     y_pred -- python list containing three objects:
+#             anchor -- the encodings for the anchor data
+#             positive -- the encodings for the positive data (similar to anchor)
+#             negative -- the encodings for the negative data (different from anchor)
+#     Returns:
+#     loss -- real number, value of the loss
+#     """
+#     total_lenght = y_pred.shape.as_list()[-1]
+
+#     anchor   = y_pred[:, 0: opt.embedding_size]
+#     magnitudes_anchor = magnitudes(anchor)
+
+#     anchor_extract   = y_pred[:, opt.embedding_size: opt.embedding_size*2]
+#     magnitudes_anchor_extract = magnitudes(anchor_extract)
+
+#     positive = y_pred[:, opt.embedding_size*2: opt.embedding_size*3]
+#     magnitudes_positive = magnitudes(positive)
+
+#     positive_extract = y_pred[:, opt.embedding_size*3: opt.embedding_size*4]
+#     magnitudes_positive_extract = magnitudes(positive_extract)
+
+#     negative = y_pred[:, opt.embedding_size*4: opt.embedding_size*5]
+#     magnitudes_negative = magnitudes(negative)
+
+#     negative_extract = y_pred[:, opt.embedding_size*5: opt.embedding_size*6]
+#     magnitudes_negative_extract = magnitudes(negative_extract)
+
+
+#     y_center = y_pred[:, opt.embedding_size*6: opt.embedding_size*7]
+#     y_center = tf.math.l2_normalize(y_center, axis=1, epsilon=1e-10)
+#     magnitudes_y_center = magnitudes(y_center)
+
+#     y_center_extract = y_pred[:, opt.embedding_size*7:]
+#     y_center_extract = tf.math.l2_normalize(y_center_extract, axis=1, epsilon=1e-10)
+#     magnitudes_y_center_extract = magnitudes(y_center_extract)
+    
+
+#     # Compute extracted vector-----------------------------------------------------
+#     pos_extract_dist  = tf.math.acos(product(anchor_extract, positive_extract) / (magnitudes_anchor_extract*magnitudes_positive_extract))
+#     neg_extract_dist  = tf.math.acos(product(anchor_extract, negative_extract) / (magnitudes_anchor_extract*magnitudes_negative_extract))
+#     out_extract_l2    = tf.math.acos(product(anchor_extract, y_center_extract) / (magnitudes_anchor_extract*magnitudes_y_center_extract))
+#     loss_extract      = K.maximum(tf.math.abs(neg_extract_dist)-tf.math.abs(pos_extract_dist)*alpha, 0.0)
+
+#     # mean ---------------------------------
+#     mean_anchor     = tf.expand_dims(tf.math.reduce_mean(anchor, axis=1), axis=1)
+#     multiple_anchor = tf.constant([1, anchor.shape.as_list()[1]])
+#     mean_anchor     = tf.tile(mean_anchor, multiple_anchor)
+
+#     mean_positive     = tf.expand_dims(tf.math.reduce_mean(positive, axis=1), axis=1)
+#     multiple_positive = tf.constant([1, positive.shape.as_list()[1]])
+#     mean_positive     = tf.tile(mean_positive, multiple_positive)
+
+#     mean_negative     = tf.expand_dims(tf.math.reduce_mean(negative, axis=1), axis=1)
+#     multiple_negative = tf.constant([1, negative.shape.as_list()[1]])
+#     mean_negative     = tf.tile(mean_negative, multiple_negative)
+
+#     # variance ------------------------------
+#     variance_anchor   = K.sum(K.square(anchor - mean_anchor), axis=1)/tf.cast(anchor.shape.as_list()[1], tf.float32)
+#     variance_positive = K.sum(K.square(positive - mean_positive), axis=1)/tf.cast(positive.shape.as_list()[1], tf.float32)
+#     variance_negative = K.sum(K.square(negative - mean_negative), axis=1)/tf.cast(negative.shape.as_list()[1], tf.float32)
+
+#     # distance between the anchor and the positive
+#     pos_dist          = tf.math.acos(product(anchor, positive) / (magnitudes_anchor*magnitudes_positive))
+#     mean_pos_dist     = K.sum(K.square(mean_anchor - mean_positive))
+
+#     # distance between the anchor and the negative
+#     neg_dist          = tf.math.acos(product(anchor, negative) / (magnitudes_anchor*magnitudes_negative))
+#     mean_neg_dist     = K.sum(K.square(mean_anchor - mean_negative))
+
+#     # compute loss
+#     out_l2     = tf.math.acos(product(anchor, y_center) / (magnitudes_anchor*magnitudes_y_center))
+#     loss       = K.maximum(tf.math.abs(neg_dist)-tf.math.abs(pos_dist)*alpha, 0.0)
+
+#     mean_loss  = K.maximum(alpha - mean_neg_dist, 0.0)
+
+#     return loss + loss_extract
+
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
     Implementation of the triplet loss function
