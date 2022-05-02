@@ -72,12 +72,12 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
         np.save(f, x_test_extract)
     
     # Extract model ---------------------------------------------------------
-    extract_input_1 = Input((11, 1), name='extract_input_1')
+    extract_input_1 = Input((11), name='extract_input_1')
     extract_model_1  = extracted_model(extract_input_1, opt)
     extract_shared_model_1 = tf.keras.models.Model(inputs=[extract_input_1], outputs=[extract_model_1])
     y_extract_1 = extract_shared_model_1([extract_input_1])
 
-    extract_input_2 = Input((11, 1), name='extract_input_2')
+    extract_input_2 = Input((11), name='extract_input_2')
     extract_model_2  = extracted_model(extract_input_2, opt)
     extract_shared_model_2 = tf.keras.models.Model(inputs=[extract_input_2], outputs=[extract_model_2])
     y_extract_2 = extract_shared_model_2([extract_input_2])
