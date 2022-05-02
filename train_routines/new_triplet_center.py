@@ -72,12 +72,12 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
         np.save(f, x_test_extract)
     
     # Extract model ---------------------------------------------------------
-    extract_input_1 = Input((11, ), name='extract_input_1')
+    extract_input_1 = Input((11, 1), name='extract_input_1')
     extract_model_1  = extracted_model(extract_input_1, opt)
     extract_shared_model_1 = tf.keras.models.Model(inputs=[extract_input_1], outputs=[extract_model_1])
     y_extract_1 = extract_shared_model_1([extract_input_1])
 
-    extract_input_2 = Input((11, ), name='extract_input_2')
+    extract_input_2 = Input((11, 1), name='extract_input_2')
     extract_model_2  = extracted_model(extract_input_2, opt)
     extract_shared_model_2 = tf.keras.models.Model(inputs=[extract_input_2], outputs=[extract_model_2])
     y_extract_2 = extract_shared_model_2([extract_input_2])
@@ -113,14 +113,33 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     # Data for triplet loss-----------------------------------------------------
     anchor   = X_train[:, :X_train.shape[1]//2]
     negative = X_train[:, X_train.shape[1]//2: ]
-    
-    anchor_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(anchor)), PowerTransformer)
-    anchor         = scaler_transform(anchor, PowerTransformer)
+
+    if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy'):
+      anchor_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy')
+      anchor = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor.npy')
+    else:
+      anchor_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(anchor)), PowerTransformer)
+      anchor         = scaler_transform(anchor, PowerTransformer)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy', 'wb') as f:
+        np.save(f, anchor_extract)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor.npy', 'wb') as f:
+        np.save(f, anchor)
+
     print(f'anchor shape: {anchor.shape}')
     print(f'anchor-extract shape: {anchor_extract.shape}\n')
     
-    negative_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(negative)), PowerTransformer)
-    negative         = scaler_transform(negative, PowerTransformer)
+
+    if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract.npy'):
+      negative_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract.npy')
+      negative = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative.npy')
+    else:
+      negative_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(negative)), PowerTransformer)
+      negative         = scaler_transform(negative, PowerTransformer)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract.npy', 'wb') as f:
+        np.save(f, negative_extract)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative.npy', 'wb') as f:
+        np.save(f, negative)
+
     print(f'negative shape: {negative.shape}')
     print(f'negative-extract shape: {negative_extract.shape}\n')
 
@@ -128,7 +147,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     y_negative = to_one_hot(Y_train[:, 1])
     y_target   = Y_train[:, 0]
 
-    target = np.concatenate((y_anchor, y_positive, y_negative), -1)
+    target = np.concatenate((y_anchor, y_negative), -1)
 
     # Fit data-------------------------------------------------
     model = Model(inputs=[anchor_input, extract_input_1, negative_input, extract_input_2, target_input], outputs=[merged_soft, merged_pre])
