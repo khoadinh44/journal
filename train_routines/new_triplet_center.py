@@ -119,6 +119,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
       anchor = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor.npy')
     else:
       anchor_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(anchor)), PowerTransformer)
+      anchor_extract = np.squeeze(anchor_extract)
       anchor         = scaler_transform(anchor, PowerTransformer)
       with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy', 'wb') as f:
         np.save(f, anchor_extract)
@@ -134,6 +135,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
       negative = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative.npy')
     else:
       negative_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(negative)), PowerTransformer)
+      negative_extract = np.squeeze(negative_extract)
       negative         = scaler_transform(negative, PowerTransformer)
       with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract.npy', 'wb') as f:
         np.save(f, negative_extract)
