@@ -17,7 +17,6 @@ from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, Batch
 
 def l2_loss(y_true, y_pred):
   total_length = y_pred.shape[1]
-  print(y_pred.shape)
   pre_logits, center = y_pred[:, :int(total_length/2)], y_pred[:, int(total_length/2): ]
 
   out_l2_pre      = K.sum(K.square(pre_logits - center))
@@ -25,18 +24,18 @@ def l2_loss(y_true, y_pred):
 
 
 def extracted_model(in_, opt):
-  x = Dense(opt.embedding_size*2,
+  x = Dense(opt.embedding_size,
                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                     bias_regularizer=regularizers.l2(1e-4),
                     activity_regularizer=regularizers.l2(1e-5))(in_)
-  x = Dense(opt.embedding_size*4,
+  x = Dense(opt.embedding_size*2,
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
   x = concatenate([x, in_], axis=-1)
   x = Dropout(rate=0.5)(x)
-  x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
+  x = Dense(opt.embedding_size)(x)
   return x
 
 
@@ -66,12 +65,12 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
       x_test_get = np.squeeze(x_test)
       x_test_extract = extracted_feature_of_signal(x_test_get)
 
-      x_train_extract = scaler_transform(x_train_extract, PowerTransformer)
-      x_test_extract  = scaler_transform(x_test_extract, PowerTransformer)
-      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy', 'wb') as f:
-        np.save(f, x_train_extract)
-      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy', 'wb') as f:
-        np.save(f, x_test_extract)
+    x_train_extract = scaler_transform(x_train_extract, PowerTransformer)
+    x_test_extract  = scaler_transform(x_test_extract, PowerTransformer)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy', 'wb') as f:
+      np.save(f, x_train_extract)
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy', 'wb') as f:
+      np.save(f, x_test_extract)
 
     
     print(f'x_train_extract shape: {x_train_extract.shape}')
@@ -91,7 +90,7 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     # center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
     # center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center_shared_model.add(Input((1,), name='target_input'))
-    center_shared_model.add(tf.keras.layers.Embedding(10, opt.embedding_size))
+    center_shared_model.add(tf.keras.layers.Embedding(3, opt.embedding_size))
     center_shared_model.add(GlobalAveragePooling1D())
     center_shared_model.add(Lambda(lambda  x: K.l2_normalize(x, axis=1)))
     y_center = center_shared_model([target_input])
@@ -104,6 +103,7 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
 
     merged_pre_extract = concatenate([pre_logits, y_extract], axis=-1)
     merged_pre_extract = Dense(opt.embedding_size)(merged_pre_extract)
+    merged_pre_extract = Dropout(rate=0.5)(merged_pre_extract)
     merged_pre_extract = BatchNormalization()(merged_pre_extract)
     merged_pre_extract = Lambda(lambda  x: K.l2_normalize(x, axis=1))(merged_pre_extract)
     merged_pre_logits = concatenate([merged_pre_extract, y_center], axis=-1, name='merged_pre')
