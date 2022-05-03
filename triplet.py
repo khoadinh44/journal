@@ -160,7 +160,7 @@ def magnitudes(x):
   return tf.math.sqrt(tf.math.reduce_sum(x**2))
 
 def product(x, y):
-  return tf.math.reduce_sum(x*y)
+  return tf.math.reduce_sum(tf.math.multiply(x, y))
 
 def new_triplet_loss(y_true, y_pred):
     """
@@ -208,7 +208,7 @@ def new_triplet_loss(y_true, y_pred):
     loss           = K.maximum(out_extract_l2 + alpha - neg_dist, 0.0)
     loss_extract   = K.maximum(out_extract_l2 + alpha - neg_extract_dist, 0.0)
 
-    return loss + opt.lambda_*loss_extract
+    return opt.lambda_*loss + loss_extract
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
