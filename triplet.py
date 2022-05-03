@@ -174,7 +174,7 @@ def new_triplet_loss(y_true, y_pred):
     Returns:
     loss -- real number, value of the loss
     """
-    alpha = (2*np.pi)/float(opt.num_classes*2)
+    alpha = (2*np.pi)/float(opt.num_classes)
     total_lenght = y_pred.shape.as_list()[-1]
 
     anchor   = y_pred[:, 0: opt.embedding_size]
@@ -205,10 +205,10 @@ def new_triplet_loss(y_true, y_pred):
     out_l2            = tf.math.acos(product(anchor, y_center) / (magnitudes_anchor*magnitudes_y_center))
     out_extract_l2    = tf.math.acos(product(anchor_extract, y_center_extract) / (magnitudes_anchor_extract*magnitudes_y_center_extract))
     
-    loss           = K.maximum(out_extract_l2 + alpha - neg_dist, 0.0)
+    loss           = K.maximum(out_l2 + alpha - neg_dist, 0.0)
     loss_extract   = K.maximum(out_extract_l2 + alpha - neg_extract_dist, 0.0)
 
-    return opt.lambda_*loss + loss_extract
+    return out_l2 + out_extract_l2
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
