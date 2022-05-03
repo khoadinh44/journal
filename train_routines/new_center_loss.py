@@ -9,6 +9,7 @@ import numpy as np
 from tensorflow.keras.callbacks import TensorBoard
 from angular_grad import AngularGrad
 from sklearn.preprocessing import PowerTransformer
+from tensorflow_addons.layers import MultiHeadAttention
 import os
 import argparse
 from keras.layers import Dense
