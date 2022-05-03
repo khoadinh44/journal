@@ -38,8 +38,8 @@ def extracted_model(in_, opt):
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-  x = concatenate([x, in_], axis=-1)
-  x = BatchNormalization()(x)
+  # x = concatenate([x, in_], axis=-1)
+  # x = BatchNormalization()(x)
   x = Dropout(rate=0.5)(x)
   x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
@@ -108,7 +108,7 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     extract_model  = extracted_model(extract_input, opt)
     extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract_model])
     y_extract = extract_shared_model([extract_input])
-
+    
     merged_pre_extract = concatenate([pre_logits, y_extract], axis=-1)
     # merged_pre_extract = Dense(opt.embedding_size)(merged_pre_extract)
     # merged_pre_extract = Dropout(rate=0.5)(merged_pre_extract)
