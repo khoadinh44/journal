@@ -13,16 +13,33 @@ import os
 import argparse
 from keras.layers import Dense
 from tensorflow.keras import regularizers
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization, Dropout
 
 def l2_loss(y_true, y_pred):
   total_length = y_pred.shape[1]
   pre_logits, center = y_pred[:, :int(total_length/2)], y_pred[:, int(total_length/2): ]
-  pre_logits = tf.math.l2_normalize(pre_logits, axis=1, epsilon=1e-10)
-  center     = tf.math.l2_normalize(center, axis=1, epsilon=1e-10)
+  # pre_logits = tf.math.l2_normalize(pre_logits, axis=1, epsilon=1e-10)
+  # center     = tf.math.l2_normalize(center, axis=1, epsilon=1e-10)
 
   out_l2_pre      = K.sum(K.square(pre_logits - center))
-
   return out_l2_pre
+
+
+def extracted_model(in_, opt):
+  x = Dense(opt.embedding_size*2,
+                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                    bias_regularizer=regularizers.l2(1e-4),
+                    activity_regularizer=regularizers.l2(1e-5))(in_)
+  x = Dense(opt.embedding_size*4,
+                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                  bias_regularizer=regularizers.l2(1e-4),
+                  activity_regularizer=regularizers.l2(1e-5))(x)
+  x = concatenate([x, in_], axis=-1)
+  x = Dropout(rate=0.5)(x)
+  x = Dense(opt.embedding_size)(x)
+  x = BatchNormalization()(x)
+  # x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
+  return x
 
 
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
@@ -61,43 +78,32 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     
     print(f'x_train_extract shape: {x_train_extract.shape}')
     print(f'x_test_extract shape: {x_test_extract.shape}')
-    
-    # Input layers------------------------------------------------
-    x_input        = Input(shape=(opt.input_shape, 1), name='x_input')
-    target_input   = Input((1,), name='target_input')
-    extract_input = Input((11, ), name='extract_input')
-    
-    
-    # Model ----------------------------------------------------
+     
+    # Main model ----------------------------------------------------
+    x_input = Input(shape=(opt.input_shape, 1), name='x_input')
     softmax, pre_logits = network(opt, x_input)
     shared_model = tf.keras.models.Model(inputs=[x_input], outputs=[softmax, pre_logits])
     shared_model.summary()
     softmax, pre_logits = shared_model([x_input])
 
-    
-    center = Dense(opt.embedding_size*2)(target_input)
+    # Target model----------------------------------------------
+    target_input   = Input((1,), name='target_input')
+    center = Dense(opt.embedding_size)(target_input)
+    center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     y_center = center_shared_model([target_input])
 
-    
-    extract_fc1 = Dense(opt.embedding_size*2,
-                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                    bias_regularizer=regularizers.l2(1e-4),
-                    activity_regularizer=regularizers.l2(1e-5))(extract_input)
-    extract_fc2 = Dense(opt.embedding_size*4,
-                    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                    bias_regularizer=regularizers.l2(1e-4),
-                    activity_regularizer=regularizers.l2(1e-5))(extract_fc1)
-    extract_fc3 = concatenate([extract_fc2, extract_input], axis=-1)
-    extract_fc3 = Dropout(rate=0.5)(extract_fc3)
-    extract_fc4 = Dense(opt.embedding_size*2)(extract_fc3)
-    extract_fc4 = BatchNormalization()(extract_fc4)
-    
-    extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract_fc4])
+    # Extract model--------------------------------------------------
+    extract_input = Input((11, ), name='extract_input')
+    extract_model  = extracted_model(extract_input, opt)
+    extract_shared_model = tf.keras.models.Model(inputs=[extract_input], outputs=[extract_model])
     y_extract = extract_shared_model([extract_input])
 
-    merged_pre_logits = concatenate([pre_logits, y_extract, y_center], axis=-1, name='merged_pre')
-    merged_pre_extract = concatenate([pre_logits, y_extract], axis=-1, name='merged_extract')
+    merged_pre_extract = concatenate([pre_logits, y_extract], axis=-1)
+    merged_pre_extract = Dense(opt.embedding_size)(merged_pre_extract)
+    merged_pre_extract = BatchNormalization()(merged_pre_extract)
+    merged_pre_extract = Lambda(lambda  x: K.l2_normalize(x, axis=1))(merged_pre_extract)
+    merged_pre_logits = concatenate([merged_pre_extract, y_center], axis=-1, name='merged_pre')
 
     # train logic------------------------------------------------------------------------------------------------
     model = tf.keras.models.Model(inputs=[x_input, extract_input, target_input], outputs=[softmax, merged_pre_logits])
@@ -122,30 +128,6 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
 
     tf.saved_model.save(model, outdir + 'new_center_loss')
 
-    # Train extract----------------------------------------------------------
-    # model = tf.keras.models.Model(inputs=[extract_input, target_input], outputs=[merged_pre_extract])
-
-    # model.compile(optimizer=AngularGrad(), 
-    #               metrics=["accuracy"],
-    #               # loss_weights=loss_weights,
-    #               loss=[l2_loss],)
-    
-    # if opt.use_weight:
-    #   if os.path.isdir(outdir + "new_center_loss_extract"):
-    #     model.load_weights(outdir + "new_center_loss_extract")
-    #     print(f'\n Load weight: {outdir}/new_center_loss_extract')
-    #   else:
-    #     print('\n No weight file.')
-    
-    # model.fit(x=[x_train_extract, y_train], y=y_train,
-    #           validation_data=([x_test_extract, y_test], y_test),
-    #           batch_size=opt.batch_size,  
-    #           # callbacks=[callback],
-    #           epochs=opt.epoch,)
-
-    # tf.saved_model.save(model, outdir + 'new_center_loss_extract')
-
-
     # from input data---------------------------
     model = Model(inputs=[x_input, extract_input], outputs=[softmax, merged_pre_extract])
     model.load_weights(outdir + "new_center_loss")
@@ -153,19 +135,9 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     _,           X_train_embed = model.predict([x_train_scale, x_train_extract])
     y_test_soft, X_test_embed = model.predict([x_test_scale, x_test_extract])
 
-    # from extract features of data ----------------------
-    # extract_shared_model.load_weights(outdir + "new_center_loss_extract")
-
-    # X_train_embed_extract  = extract_shared_model.predict([x_train_extract])
-    # X_test_embed_extract   = extract_shared_model.predict([x_test_extract])
-
-    # X_train_embed = np.concatenate((X_train_embed_or, X_train_embed_extract), axis=-1)
-    # X_test_embed  = np.concatenate((X_test_embed_or, X_test_embed_extract), axis=-1)
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, "new_center_loss_or", X_train_embed, X_test_embed, y_train, y_test)
-    # from TSNE_plot import tsne_plot
-    # tsne_plot(outdir, "new_center_loss_extract", X_train_embed_extract, X_test_embed_extract, y_train, y_test)
+    tsne_plot(outdir, "new_center_loss", X_train_embed, X_test_embed, y_train, y_test)
 
     y_train = y_train.astype(np.int32)
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
