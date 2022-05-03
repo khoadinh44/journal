@@ -11,7 +11,7 @@ import argparse
 from sklearn.preprocessing import PowerTransformer
 
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization, Dropout
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization, Dropout, GlobalAveragePooling1D
 from tensorflow.keras import regularizers
 import tensorflow.keras.backend as K
 from keras.layers import Dense
