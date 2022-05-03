@@ -98,9 +98,9 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     # center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
     # center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center_shared_model.add(Input((1,), name='target_input'))
-    center_shared_model.add(tf.keras.layers.Embedding(opt.embedding_size, opt.embedding_size*2))
+    center_shared_model.add(tf.keras.layers.Embedding(1000, opt.embedding_size*2))
     center_shared_model.add(GlobalAveragePooling1D())
-    center_shared_model.add(Lambda(lambda  x: K.l2_normalize(x, axis=1)))
+    # center_shared_model.add(Lambda(lambda  x: K.l2_normalize(x, axis=1)))
     y_center = center_shared_model([target_input])
 
     # Extract model--------------------------------------------------
