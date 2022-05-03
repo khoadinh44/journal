@@ -13,13 +13,12 @@ import os
 import argparse
 from keras.layers import Dense
 from tensorflow.keras import regularizers
-from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization, Dropout
+from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, BatchNormalization, Dropout, GlobalAveragePooling1D
 
 def l2_loss(y_true, y_pred):
   total_length = y_pred.shape[1]
+  print(y_pred.shape)
   pre_logits, center = y_pred[:, :int(total_length/2)], y_pred[:, int(total_length/2): ]
-  # pre_logits = tf.math.l2_normalize(pre_logits, axis=1, epsilon=1e-10)
-  # center     = tf.math.l2_normalize(center, axis=1, epsilon=1e-10)
 
   out_l2_pre      = K.sum(K.square(pre_logits - center))
   return out_l2_pre
@@ -38,7 +37,6 @@ def extracted_model(in_, opt):
   x = Dropout(rate=0.5)(x)
   x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
-  # x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
   return x
 
 
@@ -87,10 +85,15 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     softmax, pre_logits = shared_model([x_input])
 
     # Target model----------------------------------------------
+    center_shared_model = tf.keras.Sequential()
     target_input   = Input((1,), name='target_input')
-    center = Dense(opt.embedding_size)(target_input)
-    center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
-    center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
+    # center = Dense(opt.embedding_size)(target_input)
+    # center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
+    # center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
+    center_shared_model.add(Input((1,), name='target_input'))
+    center_shared_model.add(tf.keras.layers.Embedding(10, opt.embedding_size))
+    center_shared_model.add(GlobalAveragePooling1D())
+    center_shared_model.add(Lambda(lambda  x: K.l2_normalize(x, axis=1)))
     y_center = center_shared_model([target_input])
 
     # Extract model--------------------------------------------------
@@ -109,7 +112,7 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     model = tf.keras.models.Model(inputs=[x_input, extract_input, target_input], outputs=[softmax, merged_pre_logits])
 
     model.compile(loss=["categorical_crossentropy", l2_loss],
-                  optimizer=AngularGrad(), 
+                  optimizer=tf.keras.optimizers.SGD(), 
                   metrics=["accuracy"],
                   loss_weights=loss_weights)
     
