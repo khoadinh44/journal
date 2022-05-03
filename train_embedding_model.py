@@ -11,7 +11,7 @@ from train_routines.center_loss import train_center_loss
 from train_routines.new_center_loss import train_new_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.new_triplet_center import train_new_triplet_center
-from train_routines.new_triplet_center_version_2 import train_new_triplet_center
+# from train_routines.new_triplet_center_version_2 import train_new_triplet_center
 from preprocessing.utils import handcrafted_features, FFT
 from preprocessing.denoise_signal import savitzky_golay, Fourier, SVD_denoise, Wavelet_denoise
 
