@@ -24,17 +24,17 @@ def l2_loss(y_true, y_pred):
 
 
 def extracted_model(in_, opt):
-  x = Dense(opt.embedding_size,
+  x = Dense(opt.embedding_size*2,
                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                     bias_regularizer=regularizers.l2(1e-4),
                     activity_regularizer=regularizers.l2(1e-5))(in_)
-  x = Dense(opt.embedding_size*2,
+  x = Dense(opt.embedding_size*4,
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
   x = concatenate([x, in_], axis=-1)
-  # x = Dropout(rate=0.5)(x)
-  # x = BatchNormalization()(x)
+  x = Dropout(rate=0.5)(x)
+  x = BatchNormalization()(x)
   x = Dense(opt.embedding_size)(x)
   return x
 
@@ -90,7 +90,7 @@ def train_new_center_loss(opt, x_train_scale, x_train, y_train, x_test_scale, x_
     # center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
     # center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center_shared_model.add(Input((1,), name='target_input'))
-    center_shared_model.add(tf.keras.layers.Embedding(3, opt.embedding_size))
+    center_shared_model.add(tf.keras.layers.Embedding(opt.embedding_size, opt.embedding_size))
     center_shared_model.add(GlobalAveragePooling1D())
     center_shared_model.add(Lambda(lambda  x: K.l2_normalize(x, axis=1)))
     y_center = center_shared_model([target_input])
