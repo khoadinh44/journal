@@ -160,7 +160,7 @@ def magnitudes(x):
   return tf.math.sqrt(tf.math.reduce_sum(x**2))
 
 def product(x, y):
-  return tf.math.reduce_sum(tf.math.multiply(x, y))
+  return tf.math.reduce_sum(x*y)
 
 def new_triplet_loss(y_true, y_pred):
     """
@@ -174,7 +174,7 @@ def new_triplet_loss(y_true, y_pred):
     Returns:
     loss -- real number, value of the loss
     """
-    alpha = (2*np.pi)/float(opt.num_classes)
+    alpha = (2*np.pi)/float(opt.num_classes*2)
     total_lenght = y_pred.shape.as_list()[-1]
 
     anchor   = y_pred[:, 0: opt.embedding_size]
