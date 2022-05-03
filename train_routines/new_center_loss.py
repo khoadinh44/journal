@@ -33,8 +33,8 @@ def extracted_model(in_, opt):
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
   x = concatenate([x, in_], axis=-1)
-  x = Dropout(rate=0.5)(x)
-  x = BatchNormalization()(x)
+  # x = Dropout(rate=0.5)(x)
+  # x = BatchNormalization()(x)
   x = Dense(opt.embedding_size)(x)
   return x
 
