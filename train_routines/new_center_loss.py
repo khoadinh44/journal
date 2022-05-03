@@ -17,10 +17,16 @@ from tensorflow.keras.layers import concatenate, Lambda, Embedding, Input, Batch
 
 def l2_loss(y_true, y_pred):
   total_length = y_pred.shape[1]
-  pre_logits, center = y_pred[:, :int(total_length/2)], y_pred[:, int(total_length/2): ]
-  print(total_length)
-  out_l2_pre      = K.sum(K.square(pre_logits - center))
-  return out_l2_pre
+
+  pre_logits_org     = y_pred[:, :int(total_length/4)]
+  pre_logits_extract = y_pred[:,int(total_length/4) :int(total_length*2/4)]
+
+  center_org     = y_pred[:,int(total_length*2/4) :int(total_length*3/4)]
+  center_extract = y_pred[:,int(total_length*3/4): ]
+
+  out_l2_org     = K.sum(K.square(pre_logits_org - center_org))
+  out_l2_extract = K.sum(K.square(pre_logits_extract - center_extract))
+  return out_l2_org + out_l2_extract
 
 
 def extracted_model(in_, opt):
