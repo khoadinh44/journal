@@ -47,17 +47,18 @@ def generate_triplet(x, y):
   for i in sorted(set(y)):
     anchor_idx = np.where(y==i)[0]
     negative_idx = np.where(y!=i)[0]
+    
     if len(anchor_idx) > len(negative_idx):
       negative_full_idx = random.sample(negative_idx.tolist(), k=len(negative_idx))*np.ceil(len(anchor_idx)/len(negative_idx)).astype(np.int32)
       negative_idx = negative_full_idx[:len(anchor_idx)]
     else:
       negative_idx = negative_idx[:len(anchor_idx)]
-
+      
     # label pair-------------------------------
-    permutation_neg_idx = permutations(negative_idx)
-    for per_neg_idx in permutation_neg_idx:
-      anchor_label = y[anchor_idx].reshape(-1, 1)
-      negative_label = y[list(per_neg_idx)].reshape(-1, 1)
+    for _ in range(20):
+      random.shuffle(negative_idx)
+      anchor_label   = y[anchor_idx].reshape(-1, 1)
+      negative_label = y[negative_idx].reshape(-1, 1)
       
       # for per_neg in permutation_neg:
       each_label = np.concatenate((anchor_label, negative_label), axis=1)
