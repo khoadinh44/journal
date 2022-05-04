@@ -222,16 +222,22 @@ if opt.PU_data_table_10_case_1:
     y_train_Healthy = Healthy_label[list(i)]
     X_train_Healthy, y_train_Healthy = load_table_10_spe(X_train_Healthy, y_train_Healthy)
     X_train_Healthy_scaled = scaler_transform(X_train_Healthy, PowerTransformer)
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_Healthy_scaled_{i}.npy', 'wb') as f:
+      np.save(f, X_train_Healthy_scaled)
     print(f'\n Shape of the Health train data and label: {X_train_Healthy.shape}, {y_train_Healthy.shape}')
     
     X_train_Outer_ring_damage, y_train_Outer_ring_damage = Outer_ring_damage[list(i)], Outer_ring_damage_label[list(i)]
     X_train_Outer_ring_damage, y_train_Outer_ring_damage = load_table_10_spe(X_train_Outer_ring_damage, y_train_Outer_ring_damage)
     X_train_Outer_ring_damage_scaled = scaler_transform(X_train_Outer_ring_damage, PowerTransformer)
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_Outer_ring_damage_scaled_{i}.npy', 'wb') as f:
+      np.save(f, X_train_Outer_ring_damage_scaled)
     print(f'\n Shape of the Outer ring damage train data and label: {X_train_Outer_ring_damage.shape}, {y_train_Outer_ring_damage.shape}')
     
     X_train_Inner_ring_damage, y_train_Inner_ring_damage = Inner_ring_damage[list(i)], Inner_ring_damage_label[list(i)]
     X_train_Inner_ring_damage, y_train_Inner_ring_damage = load_table_10_spe(X_train_Inner_ring_damage, y_train_Inner_ring_damage)
     X_train_Inner_ring_damage_scaled = scaler_transform(X_train_Inner_ring_damage, PowerTransformer)
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_Inner_ring_damage_scaled_{i}.npy', 'wb') as f:
+      np.save(f, X_train_Inner_ring_damage_scaled)
     print(f'\n Shape of the Inner ring damage train data and label: {X_train_Inner_ring_damage.shape}, {y_train_Inner_ring_damage.shape}')
     
     X_train = np.concatenate((X_train_Healthy, X_train_Outer_ring_damage, X_train_Inner_ring_damage))
@@ -246,6 +252,8 @@ if opt.PU_data_table_10_case_1:
     y_test_Healthy = Healthy_label[h]
     X_test_Healthy, y_test_Healthy = load_table_10_spe(X_test_Healthy, y_test_Healthy)
     X_test_Healthy_scaled = scaler_transform(X_test_Healthy, PowerTransformer)
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_Healthy_scaled_{i}.npy', 'wb') as f:
+      np.save(f, X_test_Healthy_scaled)
     print(f'\n Shape of the Health test data and label: {X_test_Healthy.shape}, {y_test_Healthy.shape}')
     
     k = [a for a in range(len(Outer_ring_damage)) if a not in list(i)]
@@ -253,6 +261,8 @@ if opt.PU_data_table_10_case_1:
     y_test_Outer_ring_damage = Outer_ring_damage_label[k]
     X_test_Outer_ring_damage, y_test_Outer_ring_damage = load_table_10_spe(X_test_Outer_ring_damage, y_test_Outer_ring_damage)
     X_test_Outer_ring_damage_scaled = scaler_transform(X_test_Outer_ring_damage, PowerTransformer)
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_Outer_ring_damage_scaled_{i}.npy', 'wb') as f:
+      np.save(f, X_test_Outer_ring_damage_scaled)
     print(f'\n Shape of the Outer ring damage test data and label: {X_test_Outer_ring_damage.shape}, {y_test_Outer_ring_damage.shape}')
     
     l = [a for a in range(len(Inner_ring_damage)) if a not in list(i)]
@@ -260,6 +270,8 @@ if opt.PU_data_table_10_case_1:
     y_test_Inner_ring_damage = Inner_ring_damage_label[l]
     X_test_Inner_ring_damage, y_test_Inner_ring_damage = load_table_10_spe(X_test_Inner_ring_damage, y_test_Inner_ring_damage)
     X_test_Inner_ring_damage_scaled = scaler_transform(X_test_Inner_ring_damage, PowerTransformer)
+    with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_Inner_ring_damage_scaled_{i}.npy', 'wb') as f:
+      np.save(f, X_test_Inner_ring_damage_scaled)
     print(f'\n Shape of the Inner ring damage test data and label: {X_test_Inner_ring_damage.shape}, {y_test_Inner_ring_damage.shape}')
     
     X_test = np.concatenate((X_test_Healthy, X_test_Outer_ring_damage, X_test_Inner_ring_damage))
