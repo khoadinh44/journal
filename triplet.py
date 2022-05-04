@@ -39,7 +39,6 @@ def generate_triplet(x, y,  ap_pairs=16, an_pairs=16):
                 triplet_train_pairs.append([Anchor, Positive, Negative])
                 y_triplet_pairs.append([y_Anchor, y_Pos, y_Neg])
                 # test
-
     return np.array(triplet_train_pairs), np.array(y_triplet_pairs)
 
 # def generate_triplet(x, y):
