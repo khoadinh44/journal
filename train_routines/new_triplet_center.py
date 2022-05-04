@@ -51,9 +51,13 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
+        
     # Get generator------------------------------------------------
-    X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
-    
+    # X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
+    # anchor   = X_train[:, :X_train.shape[1]//2]
+    # negative = X_train[:, X_train.shape[1]//2: ]
+
+
     # Get extracted data for testing-------------------------------
     if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract.npy'):
       x_train_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract.npy')
@@ -116,9 +120,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
   
     # https://keras.io/api/losses/
     
-    # Data for triplet loss-----------------------------------------------------
-    anchor   = X_train[:, :X_train.shape[1]//2]
-    negative = X_train[:, X_train.shape[1]//2: ]
+    # Data for triplet loss----------------------------------------------------
 
     if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy'):
       anchor_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy')
