@@ -258,10 +258,10 @@ def parse_opt(known=False):
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
     parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and case_4_11
     
-    parser.add_argument('--PU_data_table_10',            default=False, type=bool)
+    parser.add_argument('--PU_data_table_10',            default=True, type=bool)
     parser.add_argument('--PU_data_table_10_case_0',     default=False, type=bool)
-    parser.add_argument('--PU_data_table_10_case_1',     default=False, type=bool)
-    parser.add_argument('--PU_data_table_8',      default=True, type=bool)
+    parser.add_argument('--PU_data_table_10_case_1',     default=True, type=bool)
+    parser.add_argument('--PU_data_table_8',      default=False, type=bool)
     parser.add_argument('--MFPT_data',            default=False, type=bool)
     parser.add_argument('--data_normal',          default=False, type=bool)
     parser.add_argument('--data_12k',             default=False, type=bool)
@@ -287,7 +287,7 @@ def parse_opt(known=False):
     parser.add_argument('--upsample_scales',          type=str,     default=[4, 8, 8],   help='num_mels')
     parser.add_argument('--model_names',              type=str,     default=['DNN', 'CNN_A', 'CNN_B', 'CNN_C', 'wavenet', 'wavelet_head'],   help='name of all NN models')
     parser.add_argument('--embedding_model',          type=str,     default='arcface',   help='new_triplet_loss, new_triplet_loss, triplet, center, new_center, triplet_center')
-    parser.add_argument('--type_PU_data',             type=str,     default='MCS2', help='vibration, MCS1, MCS2')
+    parser.add_argument('--type_PU_data',             type=str,     default='vibration', help='vibration, MCS1, MCS2')
     parser.add_argument('--activation',               type=str,     default='relu',      help='softmax, sigmoid, softplus, softsign, tanh, selu, elu, exponential')
     parser.add_argument('--exponential_decay_steps',  type=int,     default=200000,      help='exponential_decay_steps')
     parser.add_argument('--exponential_decay_rate',   type=float,   default=0.5,         help='exponential_decay_rate')
