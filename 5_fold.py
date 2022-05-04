@@ -294,7 +294,7 @@ if opt.PU_data_table_10_case_1:
       # X_train = handcrafted_features(X_train)
       # X_test  = handcrafted_features(X_test)
       print(f'\n Length the handcrafted feature vector: {X_train.shape}')
-      train_embs, test_embs, _ = train_new_triplet_center(opt, X_train_scaled, X_train, y_train, X_test_scaled, X_test, y_test, CNN_C_trip, idx) 
+      train_embs, test_embs, y_test_solf, y_train, outdir = train_new_triplet_center(opt, X_train_scaled, X_train, y_train, X_test_scaled, X_test, y_test, CNN_C_trip, idx) 
       
       print('\n Saving embedding phase...')   
       this_acc = []
