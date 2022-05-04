@@ -8,7 +8,7 @@ from train import parse_opt
 opt = parse_opt()
 
 
-def generate_triplet(x, y,  ap_pairs=4, an_pairs=4):
+def generate_triplet(x, y,  ap_pairs=12, an_pairs=12):
     data_xy = tuple([x, y])
     trainsize = 1
 
@@ -18,8 +18,9 @@ def generate_triplet(x, y,  ap_pairs=4, an_pairs=4):
     for data_class in sorted(set(data_xy[1])):
         same_class_idx = np.where((data_xy[1] == data_class))[0]
         diff_class_idx = np.where(data_xy[1] != data_class)[0]
-        A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=ap_pairs)  # Generating Anchor-Positive pairs
-        Neg_idx = random.sample(list(diff_class_idx), k=an_pairs)
+        pair = min(len(permutations(same_class_idx, 2)), len(diff_class_idx))
+        A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=pair)  # Generating Anchor-Positive pairs
+        Neg_idx = random.sample(list(diff_class_idx), k=pair)
 
         # train
         A_P_len = len(A_P_pairs)
