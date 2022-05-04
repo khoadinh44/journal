@@ -6,7 +6,7 @@ from tensorflow_addons.layers import MultiHeadAttention
 import keras.backend as K
 from tensorflow.keras import layers
 from tensorflow.keras import regularizers
-from tensorflow.keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda, concatenate
+from tensorflow.keras.layers import Activation, BatchNormalization, Conv1D, Dense, GlobalAveragePooling1D, Input, MaxPooling1D, Lambda, concatenate, Dropout
 from tensorflow.keras.models import Model
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -27,9 +27,9 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
+    ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
     ma = BatchNormalization()(ma)
-    ma = tf.keras.layers.Dropout(0.5)(ma) 
+    ma = Dropout(0.5)(ma) 
     ma = Activation('relu')(ma) 
     return ma
 
@@ -86,8 +86,8 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     for i in range(3):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+        x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
 
     x1 = TransformerLayer(x=x, c=48, backbone=backbone)
