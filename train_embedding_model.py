@@ -87,8 +87,6 @@ def main(opt):
       np.save(f, y_test)
     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
       np.save(f, X_train)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
-      np.save(f, y_train)
     with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
       np.save(f, X_test)
 
@@ -145,10 +143,10 @@ def main(opt):
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test_FFT.shape},   Testing label shape: {y_test.shape}')
   
-  ## Save data ----------------------------------------------
-  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT_1.npy', 'wb') as f:
+  # # Save data ----------------------------------------------
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy', 'wb') as f:
   #   np.save(f, X_train_FFT)
-  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT_1.npy', 'wb') as f:
+  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy', 'wb') as f:
   #   np.save(f, X_test_FFT)
 
   # Convert label 2 to label 1. Train with 30 epochs
