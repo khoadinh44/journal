@@ -168,7 +168,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     model.compile(loss=["categorical_crossentropy",
                   new_triplet_loss],
-                  optimizer=AngularGrad(), 
+                  optimizer=tf.keras.optimizers.SGD(momentum=0.9), 
                   metrics=["accuracy"], 
                   loss_weights=loss_weights)
 
