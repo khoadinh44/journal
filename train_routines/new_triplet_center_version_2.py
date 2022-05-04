@@ -40,10 +40,10 @@ def extracted_model(in_, opt):
   return x
 
 def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale, x_test, y_test, network, i=100):
-    # x_train = np.expand_dims(x_train, axis=-1)
-    # x_test = np.expand_dims(x_test, axis=-1)
-    # x_train_scale = np.expand_dims(x_train_scale, axis=-1)
-    # x_test_scale = np.expand_dims(x_test_scale, axis=-1)
+    x_train = np.expand_dims(x_train, axis=-1)
+    x_test = np.expand_dims(x_test, axis=-1)
+    x_train_scale = np.expand_dims(x_train_scale, axis=-1)
+    x_test_scale = np.expand_dims(x_test_scale, axis=-1)
 
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}.npy'):
       x_train_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract_{i}.npy')
