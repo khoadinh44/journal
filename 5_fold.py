@@ -6,11 +6,22 @@ from src.model import CNN_C_trip
 from load_cases import get_data
 from train import parse_opt
 
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MaxAbsScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import QuantileTransformer
+from sklearn.preprocessing import PowerTransformer
+
 from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
+from train_routines.new_center_loss import train_new_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
+from train_routines.new_triplet_center import train_new_triplet_center
 from train_routines.xentropy import train_xentropy
-from preprocessing.utils import handcrafted_features
+
+from preprocessing.utils import handcrafted_features, scaler_transform
 
 from itertools import combinations
 from sklearn.utils import shuffle
@@ -48,14 +59,26 @@ Healthy_label           = np.array([0]*len(Healthy))
 Outer_ring_damage_label = np.array([1]*len(Outer_ring_damage))
 Inner_ring_damage_label = np.array([2]*len(Inner_ring_damage))
 
-Healthy           = np.array(Healthy)
-Outer_ring_damage = np.array(Outer_ring_damage)
-Inner_ring_damage = np.array(Inner_ring_damage)
-
 if opt.PU_data_table_10_case_0:
    Healthy, Healthy_label = load_table_10_spe(Healthy, Healthy_label)
    Outer_ring_damage, Outer_ring_damage_label = load_table_10_spe(Outer_ring_damage, Outer_ring_damage_label)
    Inner_ring_damage, Inner_ring_damage_label = load_table_10_spe(Inner_ring_damage, Inner_ring_damage_label)
+   if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Healthy_10.npy'):
+      Healthy = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Healthy_10.npy')  
+      Outer_ring_damage = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Outer_ring_damage_10.npy')
+      Inner_ring_damage = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Inner_ring_damage_10.npy')
+   else: 
+      Healthy = scaler_transform(Healthy, PowerTransformer)
+      Outer_ring_damage = scaler_transform(Outer_ring_damage, PowerTransformer)
+      Inner_ring_damage = scaler_transform(Inner_ring_damage, PowerTransformer)
+
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Healthy_10.npy', 'wb') as f:
+         np.save(f, Healthy)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Outer_ring_damage_10.npy', 'wb') as f:
+         np.save(f, Outer_ring_damage)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Inner_ring_damage_10.npy', 'wb') as f:
+         np.save(f, Inner_ring_damage)
+
 
    np.random.seed(0)
    Healthy, Healthy_label = shuffle(Healthy, Healthy_label, random_state=0)
@@ -81,8 +104,6 @@ emb_accuracy_euclidean = []
 emb_accuracy_cosine = []
 emb_accuracy_ensemble = []
 
-if os.path.exists(opt.outdir + "triplet_loss/triplet_loss_model.h5"):
-    os.remove(opt.outdir + "triplet_loss/triplet_loss_model.h5")
 #------------------------------------------Case 0: shuffle------------------------------------------------
 if opt.PU_data_table_10_case_0:
   for i in range(5):
@@ -142,7 +163,8 @@ if opt.PU_data_table_10_case_0:
       l = 0
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
         model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
-        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, threshold=1, ML_method=each_ML)
+        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
+         y_pred_inv = np.argmax(y_pred, axis=1)
 
         y_pred_onehot = to_one_hot(y_pred)
         if y_pred_all == []:
@@ -199,14 +221,17 @@ if opt.PU_data_table_10_case_1:
     X_train_Healthy = Healthy[list(i)]
     y_train_Healthy = Healthy_label[list(i)]
     X_train_Healthy, y_train_Healthy = load_table_10_spe(X_train_Healthy, y_train_Healthy)
+    X_train_Healthy = scaler_transform(X_train_Healthy, PowerTransformer)
     print(f'\n Shape of the Health train data and label: {X_train_Healthy.shape}, {y_train_Healthy.shape}')
     
     X_train_Outer_ring_damage, y_train_Outer_ring_damage = Outer_ring_damage[list(i)], Outer_ring_damage_label[list(i)]
     X_train_Outer_ring_damage, y_train_Outer_ring_damage = load_table_10_spe(X_train_Outer_ring_damage, y_train_Outer_ring_damage)
+    X_train_Outer_ring_damage = scaler_transform(X_train_Outer_ring_damage, PowerTransformer)
     print(f'\n Shape of the Outer ring damage train data and label: {X_train_Outer_ring_damage.shape}, {y_train_Outer_ring_damage.shape}')
     
     X_train_Inner_ring_damage, y_train_Inner_ring_damage = Inner_ring_damage[list(i)], Inner_ring_damage_label[list(i)]
     X_train_Inner_ring_damage, y_train_Inner_ring_damage = load_table_10_spe(X_train_Inner_ring_damage, y_train_Inner_ring_damage)
+    X_train_Inner_ring_damage = scaler_transform(X_train_Inner_ring_damage, PowerTransformer)
     print(f'\n Shape of the Inner ring damage train data and label: {X_train_Inner_ring_damage.shape}, {y_train_Inner_ring_damage.shape}')
     
     X_train = np.concatenate((X_train_Healthy, X_train_Outer_ring_damage, X_train_Inner_ring_damage))
@@ -216,7 +241,6 @@ if opt.PU_data_table_10_case_1:
     print('\n'+ '-'*100)
 
     h = [a for a in range(len(Healthy)) if a not in list(i)]
-    
     X_test_Healthy = Healthy[h]
     y_test_Healthy = Healthy_label[h]
     X_test_Healthy, y_test_Healthy = load_table_10_spe(X_test_Healthy, y_test_Healthy)
@@ -254,14 +278,15 @@ if opt.PU_data_table_10_case_1:
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine', 'KNN', 'BT']:
         model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
-
-        y_pred_onehot = to_one_hot(y_pred)
+        y_pred_inv = np.argmax(y_pred, axis=1)
+        acc = accuracy_score(y_test, y_pred_inv)
+      
+        if each_ML not in ['euclidean', 'cosine']:
         if y_pred_all == []:
-          y_pred_all = y_pred_onehot
+          y_pred_all = y_pred
         else:
-          y_pred_all += y_pred_onehot
+          y_pred_all += y_pred
         count += 1
-        acc = accuracy_score(y_test, y_pred)
 
         if each_ML == 'SVM':
           emb_accuracy_SVM.append(acc)
@@ -284,13 +309,11 @@ if opt.PU_data_table_10_case_1:
         
         model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
         y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
-        y_pred_onehot_no_emb = to_one_hot(y_pred_no_emb)
-        if y_pred_all == []:
-          y_pred_all = y_pred_onehot_no_emb
-        else:
-          y_pred_all += y_pred_onehot_no_emb
+        y_pred_no_emb_inv = np.argmax(y_pred_no_emb, axis=1)
+
+        y_pred_all += y_pred_no_emb
         count += 1
-        acc = accuracy_score(y_test, y_pred_no_emb)
+        acc = accuracy_score(y_test, y_pred_no_emb_inv)
 
         if each_ML == 'SVM':
           emb_accuracy_SVM_no_emb.append(acc)
