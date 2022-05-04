@@ -28,8 +28,10 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
-    fc2 = tf.keras.layers.Dropout(0.5)(ma) 
-    return fc2
+    ma = BatchNormalization()(ma)
+    ma = tf.keras.layers.Dropout(0.5)(ma) 
+    ma = Activation('relu')(ma) 
+    return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
 def identity_block(input_tensor, kernel_size, filters, stage, block):
@@ -84,7 +86,6 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     for i in range(3):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
-
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
