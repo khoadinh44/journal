@@ -8,9 +8,8 @@ from train import parse_opt
 opt = parse_opt()
 
 
-def generate_triplet(x, y,  ap_pairs=8, an_pairs=8):
+def generate_triplet(x, y,  ap_pairs=4, an_pairs=4):
     data_xy = tuple([x, y])
-
     trainsize = 1
 
     triplet_train_pairs = []
