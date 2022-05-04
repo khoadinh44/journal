@@ -208,7 +208,7 @@ def new_triplet_loss(y_true, y_pred):
     loss           = K.maximum(out_l2 + alpha - neg_dist, 0.0)
     loss_extract   = K.maximum(out_extract_l2 + alpha - neg_extract_dist, 0.0)
 
-    return loss + loss_extract
+    return 0.5*loss + loss_extract
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
