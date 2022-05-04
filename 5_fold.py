@@ -225,7 +225,7 @@ if opt.PU_data_table_10_case_1:
 
       X_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{i}.npy')
       X_test_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{i}.npy')
-      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_{i}.npy')
+      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{i}.npy')
     else:
       X_train_Healthy = Healthy[list(i)]
       y_train_Healthy = Healthy_label[list(i)]
@@ -251,7 +251,7 @@ if opt.PU_data_table_10_case_1:
       with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{i}.npy', 'wb') as f:
         np.save(f, X_train_scaled)
       with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_table10_{i}.npy', 'wb') as f:
-        np.save(f, X_train_scaled)
+        np.save(f, y_train)
       
       print('\n'+ '-'*100)
 
@@ -282,9 +282,9 @@ if opt.PU_data_table_10_case_1:
         np.save(f, X_test)
       with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{i}.npy', 'wb') as f:
         np.save(f, X_test_scaled)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_{i}.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{i}.npy', 'wb') as f:
         np.save(f, y_test)
-        
+
     print(f'\n Shape of train data: {X_train.shape}, {y_train.shape}')
     print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
     print('\n'+ '-'*100)
