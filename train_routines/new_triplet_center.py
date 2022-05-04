@@ -51,11 +51,6 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
-        
-    # Get generator------------------------------------------------
-    # X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
-    # anchor   = X_train[:, :X_train.shape[1]//2]
-    # negative = X_train[:, X_train.shape[1]//2: ]
 
 
     # Get extracted data for testing-------------------------------
@@ -125,7 +120,13 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy'):
       anchor_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract.npy')
       anchor = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor.npy')
+      Y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train.npy')
     else:
+      # Get generator------------------------------------------------
+      X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
+      anchor   = X_train[:, :X_train.shape[1]//2]
+      negative = X_train[:, X_train.shape[1]//2: ]
+
       anchor_extract = scaler_transform(extracted_feature_of_signal(np.squeeze(anchor)), PowerTransformer)
       anchor_extract = np.squeeze(anchor_extract)
       anchor         = scaler_transform(anchor, PowerTransformer)
@@ -133,6 +134,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
         np.save(f, anchor_extract)
       with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor.npy', 'wb') as f:
         np.save(f, anchor)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train.npy', 'wb') as f:
+        np.save(f, Y_train)
 
     print(f'anchor shape: {anchor.shape}')
     print(f'anchor-extract shape: {anchor_extract.shape}\n')
