@@ -1,6 +1,6 @@
 from FaceNet_predict import FaceNetOneShotRecognitor
 from load_data import Healthy, Outer_ring_damage, Inner_ring_damage 
-from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot
+from preprocessing.utils import invert_one_hot, load_table_10_spe, recall_m, precision_m, f1_m, to_one_hot, handcrafted_features, scaler_transform
 from network.nn import CNN_C
 from src.model import CNN_C_trip
 from load_cases import get_data
@@ -21,8 +21,6 @@ from train_routines.triplet_center_loss import train_triplet_center_loss
 from train_routines.new_triplet_center_version_2 import train_new_triplet_center
 from train_routines.xentropy import train_xentropy
 
-from preprocessing.utils import handcrafted_features, scaler_transform
-
 from itertools import combinations
 from sklearn.utils import shuffle
 from scipy.spatial.distance import cosine, euclidean
@@ -33,8 +31,25 @@ import pandas as pd
 from tqdm import tqdm
 import numpy as np
 import os
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 import warnings
+
+def plot_confusion(y_test, y_pred_inv, outdir, each_ML):
+   commands = ['Healthy', 'OR Damage', 'IR Damage']
+   confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
+
+   plt.figure(figsize=(10, 8))
+   sns.heatmap(confusion_mtx,
+             xticklabels=commands,
+             yticklabels=commands,
+             annot=True, fmt='g')
+   plt.xlabel('Prediction')
+   plt.ylabel('Label')
+   plt.savefig(os.path.join(outdir, each_ML))
+   plt.show()
+
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 np.seterr(all="ignore")
@@ -306,6 +321,7 @@ if opt.PU_data_table_10_case_1:
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
         y_pred_inv = np.argmax(y_pred, axis=1)
         acc = accuracy_score(y_test, y_pred_inv)
+        plot_confusion(y_test, y_pred_inv, outdir, each_ML)
       
         if each_ML not in ['euclidean', 'cosine']:
           if y_pred_all == []:
@@ -334,7 +350,7 @@ if opt.PU_data_table_10_case_1:
         print(f'\n-------------- 1.Test accuracy: {acc} with the {each_ML} method--------------')
         
         model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
-        y_pred_no_emb = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, emb=False)
+        y_pred_no_emb = model.predict(test_embs=X_test, train_embs=X_train, ML_method=each_ML, emb=False)
         y_pred_no_emb_inv = np.argmax(y_pred_no_emb, axis=1)
 
         y_pred_all += y_pred_no_emb
