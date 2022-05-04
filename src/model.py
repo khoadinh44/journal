@@ -96,7 +96,6 @@ def CNN_C_trip(opt, input_, backbone=False):
     if backbone:
         return x
     x = BatchNormalization()(x_123)
-    x = Dropout(rate=0.5)(x)
     x = Dense(opt.embedding_size,
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
