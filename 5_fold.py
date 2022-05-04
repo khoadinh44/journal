@@ -18,7 +18,7 @@ from train_routines.triplet_loss import train
 from train_routines.center_loss import train_center_loss
 from train_routines.new_center_loss import train_new_center_loss
 from train_routines.triplet_center_loss import train_triplet_center_loss
-from train_routines.new_triplet_center import train_new_triplet_center
+from train_routines.new_triplet_center_version_2 import train_new_triplet_center
 from train_routines.xentropy import train_xentropy
 
 from preprocessing.utils import handcrafted_features, scaler_transform
@@ -154,7 +154,7 @@ if opt.PU_data_table_10_case_0:
     
     if opt.faceNet:
       print('\n Train phase...')
-      train_embs, test_embs = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip, i) 
+      train_embs, test_embs = train_new_triplet_center(opt, X_train, y_train, X_test, y_test, CNN_C_trip, i) 
       
       print('\n Saving embedding phase...')   
       this_acc = []
@@ -164,7 +164,7 @@ if opt.PU_data_table_10_case_0:
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine']:
         model = FaceNetOneShotRecognitor(opt, X_train, y_train) 
         y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
-         y_pred_inv = np.argmax(y_pred, axis=1)
+        y_pred_inv = np.argmax(y_pred, axis=1)
 
         y_pred_onehot = to_one_hot(y_pred)
         if y_pred_all == []:
@@ -221,20 +221,21 @@ if opt.PU_data_table_10_case_1:
     X_train_Healthy = Healthy[list(i)]
     y_train_Healthy = Healthy_label[list(i)]
     X_train_Healthy, y_train_Healthy = load_table_10_spe(X_train_Healthy, y_train_Healthy)
-    X_train_Healthy = scaler_transform(X_train_Healthy, PowerTransformer)
+    X_train_Healthy_scaled = scaler_transform(X_train_Healthy, PowerTransformer)
     print(f'\n Shape of the Health train data and label: {X_train_Healthy.shape}, {y_train_Healthy.shape}')
     
     X_train_Outer_ring_damage, y_train_Outer_ring_damage = Outer_ring_damage[list(i)], Outer_ring_damage_label[list(i)]
     X_train_Outer_ring_damage, y_train_Outer_ring_damage = load_table_10_spe(X_train_Outer_ring_damage, y_train_Outer_ring_damage)
-    X_train_Outer_ring_damage = scaler_transform(X_train_Outer_ring_damage, PowerTransformer)
+    X_train_Outer_ring_damage_scaled = scaler_transform(X_train_Outer_ring_damage, PowerTransformer)
     print(f'\n Shape of the Outer ring damage train data and label: {X_train_Outer_ring_damage.shape}, {y_train_Outer_ring_damage.shape}')
     
     X_train_Inner_ring_damage, y_train_Inner_ring_damage = Inner_ring_damage[list(i)], Inner_ring_damage_label[list(i)]
     X_train_Inner_ring_damage, y_train_Inner_ring_damage = load_table_10_spe(X_train_Inner_ring_damage, y_train_Inner_ring_damage)
-    X_train_Inner_ring_damage = scaler_transform(X_train_Inner_ring_damage, PowerTransformer)
+    X_train_Inner_ring_damage_scaled = scaler_transform(X_train_Inner_ring_damage, PowerTransformer)
     print(f'\n Shape of the Inner ring damage train data and label: {X_train_Inner_ring_damage.shape}, {y_train_Inner_ring_damage.shape}')
     
     X_train = np.concatenate((X_train_Healthy, X_train_Outer_ring_damage, X_train_Inner_ring_damage))
+    X_train_scaled = np.concatenate((X_train_Healthy_scaled, X_train_Outer_ring_damage_scaled, X_train_Inner_ring_damage_scaled))
     y_train = np.concatenate((y_train_Healthy, y_train_Outer_ring_damage, y_train_Inner_ring_damage))
     print(f'\n Shape of train data: {X_train.shape}, {y_train.shape}')
     
@@ -244,21 +245,25 @@ if opt.PU_data_table_10_case_1:
     X_test_Healthy = Healthy[h]
     y_test_Healthy = Healthy_label[h]
     X_test_Healthy, y_test_Healthy = load_table_10_spe(X_test_Healthy, y_test_Healthy)
+    X_test_Healthy_scaled = scaler_transform(X_test_Healthy, PowerTransformer)
     print(f'\n Shape of the Health test data and label: {X_test_Healthy.shape}, {y_test_Healthy.shape}')
     
     k = [a for a in range(len(Outer_ring_damage)) if a not in list(i)]
     X_test_Outer_ring_damage = Outer_ring_damage[k]
     y_test_Outer_ring_damage = Outer_ring_damage_label[k]
     X_test_Outer_ring_damage, y_test_Outer_ring_damage = load_table_10_spe(X_test_Outer_ring_damage, y_test_Outer_ring_damage)
+    X_test_Outer_ring_damage_scaled = scaler_transform(X_test_Outer_ring_damage, PowerTransformer)
     print(f'\n Shape of the Outer ring damage test data and label: {X_test_Outer_ring_damage.shape}, {y_test_Outer_ring_damage.shape}')
     
     l = [a for a in range(len(Inner_ring_damage)) if a not in list(i)]
     X_test_Inner_ring_damage = Inner_ring_damage[l]
     y_test_Inner_ring_damage = Inner_ring_damage_label[l]
     X_test_Inner_ring_damage, y_test_Inner_ring_damage = load_table_10_spe(X_test_Inner_ring_damage, y_test_Inner_ring_damage)
+    X_test_Inner_ring_damage_scaled = scaler_transform(X_test_Inner_ring_damage, PowerTransformer)
     print(f'\n Shape of the Inner ring damage test data and label: {X_test_Inner_ring_damage.shape}, {y_test_Inner_ring_damage.shape}')
     
     X_test = np.concatenate((X_test_Healthy, X_test_Outer_ring_damage, X_test_Inner_ring_damage))
+    X_test_scaled = np.concatenate((X_test_Healthy_scaled, X_test_Outer_ring_damage_scaled, X_test_Inner_ring_damage_scaled))
     y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
     print(f'\n Shape of test data: {X_test.shape}, {y_test.shape}')
     print('\n'+ '-'*100)
@@ -268,7 +273,7 @@ if opt.PU_data_table_10_case_1:
       X_train = handcrafted_features(X_train)
       X_test  = handcrafted_features(X_test)
       print(f'\n Length the handcrafted feature vector: {X_train.shape}')
-      train_embs, test_embs, _ = train(opt, X_train, y_train, X_test, y_test, CNN_C_trip, idx) 
+      train_embs, test_embs, _ = train_new_triplet_center(opt, X_train_scaled, X_train, y_train, X_test_scaled, X_test, y_test, CNN_C_trip, idx) 
       
       print('\n Saving embedding phase...')   
       this_acc = []
@@ -282,11 +287,11 @@ if opt.PU_data_table_10_case_1:
         acc = accuracy_score(y_test, y_pred_inv)
       
         if each_ML not in ['euclidean', 'cosine']:
-        if y_pred_all == []:
-          y_pred_all = y_pred
-        else:
-          y_pred_all += y_pred
-        count += 1
+          if y_pred_all == []:
+            y_pred_all = y_pred
+          else:
+            y_pred_all += y_pred
+          count += 1
 
         if each_ML == 'SVM':
           emb_accuracy_SVM.append(acc)
