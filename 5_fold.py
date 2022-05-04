@@ -225,7 +225,7 @@ if opt.PU_data_table_10_case_1:
 
       X_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{i}.npy')
       X_test_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{i}.npy')
-      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_table10_{i}.npy')
+      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_{i}.npy')
     else:
       X_train_Healthy = Healthy[list(i)]
       y_train_Healthy = Healthy_label[list(i)]
