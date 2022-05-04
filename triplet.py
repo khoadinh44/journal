@@ -18,7 +18,7 @@ def generate_triplet(x, y,  ap_pairs=12, an_pairs=12):
     for data_class in sorted(set(data_xy[1])):
         same_class_idx = np.where((data_xy[1] == data_class))[0]
         diff_class_idx = np.where(data_xy[1] != data_class)[0]
-        pair = min(list(len(permutations(same_class_idx, 2))), len(diff_class_idx))
+        pair = min(len(list(permutations(same_class_idx, 2))), len(diff_class_idx))
         A_P_pairs = random.sample(list(permutations(same_class_idx, 2)), k=pair)  # Generating Anchor-Positive pairs
         Neg_idx = random.sample(list(diff_class_idx), k=pair)
 
