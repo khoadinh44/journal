@@ -40,10 +40,10 @@ def extracted_model(in_, opt):
   return x
 
 def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale, x_test, y_test, network, i=100):
-    x_train = np.expand_dims(x_train, axis=-1)
-    x_test = np.expand_dims(x_test, axis=-1)
-    x_train_scale = np.expand_dims(x_train_scale, axis=-1)
-    x_test_scale = np.expand_dims(x_test_scale, axis=-1)
+    # x_train = np.expand_dims(x_train, axis=-1)
+    # x_test = np.expand_dims(x_test, axis=-1)
+    # x_train_scale = np.expand_dims(x_train_scale, axis=-1)
+    # x_test_scale = np.expand_dims(x_test_scale, axis=-1)
 
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}.npy'):
       x_train_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract_{i}.npy')
@@ -121,19 +121,19 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
-    anchor   = X_train[:, 0, :].reshape(-1, opt.input_shape, 1)
+    anchor = X_train[:, 0].reshape(-1, opt.input_shape, 1)
     anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
     anchor = scaler_transform(anchor, PowerTransformer)
     print(f'anchor shape: {anchor.shape}')
     print(f'anchor-extract shape: {anchor_extract.shape}\n')
 
-    positive = X_train[:, 1, :].reshape(-1, opt.input_shape, 1)
+    positive = X_train[:, 1].reshape(-1, opt.input_shape, 1)
     positive_extract = extracted_feature_of_signal(np.squeeze(positive))
     positive = scaler_transform(positive, PowerTransformer)
     print(f'positive shape: {positive.shape}')
     print(f'positive-extract shape: {positive_extract.shape}\n')
 
-    negative = X_train[:, 2, :].reshape(-1, opt.input_shape, 1)
+    negative = X_train[:, 2].reshape(-1, opt.input_shape, 1)
     negative_extract = extracted_feature_of_signal(np.squeeze(negative))
     negative = scaler_transform(negative, PowerTransformer)
     print(f'negative shape: {negative.shape}')
