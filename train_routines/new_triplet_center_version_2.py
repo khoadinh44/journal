@@ -102,7 +102,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     shared_model.summary()
    
     X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
-    
+    print('\n Finishing data generator')
   
     anchor_input   = Input((opt.input_shape, 1,), name='anchor_input')
     positive_input = Input((opt.input_shape, 1,), name='positive_input')
