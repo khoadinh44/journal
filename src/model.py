@@ -65,7 +65,6 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
 
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    # x = tf.keras.activations.gelu(x)
     return x
 
 def CNN_C_trip(opt, input_, backbone=False):
@@ -88,6 +87,8 @@ def CNN_C_trip(opt, input_, backbone=False):
         x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     x = GlobalAveragePooling1D()(x)
+    x = BatchNormalization()(x)
+    x = Dropout(rate=0.5)(x)
 
     x1 = TransformerLayer(x=x, c=48, backbone=backbone)
     x2 = TransformerLayer(x=x, c=48, backbone=backbone)
