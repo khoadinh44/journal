@@ -55,7 +55,7 @@ def generate_triplet(x, y):
       negative_idx = negative_idx[:len(anchor_idx)]
 
     # label pair-------------------------------
-    for _ in range(10):
+    for _ in range(3):
       random.shuffle(negative_idx)
       anchor_label   = y[anchor_idx].reshape(-1, 1)
       negative_label = y[negative_idx].reshape(-1, 1)
@@ -66,7 +66,6 @@ def generate_triplet(x, y):
         label = each_label
       else:
         label = np.concatenate((label, each_label))
-
       # data pair--------------------------
       anchor_data = x[anchor_idx]
       negative_data = x[negative_idx]
