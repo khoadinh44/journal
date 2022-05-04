@@ -119,35 +119,23 @@ class FaceNetOneShotRecognitor(object):
         else:
           train_label = self.df_train['name']
           train_label = self.loading(train_label)
-
+          if ML_method == 'SVM':
+            model = SVC(kernel='rbf', probability=True)
+          elif ML_method == 'RandomForestClassifier':
+            model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
+          elif ML_method == 'LogisticRegression':     
+            model = LogisticRegression(random_state=1)
+          elif ML_method == 'GaussianNB':
+            model = GaussianNB()
+          elif ML_method == 'KNN':     
+            model = KNeighborsClassifier(n_neighbors=3)
+          elif ML_method == 'BT':
+            model = GradientBoostingClassifier()
+            
           if emb:
-            if ML_method == 'SVM':
-              model = SVC(kernel='rbf', probability=True)
-            elif ML_method == 'RandomForestClassifier':
-              model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-            elif ML_method == 'LogisticRegression':     
-              model = LogisticRegression(random_state=1)
-            elif ML_method == 'GaussianNB':
-              model = GaussianNB()
-            elif ML_method == 'KNN':     
-              model = KNeighborsClassifier(n_neighbors=3)
-            elif ML_method == 'BT':
-              model = GradientBoostingClassifier()
             model.fit(train_embs, train_label)
             list_label = model.predict_proba(test_embs)
           else:
-            if ML_method == 'SVM':
-              model = SVC(kernel='rbf', probability=True)
-            elif ML_method == 'RandomForestClassifier':
-              model = RandomForestClassifier(n_estimators= 300, max_features = "sqrt", n_jobs = -1, random_state = 38)
-            elif ML_method == 'LogisticRegression':     
-              model = LogisticRegression(random_state=1)
-            elif ML_method == 'GaussianNB':
-              model = GaussianNB()
-            elif ML_method == 'KNN':     
-              model = KNeighborsClassifier(n_neighbors=3)
-            elif ML_method == 'BT':
-              model = GradientBoostingClassifier()
             model.fit(self.X_train_all, self.y_train_all)
             list_label = model.predict_proba(test_embs)
           
