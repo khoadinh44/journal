@@ -100,9 +100,6 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     softmax, pre_logits = network(opt, model_input)
     shared_model = tf.keras.models.Model(inputs=[model_input], outputs=[softmax, pre_logits])
     shared_model.summary()
-   
-    X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
-    print('\n Finishing data generator')
   
     anchor_input   = Input((opt.input_shape, 1,), name='anchor_input')
     positive_input = Input((opt.input_shape, 1,), name='positive_input')
@@ -121,21 +118,55 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
-    anchor = X_train[:, 0].reshape(-1, opt.input_shape, 1)
-    anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
-    anchor = scaler_transform(anchor, PowerTransformer)
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}.npy'):
+      anchor_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}.npy')
+      anchor = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}.npy')
+      X_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}.npy')
+      Y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}.npy')
+    else:
+      X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
+      print('\n Finishing data generator')
+      anchor = X_train[:, 0].reshape(-1, opt.input_shape, 1)
+      anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
+      anchor = scaler_transform(anchor, PowerTransformer)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}.npy', 'wb') as f:
+        np.save(f, anchor_extract)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}.npy', 'wb') as f:
+        np.save(f, anchor)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}.npy', 'wb') as f:
+        np.save(f, X_train)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}.npy', 'wb') as f:
+        np.save(f, Y_train)
     print(f'anchor shape: {anchor.shape}')
     print(f'anchor-extract shape: {anchor_extract.shape}\n')
+    
 
-    positive = X_train[:, 1].reshape(-1, opt.input_shape, 1)
-    positive_extract = extracted_feature_of_signal(np.squeeze(positive))
-    positive = scaler_transform(positive, PowerTransformer)
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}.npy'):
+      positive_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}.npy')
+      positive = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}.npy')
+    else:
+      positive = X_train[:, 1].reshape(-1, opt.input_shape, 1)
+      positive_extract = extracted_feature_of_signal(np.squeeze(positive))
+      positive = scaler_transform(positive, PowerTransformer)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}.npy', 'wb') as f:
+        np.save(f, positive_extract)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}.npy', 'wb') as f:
+        np.save(f, positive)
     print(f'positive shape: {positive.shape}')
     print(f'positive-extract shape: {positive_extract.shape}\n')
 
-    negative = X_train[:, 2].reshape(-1, opt.input_shape, 1)
-    negative_extract = extracted_feature_of_signal(np.squeeze(negative))
-    negative = scaler_transform(negative, PowerTransformer)
+
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}.npy'):
+      negative_extract = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}.npy')
+      negative = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}.npy')
+    else:
+      negative = X_train[:, 2].reshape(-1, opt.input_shape, 1)
+      negative_extract = extracted_feature_of_signal(np.squeeze(negative))
+      negative = scaler_transform(negative, PowerTransformer)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}.npy', 'wb') as f:
+        np.save(f, negative_extract)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}.npy', 'wb') as f:
+        np.save(f, negative)
     print(f'negative shape: {negative.shape}')
     print(f'negative-extract shape: {negative_extract.shape}\n')
 
