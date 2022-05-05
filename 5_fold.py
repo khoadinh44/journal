@@ -233,14 +233,14 @@ if opt.PU_data_table_10_case_1:
  
   # Print the obtained combinations
   for idx, i in enumerate(list(comb)):
-    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy'):
-      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy')
-      X_train_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{i}.npy')
-      y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_table10_{i}.npy')
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{idx}.npy'):
+      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{idx}.npy')
+      X_train_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{idx}.npy')
+      y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_table10_{idx}.npy')
 
-      X_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{i}.npy')
-      X_test_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{i}.npy')
-      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{i}.npy')
+      X_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{idx}.npy')
+      X_test_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{idx}.npy')
+      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{idx}.npy')
     else:
       X_train_Healthy = Healthy[list(i)]
       y_train_Healthy = Healthy_label[list(i)]
@@ -293,11 +293,11 @@ if opt.PU_data_table_10_case_1:
       X_test_scaled = np.concatenate((X_test_Healthy_scaled, X_test_Outer_ring_damage_scaled, X_test_Inner_ring_damage_scaled))
       y_test = np.concatenate((y_test_Healthy, y_test_Outer_ring_damage, y_test_Inner_ring_damage))
       
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{i}.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{idx}.npy', 'wb') as f:
         np.save(f, X_test)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{i}.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{idx}.npy', 'wb') as f:
         np.save(f, X_test_scaled)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{i}.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{idx}.npy', 'wb') as f:
         np.save(f, y_test)
 
     print(f'\n Shape of train data: {X_train.shape}, {y_train.shape}')
