@@ -108,7 +108,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     soft_anchor, pre_logits_anchor = shared_model([anchor_input])
     soft_neg, pre_logits_neg       = shared_model([negative_input])
 
-    merged_pre  = concatenate([pre_logits_anchor, y_extract_1, pre_logits_neg, y_extract_2, center], axis=-1, name='merged_pre')
+    merged_pre  = concatenate([pre_logits_anchor, pre_logits_neg, center], axis=-1, name='merged_pre')
     merged_soft = concatenate([soft_anchor, soft_neg], axis=-1, name='merged_soft')
     
     loss_weights = [1, 0.01]
@@ -163,7 +163,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     target = np.concatenate((y_anchor, y_negative), -1)
 
     # Fit data-------------------------------------------------
-    model = Model(inputs=[anchor_input, extract_input_1, negative_input, extract_input_2, target_input], outputs=[merged_soft, merged_pre])
+    model = Model(inputs=[anchor_input, negative_input, target_input], outputs=[merged_soft, merged_pre])
     if opt.use_weight:
       if os.path.isdir(outdir + "new_triplet_loss_model"):
         model.load_weights(outdir + "new_triplet_loss_model")
@@ -185,17 +185,17 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
 
     # Embedding------------------------------------------------
-    pre_anchor = concatenate([pre_logits_anchor, y_extract_1], axis=-1, name='merged_soft')
-    model = Model(inputs=[anchor_input, extract_input_1], outputs=[soft_anchor, pre_anchor])
+#     pre_anchor = concatenate([pre_logits_anchor, y_extract_1], axis=-1, name='merged_soft')
+    model = Model(inputs=[anchor_input], outputs=[soft_anchor, pre_logits_anchor])
     model.load_weights(outdir + "new_triplet_loss_model")
 
     # x_train, y_train = choosing_features(x_train, y_train)
     
-    _, X_train_embed = model.predict([x_train_scale, x_train_extract])
-    y_test_soft, X_test_embed = model.predict([x_test_scale, x_test_extract])
+    _, X_train_embed = model.predict([x_train_scale])
+    y_test_soft, X_test_embed = model.predict([x_test_scale])
     
     from TSNE_plot import tsne_plot
-    tsne_plot(outdir, 'original', X_train_embed[:, :opt.embedding_size], X_test_embed[:, :opt.embedding_size], y_train, y_test)
-    tsne_plot(outdir, 'extracted', X_train_embed[:, opt.embedding_size: ], X_test_embed[:, opt.embedding_size: ], y_train, y_test)
+    tsne_plot(outdir, 'original', X_train_embed, X_test_embed, y_train, y_test)
+#     tsne_plot(outdir, 'extracted', X_train_embed[:, opt.embedding_size: ], X_test_embed[:, opt.embedding_size: ], y_train, y_test)
     
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
