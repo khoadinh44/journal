@@ -175,41 +175,26 @@ def new_triplet_loss(y_true, y_pred):
     Returns:
     loss -- real number, value of the loss
     """
-    alpha = (2*np.pi)/float(opt.num_classes)
+    alpha = (np.pi)/float(opt.num_classes)
     total_lenght = y_pred.shape.as_list()[-1]
 
     anchor   = y_pred[:, 0: opt.embedding_size]
     magnitudes_anchor = magnitudes(anchor)
 
-    anchor_extract   = y_pred[:, opt.embedding_size: opt.embedding_size*2]
-    magnitudes_anchor_extract = magnitudes(anchor_extract)
-
-    negative = y_pred[:, opt.embedding_size*2: opt.embedding_size*3]
+    negative = y_pred[:, opt.embedding_size: opt.embedding_size*2]
     magnitudes_negative = magnitudes(negative)
 
-    negative_extract = y_pred[:, opt.embedding_size*3: opt.embedding_size*4]
-    magnitudes_negative_extract = magnitudes(negative_extract)
-
-
-    y_center = y_pred[:, opt.embedding_size*4: opt.embedding_size*5]
+    y_center = y_pred[:, opt.embedding_size*2: opt.embedding_size*3]
     magnitudes_y_center = magnitudes(y_center)
-
-    y_center_extract = y_pred[:, opt.embedding_size*5:]
-    magnitudes_y_center_extract = magnitudes(y_center_extract)
-    
 
     # negative angle----------------------------------------
     neg_dist          = tf.math.acos(product(anchor, negative) / (magnitudes_anchor*magnitudes_negative))
-    neg_extract_dist  = tf.math.acos(product(anchor_extract, negative_extract) / (magnitudes_anchor_extract*magnitudes_negative_extract))
 
     # anchor angle------------------------------------------
     out_l2            = tf.math.acos(product(anchor, y_center) / (magnitudes_anchor*magnitudes_y_center))
-    out_extract_l2    = tf.math.acos(product(anchor_extract, y_center_extract) / (magnitudes_anchor_extract*magnitudes_y_center_extract))
     
     loss           = K.maximum(out_l2 + alpha - neg_dist, 0.0)
-    loss_extract   = K.maximum(out_extract_l2 + alpha - neg_extract_dist, 0.0)
-
-    return 0.5*loss + loss_extract
+    return loss + loss_extract
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
