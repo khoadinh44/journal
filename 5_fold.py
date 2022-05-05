@@ -229,12 +229,10 @@ if opt.PU_data_table_10_case_0:
 #------------------------------------------Case 1: no shuffle------------------------------------------------
 if opt.PU_data_table_10_case_1:
   comb = combinations([0, 1, 2, 3, 4], 3)
-  tf.keras.backend.clear_session()
+  
   # Print the obtained combinations
   for idx, i in enumerate(list(comb)):
-    from numba import cuda 
-    device = cuda.get_current_device()
-    device.reset()
+    tf.keras.backend.clear_session()
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy'):
       X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy', mmap_mode="r")
       X_train_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{i}.npy', mmap_mode="r")
