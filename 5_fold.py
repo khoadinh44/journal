@@ -232,9 +232,9 @@ if opt.PU_data_table_10_case_1:
  
   # Print the obtained combinations
   for idx, i in enumerate(list(comb)):
-    from numba import cuda 
-    device = cuda.get_current_device()
-    device.reset()
+    # from numba import cuda 
+    # device = cuda.get_current_device()
+    # device.reset()
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy'):
       X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy')
       X_train_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{i}.npy')
