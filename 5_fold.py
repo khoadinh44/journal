@@ -35,7 +35,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 import warnings
+import gc
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 def plot_confusion(y_test, y_pred_inv, outdir, each_ML):
    commands = ['Healthy', 'OR Damage', 'IR Damage']
    confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
@@ -233,6 +235,7 @@ if opt.PU_data_table_10_case_1:
   # Print the obtained combinations
   for idx, i in enumerate(list(comb)):
     tf.keras.backend.clear_session()
+    gc.collect()
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy'):
       X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy', mmap_mode="r")
       X_train_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{i}.npy', mmap_mode="r")
