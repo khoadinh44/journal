@@ -229,7 +229,7 @@ if opt.PU_data_table_10_case_0:
 #------------------------------------------Case 1: no shuffle------------------------------------------------
 if opt.PU_data_table_10_case_1:
   comb = combinations([0, 1, 2, 3, 4], 3)
- 
+  tf.keras.backend.clear_session()
   # Print the obtained combinations
   for idx, i in enumerate(list(comb)):
     # from numba import cuda 
