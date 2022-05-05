@@ -119,10 +119,10 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     
     # data-----------------------------------------------------
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}.npy'):
-      anchor_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}.npy')
-      anchor = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}.npy')
-      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}.npy')
-      Y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}.npy')
+      anchor_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}.npy', mmap_mode="r")
+      anchor = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}.npy', mmap_mode="r")
+      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}.npy', mmap_mode="r")
+      Y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}.npy', mmap_mode="r")
     else:
       X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
       print('\n Finishing data generator')
@@ -142,8 +142,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     
 
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}.npy'):
-      positive_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}.npy')
-      positive = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}.npy')
+      positive_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}.npy', mmap_mode="r")
+      positive = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}.npy', mmap_mode="r")
     else:
       positive = X_train[:, 1].reshape(-1, opt.input_shape, 1)
       positive_extract = extracted_feature_of_signal(np.squeeze(positive))
@@ -157,8 +157,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
 
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}.npy'):
-      negative_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}.npy')
-      negative = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}.npy')
+      negative_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}.npy', mmap_mode="r")
+      negative = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}.npy', mmap_mode="r")
     else:
       negative = X_train[:, 2].reshape(-1, opt.input_shape, 1)
       negative_extract = extracted_feature_of_signal(np.squeeze(negative))
