@@ -36,7 +36,7 @@ def extracted_model(in_, opt):
   x = concatenate([x, in_], axis=-1)
   x = Dropout(rate=0.5)(x)
   x = Dense(opt.embedding_size)(x)
-  x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
+  # x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
   x = BatchNormalization()(x)
   return x
 
