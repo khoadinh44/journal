@@ -104,7 +104,8 @@ def CNN_C_trip(opt, input_, backbone=False):
               bias_regularizer=regularizers.l2(1e-4),
               activity_regularizer=regularizers.l2(1e-5))(x)
     x = BatchNormalization()(x)
-    pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
+    # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
+    pre_logit = x
     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
     return softmax, pre_logit
