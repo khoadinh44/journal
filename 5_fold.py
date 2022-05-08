@@ -411,6 +411,7 @@ if opt.PU_data_table_10_case_1:
       tf.saved_model.save(model, '/content/journal/train_routines/supervise_model')
       _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
       emb_accuracy_ensemble.append(test_acc)
+      print(f'\n Test accuracy: {test_acc}')
       
     print(color.GREEN + f'\n\t\t********* FINISHING ROUND {idx} *********\n\n\n' + color.END)
 
