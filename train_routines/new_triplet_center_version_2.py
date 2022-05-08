@@ -37,7 +37,7 @@ def extracted_model(in_, opt):
   x = Dropout(rate=0.5)(x)
   x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
-  x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
+  # x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
   return x
 
 def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale, x_test, y_test, network, i=100):
@@ -95,7 +95,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     target_input   = Input((1,), name='target_input')
     center = Dense(opt.embedding_size*2)(target_input)
     center = BatchNormalization()(center)
-    center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
+    # center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = center_shared_model([target_input])
 
