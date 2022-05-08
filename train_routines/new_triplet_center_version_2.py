@@ -1,8 +1,3 @@
-######################################################
-# Original implementation by KinWaiCheuk: https://github.com/KinWaiCheuk/Triplet-net-keras
-######################################################
-
-
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.callbacks import TensorBoard
