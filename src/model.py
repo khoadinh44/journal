@@ -14,29 +14,25 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-    q   = Dense(c, 
-                activation='relu',
+    q   = Dense(c,
                 use_bias=True, 
                 kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                 bias_regularizer=regularizers.l2(1e-4),
                 activity_regularizer=regularizers.l2(1e-5))(x)
     q = Dropout(0.1)(q)
-    k   = Dense(c, 
-                activation='relu',
+    k   = Dense(c,
                 use_bias=True, 
                 kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                 bias_regularizer=regularizers.l2(1e-4),
                 activity_regularizer=regularizers.l2(1e-5))(x)
     k = Dropout(0.1)(k)
-    v = Dense(c, 
-              activation='relu',
+    v = Dense(c,
               use_bias=True, 
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
               activity_regularizer=regularizers.l2(1e-5))(x)
     v = Dropout(0.1)(v)
     ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
-    ma = Dropout(0.2)(ma) 
     return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -95,14 +91,15 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = GlobalAveragePooling1D()(x)
 
-    x1 = TransformerLayer(x=x, c=48, backbone=backbone)
+    x1 = TransformerLayer(x=x, c=48//2, backbone=backbone)
     x2 = TransformerLayer(x=x, c=48, backbone=backbone)
-    x3 = TransformerLayer(x=x, c=48, backbone=backbone)
+    x3 = TransformerLayer(x=x, c=48*2, backbone=backbone)
     x_123 = concatenate([x1, x2, x3], axis=-1)
 
     if backbone:
         return x
-    # x = BatchNormalization()(x_123)
+    x = BatchNormalization()(x_123)
+    x = Dropout(0.5)(x) 
     x = Dense(opt.embedding_size)(x)
     x = BatchNormalization()(x)
     # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
