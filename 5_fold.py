@@ -393,8 +393,12 @@ if opt.PU_data_table_10_case_1:
       model.compile(optimizer=AngularGrad(), loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
 
       model.summary()
+      if idx==0:
+        epoch_ = opt.epoch
+      else:
+        epoch_ = 10
       history = model.fit(X_train, y_train,
-                          epochs     = opt.epoch,
+                          epochs     = epoch_,
                           batch_size = opt.batch_size, 
                           # callbacks  = [callback],
                           validation_data = (X_test, y_test),)
