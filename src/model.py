@@ -96,18 +96,33 @@ def CNN_C_trip(opt, input_, backbone=False, sup=False):
 
     for i in range(3):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
-        # x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(4):
+        x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(6):
+        x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
+
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+    for i in range(3):
+        x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
 
     x = GlobalAveragePooling1D()(x)
 
-    x1 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x = concatenate([x1, x2, x3], axis=-1)
+    x = TransformerLayer(x=x, c=384, backbone=backbone, sup=sup)
+    # x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
+    # x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
+    # x = concatenate([x1, x2, x3], axis=-1)
 
     if backbone:
         return x
     if sup==False:
+      x = BatchNormalization()(x)
       x = Dropout(0.5)(x) 
       x = Dense(opt.embedding_size)(x)
       x = BatchNormalization()(x)
