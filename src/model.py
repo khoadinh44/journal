@@ -32,7 +32,7 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
     v = Dropout(0.1)(v)
     ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
     ma = Dropout(0.5)(ma) 
-    # ma = Activation('relu')(ma) 
+    ma = Activation('relu')(ma) 
     return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -98,7 +98,7 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     if backbone:
         return x
-    x = BatchNormalization()(x_123)
+    # x = BatchNormalization()(x_123)
     x = Dense(opt.embedding_size)(x)
     x = BatchNormalization()(x)
     # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
