@@ -12,7 +12,7 @@ from tensorflow.keras.models import Model
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
+def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None, sup=None):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
     q   = Dense(c,
                 use_bias=True, 
@@ -20,18 +20,24 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
                 bias_regularizer=regularizers.l2(1e-4),
                 activity_regularizer=regularizers.l2(1e-5))(x)
     q = Dropout(0.1)(q)
+    if sup:
+      q = Activation('relu')(q)
     k   = Dense(c,
                 use_bias=True, 
                 kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                 bias_regularizer=regularizers.l2(1e-4),
                 activity_regularizer=regularizers.l2(1e-5))(x)
     k = Dropout(0.1)(k)
+    if sup: 
+      k = Activation('relu')(k)
     v = Dense(c,
               use_bias=True, 
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
               activity_regularizer=regularizers.l2(1e-5))(x)
     v = Dropout(0.1)(v)
+    if sup:
+      v = Activation('relu')(v)
     ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
     return ma
 
@@ -70,7 +76,7 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     x = Activation('relu')(x)
     return x
 
-def CNN_C_trip(opt, input_, backbone=False):
+def CNN_C_trip(opt, input_, backbone=False, sup=False):
     '''
     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
@@ -91,20 +97,22 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = GlobalAveragePooling1D()(x)
 
-    x1 = TransformerLayer(x=x, c=48, backbone=backbone)
-    x2 = TransformerLayer(x=x, c=48, backbone=backbone)
-    x3 = TransformerLayer(x=x, c=48, backbone=backbone)
+    x1 = TransformerLayer(x=x, c=48, backbone=backbone, sup)
+    x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup)
+    x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup)
     x_123 = concatenate([x1, x2, x3], axis=-1)
 
     if backbone:
         return x
-    x = Dropout(0.5)(x_123) 
-    x = Dense(opt.embedding_size)(x)
-    x = BatchNormalization()(x)
-    # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
-    pre_logit = x
+    if sup==False:
+      x = Dropout(0.5)(x_123) 
+      x = Dense(opt.embedding_size)(x)
+      x = BatchNormalization()(x)
+      # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
+      pre_logit = x
     softmax = Dense(opt.num_classes, activation='softmax')(x)
-
+    if sup:
+      return softmax
     return softmax, pre_logit
 
 
