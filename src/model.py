@@ -19,17 +19,17 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    q = Dropout(0.1)(q)
+    q = Dropout(0.2)(q)
     k   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    k = Dropout(0.1)(k)
+    k = Dropout(0.2)(k)
     v   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    v = Dropout(0.1)(v)
+    v = Dropout(0.2)(v)
     ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
     ma = Dropout(0.5)(ma) 
     ma = Activation('relu')(ma) 
@@ -99,10 +99,7 @@ def CNN_C_trip(opt, input_, backbone=False):
     if backbone:
         return x
     x = BatchNormalization()(x_123)
-    x = Dense(opt.embedding_size,
-              kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-              bias_regularizer=regularizers.l2(1e-4),
-              activity_regularizer=regularizers.l2(1e-5))(x)
+    x = Dense(opt.embedding_size)(x)
     x = BatchNormalization()(x)
     # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
     pre_logit = x
