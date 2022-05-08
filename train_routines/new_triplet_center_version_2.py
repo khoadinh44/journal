@@ -29,16 +29,15 @@ def extracted_model(in_, opt):
                     kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                     bias_regularizer=regularizers.l2(1e-4),
                     activity_regularizer=regularizers.l2(1e-5))(in_)
+  x = Dropout(rate=0.1)(x)
   x = Dense(opt.embedding_size*4,
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
+  x = Dropout(rate=0.1)(x)
   x = concatenate([x, in_], axis=-1)
   x = Dropout(rate=0.5)(x)
-  x = Dense(opt.embedding_size,
-                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                  bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(x)
+  x = Dense(opt.embedding_size)(x)
   # x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
   x = BatchNormalization()(x)
   return x
@@ -69,7 +68,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     outdir = opt.outdir + "/new_triplet_loss/"
     if i==0:
-      epoch = 60 # 30
+      epoch = 50 # 30
     else:
       epoch = opt.epoch # 10
 
@@ -95,10 +94,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     # Center model----------------------------------------------------------
     target_input   = Input((1,), name='target_input')
-    center = Dense(opt.embedding_size*2,
-                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                  bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(target_input)
+    center = Dense(opt.embedding_size*2)(target_input)
     center = Lambda(lambda  x: K.l2_normalize(x, axis=1))(center)
     center_shared_model = tf.keras.models.Model(inputs=[target_input], outputs=[center])
     center = center_shared_model([target_input])
