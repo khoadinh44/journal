@@ -36,7 +36,8 @@ def extracted_model(in_, opt):
             activity_regularizer=regularizers.l2(1e-5),
             activation='relu')(x)
   x = concatenate([x, in_], axis=-1)
-  x = Dropout(rate=0.5)(x)
+  x = BatchNormalization()(x)
+  x = Dropout(rate=0.2)(x)
   x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
   # x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
