@@ -397,8 +397,9 @@ if opt.PU_data_table_10_case_1:
         epoch_ = opt.epoch
       else:
         epoch_ = 10
-      if os.path.isdir('/content/journal/train_routines/supervise_model'):
-        model.load_weights('/content/journal/train_routines/supervise_model')
+      outdir = '/content/journal/train_routines/supervise_model'
+      if os.path.isdir(outdir):
+        model.load_weights(outdir)
         print(f'\n Load weight : {outdir}')
       else:
         print('\n No weight file.')
