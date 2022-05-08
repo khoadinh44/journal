@@ -96,7 +96,7 @@ def CNN_C_trip(opt, input_, backbone=False, sup=False):
 
     for i in range(3):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
-        x = MaxPooling1D(pool_size=4, strides=None)(x)
+        # x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     x = GlobalAveragePooling1D()(x)
 
