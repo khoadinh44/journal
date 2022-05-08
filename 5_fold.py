@@ -321,7 +321,7 @@ if opt.PU_data_table_10_case_1:
       count = 0
       for each_ML in ['SVM', 'RandomForestClassifier', 'LogisticRegression', 'GaussianNB', 'euclidean', 'cosine', 'KNN', 'BT']:
         model = FaceNetOneShotRecognitor(opt, X_train, y_train, X_test, y_test) 
-        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
+        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, use_mean=False)
         y_pred_inv = np.argmax(y_pred, axis=1)
         acc = accuracy_score(y_test, y_pred_inv)
         plot_confusion(y_test, y_pred_inv, outdir, each_ML)
