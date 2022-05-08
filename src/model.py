@@ -41,7 +41,7 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None, sup=None):
       v = Activation('relu')(v)
     else:
       v = Dropout(0.1)(v)
-    ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
+    ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
     return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
