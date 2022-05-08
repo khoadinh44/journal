@@ -91,14 +91,14 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     x = GlobalAveragePooling1D()(x)
 
-    x1 = TransformerLayer(x=x, c=48//2, backbone=backbone)
+    x1 = TransformerLayer(x=x, c=48, backbone=backbone)
     x2 = TransformerLayer(x=x, c=48, backbone=backbone)
-    x3 = TransformerLayer(x=x, c=48*2, backbone=backbone)
+    x3 = TransformerLayer(x=x, c=48, backbone=backbone)
     x_123 = concatenate([x1, x2, x3], axis=-1)
 
     if backbone:
         return x
-    x = BatchNormalization()(x_123)
+    # x = BatchNormalization()(x_123)
     x = Dropout(0.5)(x) 
     x = Dense(opt.embedding_size)(x)
     x = BatchNormalization()(x)
