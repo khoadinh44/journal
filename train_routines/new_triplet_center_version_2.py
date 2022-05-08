@@ -34,11 +34,10 @@ def extracted_model(in_, opt):
             bias_regularizer=regularizers.l2(1e-4),
             activity_regularizer=regularizers.l2(1e-5))(x)
   x = concatenate([x, in_], axis=-1)
-  x = BatchNormalization()(x)
   x = Dropout(rate=0.5)(x)
   x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
-  # x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
+  x = Lambda(lambda  x: K.l2_normalize(x, axis=1))(x)
   return x
 
 def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale, x_test, y_test, network, i=100):
@@ -79,6 +78,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     extract_model_1  = extracted_model(extract_input_1, opt)
     extract_shared_model_1 = tf.keras.models.Model(inputs=[extract_input_1], outputs=[extract_model_1])
     y_extract_1 = extract_shared_model_1([extract_input_1])
+    extract_shared_model_1.summary()
 
     extract_input_2 = Input((11, ), name='extract_input_2')
     extract_model_2  = extracted_model(extract_input_2, opt)
