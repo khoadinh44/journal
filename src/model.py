@@ -97,9 +97,9 @@ def CNN_C_trip(opt, input_, backbone=False, sup=False):
 
     x = GlobalAveragePooling1D()(x)
 
-    x1 = TransformerLayer(x=x, c=48, backbone=backbone, sup)
-    x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup)
-    x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup)
+    x1 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
+    x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
+    x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
     x_123 = concatenate([x1, x2, x3], axis=-1)
 
     if backbone:
