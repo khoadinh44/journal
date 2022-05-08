@@ -19,25 +19,28 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None, sup=None):
                 kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                 bias_regularizer=regularizers.l2(1e-4),
                 activity_regularizer=regularizers.l2(1e-5))(x)
-    q = Dropout(0.1)(q)
     if sup:
       q = Activation('relu')(q)
+    else:
+      q = Dropout(0.1)(q)
     k   = Dense(c,
                 use_bias=True, 
                 kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                 bias_regularizer=regularizers.l2(1e-4),
                 activity_regularizer=regularizers.l2(1e-5))(x)
-    k = Dropout(0.1)(k)
     if sup: 
       k = Activation('relu')(k)
+    else:
+      k = Dropout(0.1)(k)
     v = Dense(c,
               use_bias=True, 
               kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
               bias_regularizer=regularizers.l2(1e-4),
               activity_regularizer=regularizers.l2(1e-5))(x)
-    v = Dropout(0.1)(v)
     if sup:
       v = Activation('relu')(v)
+    else:
+      v = Dropout(0.1)(v)
     ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
     return ma
 
