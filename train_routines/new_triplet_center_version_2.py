@@ -28,15 +28,14 @@ def extracted_model(in_, opt):
   x = Dense(opt.embedding_size*2,
             kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
             bias_regularizer=regularizers.l2(1e-4),
-            activity_regularizer=regularizers.l2(1e-5))(in_)
-  x = Activation('relu')(x)
+            activity_regularizer=regularizers.l2(1e-5),
+            activation='relu')(in_)
   x = Dense(opt.embedding_size*4,
             kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
             bias_regularizer=regularizers.l2(1e-4),
-            activity_regularizer=regularizers.l2(1e-5))(x)
+            activity_regularizer=regularizers.l2(1e-5),
+            activation='relu')(x)
   x = concatenate([x, in_], axis=-1)
-  # x = BatchNormalization()(x)
-  x = Activation('relu')(x)
   x = Dropout(rate=0.5)(x)
   x = Dense(opt.embedding_size)(x)
   x = BatchNormalization()(x)
