@@ -41,7 +41,8 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None, sup=None):
       v = Activation('relu')(v)
     else:
       v = Dropout(0.1)(v)
-    ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) + x
+    ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
+    ma = concatenate([ma, x], axis=-1)
     return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -94,22 +95,22 @@ def CNN_C_trip(opt, input_, backbone=False, sup=False):
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(3):
+    for i in range(1):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(4):
+    for i in range(1):
         x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(6):
+    for i in range(1):
         x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
 
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(3):
+    for i in range(1):
         x = identity_block(x, kernel_size=3, filters=384, stage=4, block=i)
 
     x = GlobalAveragePooling1D()(x)
