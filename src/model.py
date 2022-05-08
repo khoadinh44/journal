@@ -14,25 +14,29 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None):
     # Transformer layer https://arxiv.org/abs/2010.11929 (LayerNorm layers removed for better performance)
-
-    q   = Dense(c, use_bias=True, 
-                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                  bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(x)
+    q   = Dense(c, 
+                activation='relu',
+                use_bias=True, 
+                kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                bias_regularizer=regularizers.l2(1e-4),
+                activity_regularizer=regularizers.l2(1e-5))(x)
     q = Dropout(0.1)(q)
-    k   = Dense(c, use_bias=True, 
-                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                  bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(x)
+    k   = Dense(c, 
+                activation='relu',
+                use_bias=True, 
+                kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+                bias_regularizer=regularizers.l2(1e-4),
+                activity_regularizer=regularizers.l2(1e-5))(x)
     k = Dropout(0.1)(k)
-    v   = Dense(c, use_bias=True, 
-                  kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-                  bias_regularizer=regularizers.l2(1e-4),
-                  activity_regularizer=regularizers.l2(1e-5))(x)
+    v = Dense(c, 
+              activation='relu',
+              use_bias=True, 
+              kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+              bias_regularizer=regularizers.l2(1e-4),
+              activity_regularizer=regularizers.l2(1e-5))(x)
     v = Dropout(0.1)(v)
     ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
-    ma = Dropout(0.5)(ma) 
-    ma = Activation('relu')(ma) 
+    ma = Dropout(0.2)(ma) 
     return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
