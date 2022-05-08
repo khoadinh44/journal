@@ -98,8 +98,7 @@ def CNN_C_trip(opt, input_, backbone=False):
 
     if backbone:
         return x
-    # x = BatchNormalization()(x_123)
-    x = Dropout(0.5)(x) 
+    x = Dropout(0.5)(x_123) 
     x = Dense(opt.embedding_size)(x)
     x = BatchNormalization()(x)
     # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
