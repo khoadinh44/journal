@@ -32,16 +32,16 @@ class FaceNetOneShotRecognitor(object):
         pd = []
         for start in tqdm(range(0, len(input_data), self.opt.batch_size)):
             embeddings = self.model(input_data[start: start+self.opt.batch_size])
-            pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
-            # pd.append(embeddings)
+            # pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
+            pd.append(embeddings)
         return np.array(pd)
     
     def __calc_emb_test(self, input_data):
         pd = []
         if len(input_data) == 1:
             embeddings = self.model(input_data)
-            pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
-            # pd.append(embeddings)
+            # pd.append(tf.math.l2_normalize(embeddings, axis=1, epsilon=1e-10))
+            pd.append(embeddings)
         elif len(input_data) > 1:
             pd = self.__calc_embs(input_data)
         return np.array(pd)
