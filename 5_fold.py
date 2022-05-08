@@ -387,9 +387,10 @@ if opt.PU_data_table_10_case_1:
       y_train = to_one_hot(y_train)
       y_test = to_one_hot(y_test)
       print('\n\t\t\t Load model...')
-      input_   = Input((opt.input_shape, 1), name='supervise_input')
-      output = CNN_C_trip(opt, input_, sup=True)
-      model = Model(inputs=input_, outputs=output)
+      # input_   = Input((opt.input_shape, 1), name='supervise_input')
+      # output = CNN_C_trip(opt, input_, sup=True)
+      # model = Model(inputs=input_, outputs=output)
+      model = CNN_C(opt)
       model.compile(optimizer=AngularGrad(), loss='categorical_crossentropy', metrics=['acc', f1_m, precision_m, recall_m]) # loss='mse'
 
       model.summary()
@@ -408,7 +409,7 @@ if opt.PU_data_table_10_case_1:
                           batch_size = opt.batch_size, 
                           # callbacks  = [callback],
                           validation_data = (X_test, y_test),)
-      tf.saved_model.save(model, '/content/journal/train_routines/supervise_model')
+      tf.saved_model.save(model, outdir)
       _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
       emb_accuracy_ensemble.append(test_acc)
       print(f'\n Test accuracy: {test_acc}')
