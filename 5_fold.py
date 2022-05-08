@@ -396,6 +396,7 @@ if opt.PU_data_table_10_case_1:
                           batch_size = opt.batch_size, 
                           # callbacks  = [callback],
                           validation_data = (X_test, y_test),)
+      tf.saved_model.save(model, '/content/journal/train_routines/supervise_model')
       _, test_acc,  test_f1_m,  test_precision_m,  test_recall_m  = model.evaluate(X_test, y_test, verbose=0)
       emb_accuracy_ensemble.append(test_acc)
       
