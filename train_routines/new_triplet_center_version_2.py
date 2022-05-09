@@ -25,11 +25,11 @@ from angular_grad import AngularGrad
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=2)
 
 def extracted_model(in_, opt):
-  x = Dense(opt.embedding_size*2,
+  x = Dense(opt.embedding_size*4,
             kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
             bias_regularizer=regularizers.l2(1e-4),
             activity_regularizer=regularizers.l2(1e-5))(in_)
-  x = Dense(opt.embedding_size*4,
+  x = Dense(opt.embedding_size*2,
             kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
             bias_regularizer=regularizers.l2(1e-4),
             activity_regularizer=regularizers.l2(1e-5))(x)
