@@ -100,11 +100,11 @@ def CNN_C_trip(opt, input_, backbone=False, sup=False):
         x = MaxPooling1D(pool_size=4, strides=None)(x)
     
 
-    x1 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x = concatenate([x1, x2, x3], axis=-1)
-    x = GlobalAveragePooling1D()(x)
+    x = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
+    # x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
+    # x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
+    # x = concatenate([x1, x2, x3], axis=-1)
+    x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
     if backbone:
         return x
     if sup==False:
