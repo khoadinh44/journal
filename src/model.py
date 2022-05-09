@@ -44,6 +44,7 @@ def TransformerLayer(x=None, c=48, num_heads=4*3, backbone=None, sup=None):
     ma = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
     return ma
 
+    
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
 def identity_block(input_tensor, kernel_size, filters, stage, block):
     conv_name_base = 'res' + str(stage) + str(block) + '_branch'
@@ -97,19 +98,18 @@ def CNN_C_trip(opt, input_, backbone=False, sup=False):
     for i in range(3):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
         x = MaxPooling1D(pool_size=4, strides=None)(x)
-    x = GlobalAveragePooling1D()(x)
+    
 
     x1 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
     x2 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
     x3 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x4 = TransformerLayer(x=x, c=48, backbone=backbone, sup=sup)
-    x = concatenate([x1, x2, x3, x4], axis=-1)
-
+    x = concatenate([x1, x2, x3], axis=-1)
+    x = GlobalAveragePooling1D()(x)
     if backbone:
         return x
     if sup==False:
-      x = BatchNormalization()(x)
-      x = Dropout(0.5)(x) 
+      # x = BatchNormalization()(x)
+      # x = Dropout(0.5)(x) 
       x = Dense(opt.embedding_size)(x)
       x = BatchNormalization()(x)
       # pre_logit = Lambda(lambda  x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
