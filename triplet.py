@@ -193,8 +193,8 @@ def product(x, y):
 #     # anchor angle------------------------------------------
 #     out_l2            = tf.math.acos(product(anchor, y_center) / (magnitudes_anchor*magnitudes_y_center))
     
-#     loss           = K.maximum(out_l2 + alpha - neg_dist, 0.0)
-#     return loss + loss_extract
+#     loss           = K.maximum(abs(out_l2) + alpha - abs(neg_dist), 0.0)
+#     return loss 
 
 def triplet_loss(y_true, y_pred, alpha=0.4, lambda_=opt.lambda_):
     """
