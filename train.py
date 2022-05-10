@@ -273,7 +273,7 @@ def parse_opt(known=False):
     parser.add_argument('--save',               type=str,   default='/content/drive/Shareddrives/newpro112233/signal_machine/', help='Position to save weights')
     parser.add_argument('--num_classes',        type=int,   default=3,          help='3 Number of classes in faceNet')
     parser.add_argument('--embedding_size',     type=int,   default=128,        help='128 Number of embedding in faceNet')
-    parser.add_argument('--input_shape',        type=int,   default=255900,       help='127950 or 255900 in 5-fold or table 8: 6270 for handcrafted, 250604 in the only training.')
+    parser.add_argument('--input_shape',        type=int,   default=250604,       help='127950 or 255900 in 5-fold or table 8: 6270 for handcrafted, 250604 in the only training.')
     parser.add_argument('--batch_size',         type=int,   default=32,         help='80 for arc_face, 32 for others')
     parser.add_argument('--test_rate',          type=float, default=0.2,        help='rate of split data for testing')
     parser.add_argument('--learning_rate',      type=float, default=0.001,      help='learning rate')
