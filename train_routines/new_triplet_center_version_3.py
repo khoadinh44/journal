@@ -209,8 +209,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     # Embedding------------------------------------------------
     pre_anchor = concatenate([pre_logits_anchor, y_extract_1], axis=-1, name='merged_soft')
-    s_anchor = concatenate([soft_anchor, extract_model_1_s], axis=-1)
-    model = Model(inputs=[anchor_input, extract_input_1], outputs=[s_anchor, pre_anchor])
+    model = Model(inputs=[anchor_input, extract_input_1], outputs=[soft_anchor, pre_anchor])
     model.load_weights(outdir + "new_triplet_loss_model")
 
     # x_train, y_train = choosing_features(x_train, y_train)
