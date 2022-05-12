@@ -265,3 +265,50 @@ def CNN_C_trip(opt, input_, backbone=False):
 #     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
 #     return softmax, pre_logit
+
+
+# def CNN_C_trip(opt, input_, backbone=False):
+#     '''
+#     The model was rebuilt based on the construction of resnet 34 and inherited from this source code:
+#     https://github.com/philipperemy/very-deep-convnets-raw-waveforms/blob/master/model_resnet.py
+#     '''
+#     x = Conv1D(48,
+#                kernel_size=80,
+#                strides=4,
+#                padding='same',
+#                kernel_initializer='glorot_uniform',
+#                kernel_regularizer=regularizers.l2(l=0.0001),)(input_)
+#     x = BatchNormalization()(x)
+#     x = Activation('relu')(x)
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     for i in range(2):
+#         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     for i in range(3):
+#         x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
+
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+#     x = MaxPooling1D(pool_size=4, strides=None)(x)
+
+#     # for i in range(2):
+#     #     x = identity_block(x, kernel_size=3, filters=192, stage=3, block=i)
+    
+#     x = GlobalAveragePooling1D()(x)
+#     x = TransformerLayer(x=x, c=96, backbone=backbone)
+#     # x = GlobalAveragePooling1D(data_format='channels_first', keepdims=False)(x)
+    
+#     if backbone:
+#         return x
+#     x = Activation('relu')(x)
+#     x = BatchNormalization()(x)
+#     x = tf.keras.layers.Dropout(0.5)(x) 
+#     x = Dense(opt.embedding_size)(x)
+#     x = BatchNormalization()(x)
+#     # pre_logit = Lambda(lambda x: K.l2_normalize(x, axis=1), name='norm_layer')(x)
+#     pre_logit = x
+#     softmax = Dense(opt.num_classes, activation='softmax')(x)
+
+#     return softmax, pre_logit
