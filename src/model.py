@@ -126,18 +126,19 @@ def TransformerLayer(x=None, c=48, num_heads=4, backbone=None):
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    q = tf.keras.layers.Dropout(0.1)(q) 
+    # q = tf.keras.layers.Dropout(0.1)(q) 
     k   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    k = tf.keras.layers.Dropout(0.1)(k) 
+    # k = tf.keras.layers.Dropout(0.1)(k) 
     v   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    v = tf.keras.layers.Dropout(0.1)(v) 
+    # v = tf.keras.layers.Dropout(0.1)(v) 
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
+    x = tf.keras.layers.Dropout(0.2)(x) 
     return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
@@ -190,19 +191,26 @@ def CNN_C_trip(opt, input_, backbone=False):
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    for i in range(5):
+    for i in range(4):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
         x = MaxPooling1D(pool_size=4, strides=None)(x)
-
-    x = TransformerLayer(x=x, c=opt.embedding_size*4, backbone=backbone)
+        
+    for i in range(3):
+        x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
+        
+    x = MaxPooling1D(pool_size=4, strides=None)(x)
     x = GlobalAveragePooling1D()(x)
-     
+
+    x1 = TransformerLayer(x=x, c=96, backbone=backbone)
+    x2 = TransformerLayer(x=x, c=96, backbone=backbone)
+    x = concatenate([x1, x2], axis=-1)
+      
     if backbone:
         return x
-    
+ 
     x = Dense(opt.embedding_size)(x)
     x = BatchNormalization()(x)
-    pre_logit = x
+    pre_logit = x 
     softmax = Dense(opt.num_classes, activation='softmax')(x)
 
     return softmax, pre_logit
