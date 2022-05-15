@@ -44,10 +44,10 @@ def scatter(outdir, x, labels, subtitle=None):
 
 def tsne_plot(outdir, name, x_train, x_test, y_train, y_test):
     tsne = TSNE()
-    train_tsne_embeds = tsne.fit_transform(x_train[:512])
-    scatter(outdir, train_tsne_embeds, y_train[:512], "Samples from Train Data, {}".format(name))
+    train_tsne_embeds = tsne.fit_transform(x_train)
+    scatter(outdir, train_tsne_embeds, y_train, "Samples from Train Data, {}".format(name))
 
-    eval_tsne_embeds = tsne.fit_transform(x_test[:512])
-    scatter(outdir, eval_tsne_embeds, y_test[:512], "Samples from Test Data, {}".format(name))
+    eval_tsne_embeds = tsne.fit_transform(x_test)
+    scatter(outdir, eval_tsne_embeds, y_test, "Samples from Test Data, {}".format(name))
 
 
