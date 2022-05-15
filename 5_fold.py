@@ -83,9 +83,9 @@ if opt.PU_data_table_10_case_0:
    Outer_ring_damage, Outer_ring_damage_label = load_table_10_spe(Outer_ring_damage, Outer_ring_damage_label)
    Inner_ring_damage, Inner_ring_damage_label = load_table_10_spe(Inner_ring_damage, Inner_ring_damage_label)
    if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Healthy_10.npy'):
-      Healthy = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Healthy_10.npy')  
-      Outer_ring_damage = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Outer_ring_damage_10.npy')
-      Inner_ring_damage = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Inner_ring_damage_10.npy')
+      Healthy = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Healthy_10.npy', mmap_mode="r")  
+      Outer_ring_damage = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Outer_ring_damage_10.npy', mmap_mode="r")
+      Inner_ring_damage = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Inner_ring_damage_10.npy', mmap_mode="r")
    else: 
       Healthy = scaler_transform(Healthy, PowerTransformer)
       Outer_ring_damage = scaler_transform(Outer_ring_damage, PowerTransformer)
@@ -241,13 +241,13 @@ if opt.PU_data_table_10_case_1:
     tf.keras.backend.clear_session()
     gc.collect()
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy'):
-      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy')
-      X_train_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{i}.npy')
-      y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_table10_{i}.npy')
+      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy', mmap_mode="r")
+      X_train_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_scaled_table10_{i}.npy', mmap_mode="r")
+      y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_table10_{i}.npy', mmap_mode="r")
   
-      X_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{i}.npy')
-      X_test_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{i}.npy')
-      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{i}.npy')
+      X_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_table10_{i}.npy', mmap_mode="r")
+      X_test_scaled = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_scaled_table10_{i}.npy', mmap_mode="r")
+      y_test = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_scaled_table10_{i}.npy', mmap_mode="r")
     else:
       X_train_Healthy = Healthy[list(i)]
       y_train_Healthy = Healthy_label[list(i)]
