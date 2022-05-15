@@ -233,9 +233,11 @@ if opt.PU_data_table_10_case_0:
 #------------------------------------------Case 1: no shuffle------------------------------------------------
 if opt.PU_data_table_10_case_1:
   comb = combinations([0, 1, 2, 3, 4], 3)
+  train_l = [[1, 2, 3, 4], [0, 2, 3,  4], [0, 1, 3, 4], [0, 1, 2, 4], [0, 1, 2, 3]]
   
   # Print the obtained combinations
-  for idx, i in enumerate(list(comb)):
+#   for idx, i in enumerate(list(comb)):
+  for idx, i in enumerate(train_l):
     tf.keras.backend.clear_session()
     gc.collect()
     if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_table10_{i}.npy'):
