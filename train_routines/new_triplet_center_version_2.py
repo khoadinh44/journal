@@ -79,7 +79,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
 
     outdir = opt.outdir + "/new_triplet_loss/"
     if i==0:
-      epoch = 50 # 30
+      epoch = 100 # 30
     else:
       epoch = opt.epoch # 10
 
