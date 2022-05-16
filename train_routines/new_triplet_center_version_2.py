@@ -33,7 +33,7 @@ def extracted_model(in_, opt):
             kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
             bias_regularizer=regularizers.l2(1e-4),
             activity_regularizer=regularizers.l2(1e-5))(x)
-  x = Dense(opt.embedding_size,
+  x = Dense(opt.embedding_size//2,
             kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
             bias_regularizer=regularizers.l2(1e-4),
             activity_regularizer=regularizers.l2(1e-5))(x)
