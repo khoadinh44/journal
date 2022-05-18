@@ -263,8 +263,8 @@ def parse_opt(known=False):
     parser.add_argument('--PU_data_table_10_case_1',     default=False, type=bool)
     parser.add_argument('--PU_data_table_8',      default=False, type=bool)
     parser.add_argument('--MFPT_data',            default=False, type=bool)
-    parser.add_argument('--data_normal',          default=False, type=bool)
-    parser.add_argument('--data_12k',             default=False, type=bool)
+    parser.add_argument('--data_normal',          default=True, type=bool)
+    parser.add_argument('--data_12k',             default=True, type=bool)
     parser.add_argument('--data_48k',             default=False, type=bool)
     parser.add_argument('--multi_head',           default=False, type=bool)
 
