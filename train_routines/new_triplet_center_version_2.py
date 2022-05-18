@@ -59,20 +59,59 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     x_test_scale = np.expand_dims(x_test_scale, axis=-1)
     
     # adding _5_fold if using 5-fold method: 
-    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}_5_fold.npy'):
-      x_train_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract_{i}_5_fold.npy')
-      x_test_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}_5_fold.npy')
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}_CWRU.npy'):
+      x_train_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract_{i}_CWRU.npy')
+      x_test_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}_CWRU.npy')
     else:
       x_train_get = np.squeeze(x_train)
       x_train_extract = extracted_feature_of_signal(x_train_get)
       x_test_get = np.squeeze(x_test)
       x_test_extract = extracted_feature_of_signal(x_test_get)
+      
+#       x_train_extract = scaler_transform(x_train_extract, PowerTransformer)
+#       x_test_extract  = scaler_transform(x_test_extract, PowerTransformer)
+      if opt.scaler == 'handcrafted_features':
+        print('\n Using hand Crafted feature..')
+        x_train_extract = handcrafted_features(x_train_extract)
+        x_test_extract  = handcrafted_features(x_test_extract)
+      if opt.denoise == 'DFK':
+        x_train_extract = use_denoise(x_train_extract, Fourier)
+        x_test_extract  = use_denoise(x_test_extract, Fourier)
+      elif opt.denoise == 'Wavelet_denoise':
+        x_train_extract = use_denoise(x_train_extract, Wavelet_denoise)
+        x_test_extract  = use_denoise(x_test_extract, Wavelet_denoise)
+      elif opt.denoise == 'SVD':
+        x_train_extract = use_denoise(x_train_extract, SVD_denoise)
+        x_test_extract  = use_denoise(x_test_extract, SVD_denoise)
+      elif opt.denoise == 'savitzky_golay':
+        x_train_extract = use_denoise(x_train_extract, savitzky_golay)
+        x_test_extract  = use_denoise(x_test_extract, savitzky_golay)
 
-      x_train_extract = scaler_transform(x_train_extract, PowerTransformer)
-      x_test_extract  = scaler_transform(x_test_extract, PowerTransformer)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract_{i}_5_fold.npy', 'wb') as f:
+      if opt.scaler == 'MinMaxScaler':
+        x_train_extract = scaler_transform(x_train_extract, MinMaxScaler)
+        x_test_extract = scaler_transform(x_test_extract, MinMaxScaler)
+      elif opt.scaler == 'MaxAbsScaler':
+        x_train_extract = scaler_transform(x_train_extract, MaxAbsScaler)
+        x_test_extract = scaler_transform(x_test_extract, MaxAbsScaler)
+      elif opt.scaler == 'StandardScaler':
+        x_train_extract = scaler_transform(x_train_extract, StandardScaler)
+        x_test_extract = scaler_transform(x_test_extract, StandardScaler)
+      elif opt.scaler == 'RobustScaler':
+        x_train_extract = scaler_transform(x_train_extract, RobustScaler)
+        x_test_extract = scaler_transform(x_test_extract, RobustScaler)
+      elif opt.scaler == 'Normalizer':
+        x_train_extract = scaler_transform(x_train_extract, Normalizer)
+        x_test_extract = scaler_transform(x_test_extract, Normalizer)
+      elif opt.scaler == 'QuantileTransformer':
+        x_train_extract = scaler_transform(x_train_extract, QuantileTransformer)
+        x_test_extract = scaler_transform(x_test_extract, QuantileTransformer)
+      elif opt.scaler == 'PowerTransformer':
+        x_train_extract = scaler_transform(x_train_extract, PowerTransformer)
+        x_test_extract = scaler_transform(x_test_extract, PowerTransformer)
+    
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_train_extract_{i}_CWRU.npy', 'wb') as f:
         np.save(f, x_train_extract)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/x_test_extract_{i}_CWRU.npy', 'wb') as f:
         np.save(f, x_test_extract)
 
     print("\n Training with Triplet Loss....")
@@ -135,54 +174,54 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     # https://keras.io/api/losses/
     
     # data-----------------------------------------------------
-    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}_5_fold.npy'):
-      anchor_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}_5_fold.npy', mmap_mode="r")
-      anchor = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}_5_fold.npy', mmap_mode="r")
-      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}_5_fold.npy', mmap_mode="r")
-      Y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}_5_fold.npy', mmap_mode="r")
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}_CWRU.npy'):
+      anchor_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}_CWRU.npy', mmap_mode="r")
+      anchor = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}_CWRU.npy', mmap_mode="r")
+      X_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}_CWRU.npy', mmap_mode="r")
+      Y_train = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}_CWRU.npy', mmap_mode="r")
     else:
       X_train, Y_train = generate_triplet(x_train, y_train)  #(anchors, positive, negative)
       print('\n Finishing data generator')
       anchor = X_train[:, 0].reshape(-1, opt.input_shape, 1)
       anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
       anchor = scaler_transform(anchor, PowerTransformer)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}_CWRU.npy', 'wb') as f:
         np.save(f, anchor_extract)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_{i}_CWRU.npy', 'wb') as f:
         np.save(f, anchor)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_{i}_CWRU.npy', 'wb') as f:
         np.save(f, X_train)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/Y_train_{i}_CWRU.npy', 'wb') as f:
         np.save(f, Y_train)
     print(f'anchor shape: {anchor.shape}')
     print(f'anchor-extract shape: {anchor_extract.shape}\n')
     
 
-    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}_5_fold.npy'):
-      positive_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}_5_fold.npy', mmap_mode="r")
-      positive = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}_5_fold.npy', mmap_mode="r")
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}_CWRU.npy'):
+      positive_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}_CWRU.npy', mmap_mode="r")
+      positive = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}_CWRU.npy', mmap_mode="r")
     else:
       positive = X_train[:, 1].reshape(-1, opt.input_shape, 1)
       positive_extract = extracted_feature_of_signal(np.squeeze(positive))
       positive = scaler_transform(positive, PowerTransformer)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}_CWRU.npy', 'wb') as f:
         np.save(f, positive_extract)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_{i}_CWRU.npy', 'wb') as f:
         np.save(f, positive)
     print(f'positive shape: {positive.shape}')
     print(f'positive-extract shape: {positive_extract.shape}\n')
 
 
-    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}_5_fold.npy'):
-      negative_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}_5_fold.npy', mmap_mode="r")
-      negative = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}_5_fold.npy', mmap_mode="r")
+    if os.path.exists(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}_CWRU.npy'):
+      negative_extract = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}_CWRU.npy', mmap_mode="r")
+      negative = np.load(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}_CWRU.npy', mmap_mode="r")
     else:
       negative = X_train[:, 2].reshape(-1, opt.input_shape, 1)
       negative_extract = extracted_feature_of_signal(np.squeeze(negative))
       negative = scaler_transform(negative, PowerTransformer)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}_CWRU.npy', 'wb') as f:
         np.save(f, negative_extract)
-      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}_5_fold.npy', 'wb') as f:
+      with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_{i}_CWRU.npy', 'wb') as f:
         np.save(f, negative)
     print(f'negative shape: {negative.shape}')
     print(f'negative-extract shape: {negative_extract.shape}\n')
