@@ -13,7 +13,7 @@ import tensorflow as tf
 
 def scatter(outdir, x, labels, subtitle=None):
     # We choose a color palette with seaborn.
-    palette = np.array(sns.color_palette("hls", 10))
+    palette = np.array(sns.color_palette("hls", int(np.max(labels)+1)))
 
     # We create a scatter plot.
     f = plt.figure(figsize=(8, 8))
