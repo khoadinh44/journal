@@ -197,7 +197,7 @@ def main(opt):
     y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML)
     y_pred_inv = np.argmax(y_pred, axis=1)
     
-    plot_confusion(y_test, y_pred_inv, outdir, each_ML)
+    plot_confusion(y_test, y_pred_inv, outdir, each_ML, opt)
     acc = accuracy_score(y_test, y_pred_inv)
     
     if each_ML not in ['euclidean', 'cosine']:
@@ -227,7 +227,7 @@ def main(opt):
        y_pred = model.predict(test_embs=test_embs, train_embs=train_embs, ML_method=each_ML, use_mean=False)
        y_pred_inv = np.argmax(y_pred, axis=1)
 
-       plot_confusion(y_test, y_pred_inv, outdir, each_ML+'no_mean')
+       plot_confusion(y_test, y_pred_inv, outdir, each_ML+'no_mean', opt)
        acc = accuracy_score(y_test, y_pred_inv)
        print(f'\n-------------- Test accuracy: {acc} with the {each_ML} no mean method--------------')
     
