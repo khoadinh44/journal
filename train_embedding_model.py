@@ -49,19 +49,22 @@ class color:
    UNDERLINE = '\033[4m'
    END = '\033[0m'
 
-def plot_confusion(y_test, y_pred_inv, outdir, each_ML):
-   commands = ['Healthy', 'OR Damage', 'IR Damage']
-   confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
+def plot_confusion(y_test, y_pred_inv, outdir, each_ML, opt):
+  if opt.case_14:
+    commands = [str(i) for i in set(y_test)]
+  else:
+    commands = ['Healthy', 'OR Damage', 'IR Damage']
+  confusion_mtx = tf.math.confusion_matrix(y_test, y_pred_inv)
 
-   plt.figure(figsize=(10, 8))
-   sns.heatmap(confusion_mtx,
-             xticklabels=commands,
-             yticklabels=commands,
-             annot=True, fmt='g')
-   plt.xlabel('Prediction')
-   plt.ylabel('Label')
-   plt.savefig(os.path.join(outdir, each_ML))
-   plt.show()
+  plt.figure(figsize=(10, 8))
+  sns.heatmap(confusion_mtx,
+            xticklabels=commands,
+            yticklabels=commands,
+            annot=True, fmt='g')
+  plt.xlabel('Prediction')
+  plt.ylabel('Label')
+  plt.savefig(os.path.join(outdir, each_ML))
+  plt.show()
 
 def main(opt):
   print(color.GREEN + '\n\n\t *************START*************\n\n' + color.END)
@@ -178,7 +181,7 @@ def main(opt):
     y_test_solf = np.argmax(y_test_solf, axis=1)
     solf_acc = accuracy_score(y_test, y_test_solf)
     confusion_mtx = tf.math.confusion_matrix(y_test, y_test_solf)
-    plot_confusion(y_test, y_test_solf, outdir, 'softmax')
+    plot_confusion(y_test, y_test_solf, outdir, 'softmax', opt)
     
     print(f'\n-------------- Test accuracy: {solf_acc} with the solfmax method--------------')
 
