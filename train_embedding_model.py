@@ -67,12 +67,13 @@ def main(opt):
   print(color.GREEN + '\n\n\t *************START*************\n\n' + color.END)
   
   print('\n loading data...')
-
-  if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy'):
-    X_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy')
-    X_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy')
-    y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy')
-    y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy')
+   # y_train for the PU data
+   # y_train_CWRU for the CWRU data in case of 14
+  if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_CWRU.npy'):  
+    X_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_CWRU.npy')
+    X_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_CWRU.npy')
+    y_train = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_CWRU.npy')
+    y_test = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_CWRU.npy')
   else:
     X_train, X_test, y_train, y_test = get_data(opt)
 
@@ -81,13 +82,13 @@ def main(opt):
     y_test = invert_one_hot(y_test)
 
 
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train.npy', 'wb') as f:
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_train_CWRU.npy', 'wb') as f:
       np.save(f, y_train)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test.npy', 'wb') as f:
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/y_test_CWRU.npy', 'wb') as f:
       np.save(f, y_test)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train.npy', 'wb') as f:
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_CWRU.npy', 'wb') as f:
       np.save(f, X_train)
-    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test.npy', 'wb') as f:
+    with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_CWRU.npy', 'wb') as f:
       np.save(f, X_test)
 
   if opt.use_FFT:
@@ -135,10 +136,10 @@ def main(opt):
     X_train_FFT = scaler_transform(X_train, QuantileTransformer)
     X_test_FFT = scaler_transform(X_test, QuantileTransformer)
   elif opt.scaler == 'PowerTransformer':
-    # X_train_FFT = scaler_transform(X_train, PowerTransformer)
-    # X_test_FFT = scaler_transform(X_test, PowerTransformer)
-    X_train_FFT= np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy')
-    X_test_FFT = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy')
+    X_train_FFT = scaler_transform(X_train, PowerTransformer)
+    X_test_FFT = scaler_transform(X_test, PowerTransformer)
+#     X_train_FFT= np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy')
+#     X_test_FFT = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy')
 
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test_FFT.shape},   Testing label shape: {y_test.shape}')
