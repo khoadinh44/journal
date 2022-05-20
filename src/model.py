@@ -192,10 +192,10 @@ def CNN_C_trip(opt, input_, backbone=False):
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
     if opt.case_14:
-      for i in range(1):
+      for i in range(2):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
       x = MaxPooling1D(pool_size=4, strides=None)(x)
-      for i in range(1):
+      for i in range(2):
         x = identity_block(x, kernel_size=3, filters=96, stage=2, block=i)
       x = MaxPooling1D(pool_size=4, strides=None)(x)
     else:
