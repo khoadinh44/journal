@@ -139,19 +139,20 @@ def main(opt):
     X_train_FFT = scaler_transform(X_train, QuantileTransformer)
     X_test_FFT = scaler_transform(X_test, QuantileTransformer)
   elif opt.scaler == 'PowerTransformer':
-    X_train_FFT = scaler_transform(X_train, PowerTransformer)
-    X_test_FFT = scaler_transform(X_test, PowerTransformer)
-#     X_train_FFT= np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy')
-#     X_test_FFT = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy')
+    if os.path.exists('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT_pow.npy'):
+      X_train_FFT= np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT_pow.npy')
+      X_test_FFT = np.load('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT_pow.npy')
+    else:
+      X_train_FFT = scaler_transform(X_train, PowerTransformer)
+      X_test_FFT = scaler_transform(X_test, PowerTransformer)
+      # Save data ----------------------------------------------
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT_pow.npy', 'wb') as f:
+        np.save(f, X_train_FFT)
+      with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT_pow.npy', 'wb') as f:
+        np.save(f, X_test_FFT)
 
   print(f' Training data shape: {X_train_FFT.shape},  Training label shape: {y_train.shape}')
   print(f' Testing data shape: {X_test_FFT.shape},   Testing label shape: {y_test.shape}')
-  
-  # # Save data ----------------------------------------------
-  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_train_FFT.npy', 'wb') as f:
-  #   np.save(f, X_train_FFT)
-  # with open('/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/X_test_FFT.npy', 'wb') as f:
-  #   np.save(f, X_test_FFT)
 
   # Convert label 2 to label 1. Train with 30 epochs
   # y_train = np.where(y_train!=2, y_train, 1)
