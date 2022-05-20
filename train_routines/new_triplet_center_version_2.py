@@ -265,8 +265,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     _, X_train_embed = model.predict([x_train_scale, x_train_extract])
     y_test_soft, X_test_embed = model.predict([x_test_scale, x_test_extract])
     
-    from TSNE_plot import tsne_plot
-    tsne_plot(outdir, 'original', X_train_embed[:, :opt.embedding_size], X_test_embed[:, :opt.embedding_size], y_train, y_test)
-    tsne_plot(outdir, 'extracted', X_train_embed[:, opt.embedding_size: ], X_test_embed[:, opt.embedding_size: ], y_train, y_test)
+#     from TSNE_plot import tsne_plot
+#     tsne_plot(outdir, 'original', X_train_embed[:, :opt.embedding_size], X_test_embed[:, :opt.embedding_size], y_train, y_test)
+#     tsne_plot(outdir, 'extracted', X_train_embed[:, opt.embedding_size: ], X_test_embed[:, opt.embedding_size: ], y_train, y_test)
     
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
