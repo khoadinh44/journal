@@ -77,6 +77,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     
 #       x_train_extract = scaler_transform(x_train_extract, PowerTransformer)
 #       x_test_extract  = scaler_transform(x_test_extract, PowerTransformer)
+    
     if opt.scaler == 'handcrafted_features':
       print('\n Using hand Crafted feature..')
       x_train_extract = handcrafted_features(x_train_extract)
@@ -94,6 +95,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
       x_train_extract = use_denoise(x_train_extract, savitzky_golay)
       x_test_extract  = use_denoise(x_test_extract, savitzky_golay)
 
+    scaler = None
     if opt.scaler == 'MinMaxScaler':
       scaler = MinMaxScaler
       x_train_extract = scaler_transform(x_train_extract, scaler)
@@ -201,7 +203,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     anchor_extract = extracted_feature_of_signal(np.squeeze(anchor))
     if opt.scaler == 'handcrafted_features':
       anchor = handcrafted_features(anchor)
-    else:
+    if opt.scaler != None:
       anchor = scaler_transform(anchor, scaler)
       # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/anchor_extract_{i}_CWRU_pow.npy', 'wb') as f:
       #   np.save(f, anchor_extract)
@@ -224,7 +226,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     positive_extract = extracted_feature_of_signal(np.squeeze(positive))
     if opt.scaler == 'handcrafted_features':
       positive = handcrafted_features(positive)
-    else:
+    if opt.scaler != None:
       positive = scaler_transform(positive, scaler)
 
       # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/positive_extract_{i}_CWRU_pow.npy', 'wb') as f:
@@ -244,7 +246,7 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     negative_extract = extracted_feature_of_signal(np.squeeze(negative))
     if opt.scaler == 'handcrafted_features':
       negative = handcrafted_features(negative)
-    else:
+    if opt.scaler != None:
       negative = scaler_transform(negative, scaler)
 
       # with open(f'/content/drive/Shareddrives/newpro112233/signal_machine/output_triplet_loss/negative_extract_{i}_CWRU_pow.npy', 'wb') as f:
@@ -294,8 +296,8 @@ def train_new_triplet_center(opt, x_train_scale, x_train, y_train, x_test_scale,
     _, X_train_embed = model.predict([x_train_scale, x_train_extract])
     y_test_soft, X_test_embed = model.predict([x_test_scale, x_test_extract])
     
-#     from TSNE_plot import tsne_plot
-#     tsne_plot(outdir, 'original', X_train_embed[:, :opt.embedding_size], X_test_embed[:, :opt.embedding_size], y_train, y_test)
-#     tsne_plot(outdir, 'extracted', X_train_embed[:, opt.embedding_size: ], X_test_embed[:, opt.embedding_size: ], y_train, y_test)
+    # from TSNE_plot import tsne_plot
+    # tsne_plot(outdir, 'original', X_train_embed[:, :opt.embedding_size], X_test_embed[:, :opt.embedding_size], y_train, y_test)
+    # tsne_plot(outdir, 'extracted', X_train_embed[:, opt.embedding_size: ], X_test_embed[:, opt.embedding_size: ], y_train, y_test)
     
     return X_train_embed, X_test_embed, y_test_soft, y_train, outdir
