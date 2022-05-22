@@ -191,7 +191,7 @@ def CNN_C_trip(opt, input_, backbone=False):
     x = Activation('relu')(x)
     x = MaxPooling1D(pool_size=4, strides=None)(x)
 
-    if opt.case_14:
+    if opt.case_14 or opt.MFPT_data:
       for i in range(2):
         x = identity_block(x, kernel_size=3, filters=48, stage=1, block=i)
       x = MaxPooling1D(pool_size=4, strides=None)(x)
