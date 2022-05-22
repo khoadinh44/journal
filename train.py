@@ -247,22 +247,22 @@ def parse_opt(known=False):
     parser.add_argument('--scaler',  type=str, default=None, help='handcrafted_features, MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler, Normalizer, QuantileTransformer, PowerTransformer')
     
     # Run case------------------------------------------------
-    parser.add_argument('--case_0_6',  default=True,  type=bool)
-    parser.add_argument('--case_1_7',  default=True,  type=bool)
-    parser.add_argument('--case_2_8',  default=True,  type=bool)
-    parser.add_argument('--case_3_9',  default=True,  type=bool)
-    parser.add_argument('--case_4_10', default=True,  type=bool) # Turn on all cases before
+    parser.add_argument('--case_0_6',  default=False,  type=bool)
+    parser.add_argument('--case_1_7',  default=False,  type=bool)
+    parser.add_argument('--case_2_8',  default=False,  type=bool)
+    parser.add_argument('--case_3_9',  default=False,  type=bool)
+    parser.add_argument('--case_4_10', default=False,  type=bool) # Turn on all cases before
     parser.add_argument('--case_5_11', default=False, type=bool)
     
-    parser.add_argument('--case_12', default=True, type=bool) # turn on case_4_10
+    parser.add_argument('--case_12', default=False, type=bool) # turn on case_4_10
     parser.add_argument('--case_13', default=False,  type=bool)  # turn on case_5_11
-    parser.add_argument('--case_14', default=True,  type=bool)  # turn on case 12 and range(case 0, case 5)
+    parser.add_argument('--case_14', default=False,  type=bool)  # turn on case 12 and range(case 0, case 5)
     
     parser.add_argument('--PU_data_table_10',            default=False, type=bool)
     parser.add_argument('--PU_data_table_10_case_0',     default=False, type=bool)
     parser.add_argument('--PU_data_table_10_case_1',     default=False, type=bool)
     parser.add_argument('--PU_data_table_8',      default=False, type=bool)
-    parser.add_argument('--MFPT_data',            default=False, type=bool)
+    parser.add_argument('--MFPT_data',            default=True, type=bool)
     parser.add_argument('--data_normal',          default=True, type=bool)
     parser.add_argument('--data_12k',             default=True, type=bool)
     parser.add_argument('--data_48k',             default=False, type=bool)
