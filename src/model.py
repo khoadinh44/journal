@@ -126,19 +126,15 @@ def TransformerLayer(x=None, c=48, num_heads=4, backbone=None):
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    # q = tf.keras.layers.Dropout(0.1)(q) 
     k   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    # k = tf.keras.layers.Dropout(0.1)(k) 
     v   = Dense(c, use_bias=True, 
                   kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
                   bias_regularizer=regularizers.l2(1e-4),
                   activity_regularizer=regularizers.l2(1e-5))(x)
-    # v = tf.keras.layers.Dropout(0.1)(v) 
     ma  = MultiHeadAttention(head_size=c, num_heads=num_heads)([q, k, v]) 
-    x = tf.keras.layers.Dropout(0.2)(x) 
     return ma
 
 # For m34 Residual, use RepeatVector. Or tensorflow backend.repeat
