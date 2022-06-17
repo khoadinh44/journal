@@ -1,5 +1,6 @@
 import numpy as np
 
+# Time ---------------------------------------------------------------------
 def RMS(x):
   return np.sqrt(np.mean(x**2))
 
@@ -42,6 +43,21 @@ def Peak_peak_value(x):
 def Skewness(x):
   mean = np.mean(x)
   return np.mean((x-mean)**3) / (np.sqrt(np.mean((x-mean)**2)))**3 + 1e-10
+
+# Frequency ---------------------------------------------------------------------
+def Peak_FFT(x):
+  r = abs(np.fft.fft(x))
+  return np.max(r)
+
+def energy_FFT(x):
+  r = abs(np.fft.fft(x))
+  return np.average(r)
+
+def PSD_FFT(x):
+  num = float(len(x))
+  fhat = np.fft.fft(x)                 
+  PSD = fhat * np.conj(fhat) / num   
+  return np.max(PSD.real)
 
 def extracted_feature_of_signal(signals):
   data = []
